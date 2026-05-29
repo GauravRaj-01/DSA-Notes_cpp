@@ -462,10 +462,138 @@ master_html = """<!DOCTYPE html>
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
-  @media(max-width: 768px) {
-    body { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-    .nav-list { max-height: 200px; }
+  /* Mobile Navigation Header */
+  .mobile-header {
+    display: none;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+    background: rgba(10, 12, 22, 0.85);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    height: 64px;
+    flex-shrink: 0;
+  }
+
+  .mobile-header h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-white);
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .menu-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text-white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    transition: background 0.3s;
+  }
+
+  .menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .menu-toggle svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Backdrop overlay for drawer */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 9;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (max-width: 992px) {
+    .mobile-header {
+      display: flex;
+    }
+
+    body {
+      flex-direction: column;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 290px;
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: none;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 15px 0 40px rgba(0, 0, 0, 0.7);
+    }
+
+    .sidebar.open ~ .sidebar-overlay {
+      display: block;
+      opacity: 1;
+    }
+
+    .content-area {
+      height: calc(100vh - 64px);
+      width: 100%;
+    }
+
+    .landing-page {
+      padding: 24px 16px;
+    }
+
+    .landing-card {
+      padding: 44px 24px;
+      border-radius: 24px;
+    }
+
+    .landing-title {
+      font-size: 28px;
+    }
+
+    .landing-subtitle {
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .stats-row {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-box {
+      padding: 16px;
+    }
+
+    .guide-box {
+      padding: 16px 20px;
+      font-size: 13px;
+    }
   }
 </style>
 </head>
@@ -510,9 +638,18 @@ master_html += """  </div>
     </div>
   </div>
 </nav>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- MAIN CONTENT AREA -->
 <main class="content-area" id="content-area">
+
+  <!-- MOBILE HEADER -->
+  <div class="mobile-header">
+    <button class="menu-toggle" onclick="toggleSidebar()">
+      <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" fill="currentColor"/></svg>
+    </button>
+    <h2>DSA Notebook</h2>
+  </div>
 
   <!-- LANDING PAGE -->
   <div class="landing-page" id="landing-page">
@@ -602,6 +739,36 @@ master_html += """  ];
 
     // Show the selected iframe
     loadedIframes[index].classList.add('active');
+
+    // Close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      overlay.style.opacity = '0';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 300);
+    }
+  }
+
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      overlay.style.opacity = '0';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 300);
+    } else {
+      overlay.style.display = 'block';
+      // Trigger reflow to enable transition
+      overlay.offsetHeight;
+      sidebar.classList.add('open');
+      overlay.style.opacity = '1';
+    }
   }
 
   // Bind dynamic mouse glow dynamic hover effect to nav buttons
