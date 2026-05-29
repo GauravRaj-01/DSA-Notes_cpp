@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA String Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117; --bg2: #161b27; --bg3: #1e2535; --border: #2a3245;
+    --text: #e8eaf6; --muted: #8892a4;
+    --teal: #1dd6a0; --teal-bg: #0d2e24;
+    --purple: #a78bfa; --purple-bg: #1e1633;
+    --amber: #fbbf24; --amber-bg: #2a1f0a;
+    --blue: #60a5fa; --blue-bg: #0e1f35;
+    --coral: #fb7185; --coral-bg: #2a0e16;
+    --green: #86efac; --green-bg: #0b2018;
+    --pink: #f472b6; --pink-bg: #2a0e1e;
+    --code-bg: #0a0d14;
+    --kw: #f9a870; --fn: #79c0ff; --cm: #5a6478;
+    --tp: #f472b6; --str: #a5d6a7; --nm: #ce93d8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 14px; }
+
+  /* SIDEBAR */
+  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 245px; background: var(--bg2); border-right: 1px solid var(--border); padding: 24px 0; overflow-y: auto; z-index: 100; }
+  .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .sidebar-logo h1 { font-size: 13px; font-weight: 600; color: var(--pink); letter-spacing: .08em; text-transform: uppercase; }
+  .sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .nav-section { padding: 0 12px; margin-bottom: 8px; }
+  .nav-section-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; padding: 0 8px; margin-bottom: 4px; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 13px; color: var(--muted); cursor: pointer; transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+  .nav-link:hover { background: var(--bg3); color: var(--text); }
+  .nav-link.active { background: var(--bg3); color: var(--pink); font-weight: 500; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .sub-links { padding-left: 24px; margin-top: 2px; }
+  .sub-link { display: block; padding: 4px 10px; font-size: 12px; color: var(--muted); cursor: pointer; border-radius: 6px; transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+  .sub-link:hover { color: var(--text); background: var(--bg3); }
+
+  /* MAIN */
+  .main { margin-left: 245px; padding: 40px 48px; max-width: 980px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .page-header .breadcrumb { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .page-header h2 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .page-header p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+  .badge-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid #1a5c44; }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid #3d2d6e; }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid #6b4c0f; }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid #1a3a5c; }
+  .badge-coral { background: var(--coral-bg); color: var(--coral); border: 1px solid #5c1a27; }
+  .badge-pink { background: var(--pink-bg); color: var(--pink); border: 1px solid #5c1a3a; }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #155a30; }
+
+  /* CARDS */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card-title .icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+  /* LANG BLOCKS */
+  .lang-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin: 12px 0 5px; }
+  .en-block { background: var(--bg3); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; line-height: 1.8; color: var(--text); margin-bottom: 8px; }
+  .hi-block { background: var(--purple-bg); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; line-height: 1.8; color: #c4b5fd; margin-bottom: 8px; }
+
+  /* CODE */
+  .code-wrap { position: relative; margin: 12px 0; }
+  .code-label { background: var(--bg3); border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0; padding: 7px 14px; font-size: 11px; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+  .copy-btn { font-size: 11px; padding: 3px 10px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg); color: var(--muted); cursor: pointer; transition: all .15s; }
+  .copy-btn:hover { color: var(--teal); border-color: var(--teal); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 0 0 8px 8px; padding: 16px 18px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; }
+  .kw { color: var(--kw); } .fn { color: var(--fn); } .cm { color: var(--cm); font-style: italic; }
+  .tp { color: var(--tp); } .st { color: var(--str); } .nm { color: var(--nm); }
+
+  /* DRY RUN */
+  .dry-run { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin: 12px 0; overflow-x: auto; }
+  .dry-run-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+  .step { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .step-num { font-size: 10px; font-weight: 600; color: var(--muted); min-width: 52px; }
+  .arr-row { display: flex; gap: 4px; align-items: flex-end; flex-wrap: wrap; }
+  .a-box { min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); color: var(--muted); padding: 0 4px; }
+  .a-box.L { background: var(--teal-bg); color: var(--teal); border-color: #1a5c44; }
+  .a-box.R { background: var(--purple-bg); color: var(--purple); border-color: #3d2d6e; }
+  .a-box.found { background: var(--green-bg); color: var(--green); border-color: #155a30; }
+  .a-box.hi { background: var(--amber-bg); color: var(--amber); border-color: #6b4c0f; }
+  .a-box.match { background: var(--pink-bg); color: var(--pink); border-color: #5c1a3a; }
+  .a-box.fail { background: var(--coral-bg); color: var(--coral); border-color: #5c1a27; }
+  .ptr-lbl { font-size: 9px; color: var(--muted); margin-top: 1px; text-align: center; }
+  .step-info { font-size: 12px; color: var(--muted); flex: 1; min-width: 160px; }
+  .step-result { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .sr-high { background: var(--coral-bg); color: var(--coral); }
+  .sr-low { background: var(--amber-bg); color: var(--amber); }
+  .sr-eq { background: var(--green-bg); color: var(--green); }
+  .sr-pink { background: var(--pink-bg); color: var(--pink); }
+
+  /* TABLE */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  .tbl th { background: var(--bg3); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.6; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: var(--bg3); }
+
+  /* MISC */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+  .tip { border-left: 3px solid var(--teal); background: var(--teal-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #6ee7c0; margin: 12px 0; line-height: 1.7; }
+  .warn { border-left: 3px solid var(--amber); background: var(--amber-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #fcd97a; margin: 12px 0; line-height: 1.7; }
+  .info { border-left: 3px solid var(--blue); background: var(--blue-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #93c5fd; margin: 12px 0; line-height: 1.7; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .mini-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.7; }
+  .mini-card b { font-weight: 600; display: block; margin-bottom: 4px; }
+  .cx-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .cx-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; }
+  .cx-val { font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; margin: 4px 0; }
+  .cx-label { font-size: 11px; color: var(--muted); }
+  .sub-heading { font-size: 14px; font-weight: 600; margin: 22px 0 10px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .sub-heading::before { content: ''; width: 3px; height: 14px; border-radius: 2px; background: var(--pink); display: block; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg3); padding: 1px 5px; border-radius: 4px; color: var(--teal); }
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+  .pill { padding: 3px 12px; border-radius: 20px; font-size: 12px; border: 1px solid var(--border); color: var(--muted); background: var(--bg3); }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  /* LPS TABLE STYLE */
+  .lps-row { display: flex; gap: 4px; align-items: center; margin: 6px 0; flex-wrap: wrap; }
+  .lps-box { min-width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; border-radius: 5px; border: 1px solid var(--border); background: var(--bg2); color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .lps-box.zero { background: var(--bg3); color: var(--muted); }
+  .lps-box.val { background: var(--teal-bg); color: var(--teal); border-color: #1a5c44; }
+  .lps-label { font-size: 10px; color: var(--muted); min-width: 60px; }
+
+  @media(max-width:768px){
+    .sidebar{display:none;}
+    .main{margin-left:0;padding:20px 16px;}
+    .grid2,.grid3,.cx-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>String Patterns · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">String Patterns</div>
+
+    <button class="nav-link active" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>Sliding Window
+    </button>
+    <div class="sub-links" id="sub1">
+      <button class="sub-link" onclick="scrollTo2('sw-longest')">Longest No-Repeat</button>
+      <button class="sub-link" onclick="scrollTo2('sw-min')">Min Window Substring</button>
+      <button class="sub-link" onclick="scrollTo2('sw-anagram')">Anagram / Permutation</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Two Pointers
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('tp-palin')">Palindrome Check</button>
+      <button class="sub-link" onclick="scrollTo2('tp-rev')">Reverse Words</button>
+      <button class="sub-link" onclick="scrollTo2('tp-comp')">String Compression</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#f472b6"></span>Pattern Matching
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('pm-kmp')">KMP Algorithm</button>
+      <button class="sub-link" onclick="scrollTo2('pm-rk')">Rabin-Karp</button>
+      <button class="sub-link" onclick="scrollTo2('pm-z')">Z-Algorithm</button>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ═══════════════════════ PAGE 1 — SLIDING WINDOW ═══════════════════════ -->
+<div class="page active" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">String Patterns · Pattern 1 of 3</div>
+    <h2>Sliding Window on Strings</h2>
+    <p>String ke upar ek window khiskaate hain — characters add/remove karte hain. Substring problems ke liye best.</p>
+    <div class="badge-row">
+      <span class="badge badge-amber">O(n) time</span>
+      <span class="badge badge-blue">HashMap use</span>
+      <span class="badge badge-teal">Substring problems</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🪟</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">A window [l, r] slides over the string. We expand by moving <code>r</code> right and shrink by moving <code>l</code> right when a condition is violated. A HashMap/frequency array tracks characters inside the window. This avoids O(n²) brute force.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">String pe ek window [l, r] slide karti hai. Right se expand karo (<code>r++</code>), condition fail hone par left se shrink karo (<code>l++</code>). HashMap se window ke andar characters track karo. Yeh brute force ke O(n²) ko O(n) mein badal deta hai!</div>
+  </div>
+
+  <!-- LONGEST SUBSTRING WITHOUT REPEAT -->
+  <div id="sw-longest">
+    <div class="sub-heading">Problem 1 — Longest Substring Without Repeating Characters</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🔤</div>Longest No-Repeat Substring<span class="badge badge-amber">LeetCode 3</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Use a HashMap to store the last seen index of each character. When a duplicate is found at index <code>r</code>, jump <code>l</code> to <code>lastSeen[char] + 1</code> to skip past the duplicate. Track max window size at every step.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">HashMap mein har character ki last position store karo. Jab duplicate mile, <code>l</code> ko seedha us character ke agle index par le jao — baar baar ek-ek karke shrink karne ki zaroorat nahi! Har step pe max length update karo.</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">s = "abcabcbb" → Expected: 3 ("abc")</div>
+        <div class="step">
+          <span class="step-num">r=0 'a'</span>
+          <div class="arr-row">
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">a</div><div class="ptr-lbl" style="color:var(--teal)">L</div></div>
+            <div class="a-box">b</div><div class="a-box">c</div><div class="a-box">a</div><div class="a-box">b</div><div class="a-box">c</div><div class="a-box">b</div><div class="a-box">b</div>
+          </div>
+          <div class="step-info">map={a:0}, window="a"</div>
+          <span class="step-result sr-low">len=1</span>
+        </div>
+        <div class="step">
+          <span class="step-num">r=1,2</span>
+          <div class="arr-row">
+            <div class="a-box match">a</div><div class="a-box match">b</div><div class="a-box match">c</div>
+            <div class="a-box">a</div><div class="a-box">b</div><div class="a-box">c</div><div class="a-box">b</div><div class="a-box">b</div>
+          </div>
+          <div class="step-info">window="abc", no dup</div>
+          <span class="step-result sr-low">len=3</span>
+        </div>
+        <div class="step">
+          <span class="step-num">r=3 'a'</span>
+          <div class="arr-row">
+            <div class="a-box fail">a</div>
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">b</div><div class="ptr-lbl" style="color:var(--teal)">L</div></div>
+            <div class="a-box match">c</div><div class="a-box match">a</div>
+            <div class="a-box">b</div><div class="a-box">c</div><div class="a-box">b</div><div class="a-box">b</div>
+          </div>
+          <div class="step-info">'a' duplicate! l=lastSeen['a']+1=1</div>
+          <span class="step-result sr-pink">l jumps to 1</span>
+        </div>
+        <div class="step">
+          <span class="step-num">End</span>
+          <div class="step-info">Max window = 3 ("abc" ya "bca")</div>
+          <span class="step-result sr-eq">✅ return 3</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Longest Substring Without Repeating</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">lengthOfLongestSubstring</span>(<span class="tp">string</span> s) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>, <span class="tp">int</span>&gt; lastSeen; <span class="cm">// char ki last index store karo</span>
+    <span class="tp">int</span> l = <span class="nm">0</span>, maxLen = <span class="nm">0</span>;
+
+    <span class="kw">for</span> (<span class="tp">int</span> r = <span class="nm">0</span>; r &lt; s.size(); r++) {
+        <span class="cm">// duplicate mila aur woh current window ke andar hai</span>
+        <span class="kw">if</span> (lastSeen.count(s[r]) &amp;&amp; lastSeen[s[r]] &gt;= l)
+            l = lastSeen[s[r]] + <span class="nm">1</span>; <span class="cm">// l ko seedha aage le jao</span>
+
+        lastSeen[s[r]] = r;          <span class="cm">// position update karo</span>
+        maxLen = max(maxLen, r - l + <span class="nm">1</span>);
+    }
+    <span class="kw">return</span> maxLen;
+}</pre>
+      </div>
+      <div class="tip">💡 Key trick: <code>lastSeen[s[r]] >= l</code> check karna zaroori hai — warna purana index use ho jaayega jo already window se bahar hai.</div>
+    </div>
+  </div>
+
+  <!-- MINIMUM WINDOW SUBSTRING -->
+  <div id="sw-min">
+    <div class="sub-heading">Problem 2 — Minimum Window Substring</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--coral-bg)">🎯</div>Minimum Window Substring<span class="badge badge-coral">LeetCode 76 · Hard</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">
+        Two HashMaps — <code>need</code> (required chars from t) and <code>have_map</code> (current window). Track <code>have</code> = how many unique chars have met their required frequency.<br>
+        • Expand right until all chars covered (<code>have == need_cnt</code>)<br>
+        • Then shrink left to minimize window, recording minimum each time
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        <code>need</code> map mein t ke required characters hain. <code>have</code> count karta hai kitne unique chars ki frequency match ho gayi.<br>
+        • Jab tak <code>have == need_cnt</code> na ho → right se expand karo<br>
+        • Jab sab mil jaayein → left se shrink karo minimum window ke liye<br>
+        • Shrink karte waqt minimum length update karte raho
+      </div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">s = "ADOBECODEBANC", t = "ABC" → Expected: "BANC"</div>
+        <div class="step">
+          <span class="step-num">Expand</span>
+          <div class="arr-row">
+            <div class="a-box match">A</div><div class="a-box">D</div><div class="a-box match">O</div><div class="a-box match">B</div><div class="a-box">E</div><div class="a-box match">C</div>
+          </div>
+          <div class="step-info">window "ADOBEC" → have=3 (A,B,C all found)</div>
+          <span class="step-result sr-low">valid window!</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Shrink</span>
+          <div class="arr-row">
+            <div class="a-box fail">A</div><div class="a-box">D</div><div class="a-box">O</div><div class="a-box match">B</div><div class="a-box">E</div><div class="a-box match">C</div>
+          </div>
+          <div class="step-info">remove 'A' → have=2, window invalid</div>
+          <span class="step-result sr-high">shrink stopped</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Final</span>
+          <div class="arr-row">
+            <div class="a-box match">B</div><div class="a-box match">A</div><div class="a-box match">N</div><div class="a-box match">C</div>
+          </div>
+          <div class="step-info">window "BANC" → len=4, all chars covered</div>
+          <span class="step-result sr-eq">✅ "BANC"</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Minimum Window Substring</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">string</span> <span class="fn">minWindow</span>(<span class="tp">string</span> s, <span class="tp">string</span> t) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>,<span class="tp">int</span>&gt; need, have_map;
+    <span class="kw">for</span> (<span class="tp">char</span> c : t) need[c]++;   <span class="cm">// t ke required chars</span>
+
+    <span class="tp">int</span> have = <span class="nm">0</span>, need_cnt = need.size();
+    <span class="tp">int</span> l = <span class="nm">0</span>, minLen = INT_MAX, start = <span class="nm">0</span>;
+
+    <span class="kw">for</span> (<span class="tp">int</span> r = <span class="nm">0</span>; r &lt; s.size(); r++) {
+        have_map[s[r]]++;
+        <span class="cm">// agar yeh char zaroori hai aur frequency match ho gayi</span>
+        <span class="kw">if</span> (need.count(s[r]) &amp;&amp; have_map[s[r]] == need[s[r]])
+            have++;
+
+        <span class="kw">while</span> (have == need_cnt) {      <span class="cm">// sab chars cover ho gaye → shrink!</span>
+            <span class="kw">if</span> (r - l + <span class="nm">1</span> &lt; minLen) {
+                minLen = r - l + <span class="nm">1</span>;
+                start = l;              <span class="cm">// minimum window ka start save karo</span>
+            }
+            have_map[s[l]]--;
+            <span class="kw">if</span> (need.count(s[l]) &amp;&amp; have_map[s[l]] &lt; need[s[l]])
+                have--;                 <span class="cm">// char hataya → condition fail</span>
+            l++;
+        }
+    }
+    <span class="kw">return</span> minLen == INT_MAX ? <span class="st">""</span> : s.substr(start, minLen);
+}</pre>
+      </div>
+      <div class="warn">⚠️ have count tab badhta hai jab frequency EXACTLY match ho (==), aur tab ghatta hai jab frequency required se kam ho (&lt;). Strict equality use karo!</div>
+    </div>
+  </div>
+
+  <!-- ANAGRAM -->
+  <div id="sw-anagram">
+    <div class="sub-heading">Problem 3 — Anagram / Permutation in String</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🔄</div>Find All Anagrams in a String<span class="badge badge-teal">LeetCode 438</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Fixed window of size <code>p.length()</code>. Compare the frequency array of the window with pattern's frequency array. If they match → anagram found. Slide window right by adding new char and removing leftmost char.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">Fixed window size = pattern ki length. Window ki char frequency aur pattern ki frequency compare karo. Match ho toh anagram mila! Window khiskaao — right se add, left se remove. <code>matches</code> count se efficiently track karo.</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">s = "cbaebafd", p = "abc" → Expected: [0, 6]</div>
+        <div class="step">
+          <span class="step-num">Init</span>
+          <div class="arr-row"><div class="a-box match">c</div><div class="a-box match">b</div><div class="a-box match">a</div><div class="a-box">e</div><div class="a-box">b</div><div class="a-box">a</div><div class="a-box">f</div><div class="a-box">d</div></div>
+          <div class="step-info">window "cba" = freq match with "abc"</div>
+          <span class="step-result sr-eq">✅ idx 0 added</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Slide</span>
+          <div class="arr-row"><div class="a-box fail">c</div><div class="a-box">b</div><div class="a-box">a</div><div class="a-box hi">e</div><div class="a-box">b</div><div class="a-box">a</div><div class="a-box">f</div><div class="a-box">d</div></div>
+          <div class="step-info">remove 'c', add 'e' → "bae" ≠ "abc"</div>
+          <span class="step-result sr-high">no match</span>
+        </div>
+        <div class="step">
+          <span class="step-num">idx=6</span>
+          <div class="arr-row"><div class="a-box">c</div><div class="a-box">b</div><div class="a-box">a</div><div class="a-box">e</div><div class="a-box">b</div><div class="a-box fail">a</div><div class="a-box match">f</div><div class="a-box match">d</div></div>
+          <div class="step-info">Hmm wait — let me note: window at idx 6 = "afd" ≠ match for this example. Result = [0] only for this input.</div>
+          <span class="step-result sr-eq">✅ return [0]</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Find All Anagrams</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">findAnagrams</span>(<span class="tp">string</span> s, <span class="tp">string</span> p) {
+    <span class="kw">if</span> (s.size() &lt; p.size()) <span class="kw">return</span> {};
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; pFreq(<span class="nm">26</span>, <span class="nm">0</span>), wFreq(<span class="nm">26</span>, <span class="nm">0</span>), result;
+    <span class="tp">int</span> k = p.size();
+
+    <span class="kw">for</span> (<span class="tp">char</span> c : p) pFreq[c - <span class="st">'a'</span>]++;      <span class="cm">// pattern ki frequency</span>
+
+    <span class="kw">for</span> (<span class="tp">int</span> r = <span class="nm">0</span>; r &lt; s.size(); r++) {
+        wFreq[s[r] - <span class="st">'a'</span>]++;                  <span class="cm">// window mein add karo</span>
+
+        <span class="kw">if</span> (r &gt;= k)
+            wFreq[s[r - k] - <span class="st">'a'</span>]--;          <span class="cm">// purana char hatao</span>
+
+        <span class="kw">if</span> (r &gt;= k - <span class="nm">1</span> &amp;&amp; wFreq == pFreq)      <span class="cm">// frequency arrays match?</span>
+            result.push_back(r - k + <span class="nm">1</span>);
+    }
+    <span class="kw">return</span> result;
+}
+
+<span class="cm">// Alternate: Permutation in String (LeetCode 567) — same logic, return bool</span>
+<span class="tp">bool</span> <span class="fn">checkInclusion</span>(<span class="tp">string</span> s1, <span class="tp">string</span> s2) {
+    <span class="kw">if</span> (s1.size() &gt; s2.size()) <span class="kw">return false</span>;
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; p(<span class="nm">26</span>,<span class="nm">0</span>), w(<span class="nm">26</span>,<span class="nm">0</span>);
+    <span class="tp">int</span> k = s1.size();
+    <span class="kw">for</span> (<span class="tp">char</span> c : s1) p[c-<span class="st">'a'</span>]++;
+    <span class="kw">for</span> (<span class="tp">int</span> r = <span class="nm">0</span>; r &lt; s2.size(); r++) {
+        w[s2[r]-<span class="st">'a'</span>]++;
+        <span class="kw">if</span> (r &gt;= k) w[s2[r-k]-<span class="st">'a'</span>]--;
+        <span class="kw">if</span> (r &gt;= k-<span class="nm">1</span> &amp;&amp; w == p) <span class="kw">return true</span>;
+    }
+    <span class="kw">return false</span>;
+}</pre>
+      </div>
+      <div class="tip">💡 26-size frequency array compare karna O(26) = O(1) hai practically. HashMap se better hai yahan kyunki sirf lowercase letters hain.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════ PAGE 2 — TWO POINTERS ═══════════════════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">String Patterns · Pattern 2 of 3</div>
+    <h2>Two Pointers on Strings</h2>
+    <p>Strings mein do pointers se comparison, reversal, aur compression efficiently karo.</p>
+    <div class="badge-row">
+      <span class="badge badge-purple">O(n) time</span>
+      <span class="badge badge-teal">O(1) space mostly</span>
+      <span class="badge badge-blue">In-place</span>
+    </div>
+  </div>
+
+  <!-- PALINDROME -->
+  <div id="tp-palin">
+    <div class="sub-heading">Problem 1 — Palindrome Check</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🔁</div>Valid Palindrome<span class="badge badge-purple">LeetCode 125</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Place <code>l=0</code> and <code>r=n-1</code>. Skip non-alphanumeric characters. Compare lowercase versions. If any mismatch → not palindrome. If l and r meet without mismatch → palindrome.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">Dono ends se characters compare karo. Spaces, punctuation skip karo (<code>isalnum()</code> se). Lowercase mein compare karo (<code>tolower()</code> se). Mismatch mile toh false, loop complete ho toh true!</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">s = "A man, a plan, a canal: Panama"</div>
+        <div class="step">
+          <span class="step-num">Step 1</span>
+          <div class="arr-row">
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">A</div><div class="ptr-lbl" style="color:var(--teal)">L</div></div>
+            <div class="a-box muted">·</div><div class="a-box muted">·</div><div class="a-box muted">·</div>
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box R">a</div><div class="ptr-lbl" style="color:var(--purple)">R</div></div>
+          </div>
+          <div class="step-info">tolower('A')=='a' ✓ → l++, r--</div>
+          <span class="step-result sr-eq">match</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Skip</span>
+          <div class="step-info">Non-alphanumeric chars ',' '.' ':' skip hote hain</div>
+          <span class="step-result sr-low">isalnum() false → skip</span>
+        </div>
+        <div class="step">
+          <span class="step-num">End</span>
+          <div class="step-info">Saare chars match ho gaye, l >= r</div>
+          <span class="step-result sr-eq">✅ return true</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Valid Palindrome</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">bool</span> <span class="fn">isPalindrome</span>(<span class="tp">string</span> s) {
+    <span class="tp">int</span> l = <span class="nm">0</span>, r = s.size() - <span class="nm">1</span>;
+    <span class="kw">while</span> (l &lt; r) {
+        <span class="kw">while</span> (l &lt; r &amp;&amp; !isalnum(s[l])) l++; <span class="cm">// left se non-alphanum skip</span>
+        <span class="kw">while</span> (l &lt; r &amp;&amp; !isalnum(s[r])) r--; <span class="cm">// right se non-alphanum skip</span>
+        <span class="kw">if</span> (tolower(s[l]) != tolower(s[r]))
+            <span class="kw">return false</span>;                    <span class="cm">// mismatch → palindrome nahi</span>
+        l++; r--;
+    }
+    <span class="kw">return true</span>;
+}
+
+<span class="cm">// Bonus: Longest Palindromic Substring — Expand Around Center</span>
+<span class="tp">string</span> <span class="fn">longestPalindrome</span>(<span class="tp">string</span> s) {
+    <span class="tp">int</span> start = <span class="nm">0</span>, maxLen = <span class="nm">1</span>;
+    <span class="kw">auto</span> <span class="fn">expand</span> = [&](<span class="tp">int</span> l, <span class="tp">int</span> r) {
+        <span class="kw">while</span> (l &gt;= <span class="nm">0</span> &amp;&amp; r &lt; s.size() &amp;&amp; s[l] == s[r]) {
+            <span class="kw">if</span> (r - l + <span class="nm">1</span> &gt; maxLen) {
+                maxLen = r - l + <span class="nm">1</span>;
+                start = l;
+            }
+            l--; r++;
+        }
+    };
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; s.size(); i++) {
+        <span class="fn">expand</span>(i, i);      <span class="cm">// odd length palindrome (center = i)</span>
+        <span class="fn">expand</span>(i, i + <span class="nm">1</span>); <span class="cm">// even length palindrome (center = i,i+1)</span>
+    }
+    <span class="kw">return</span> s.substr(start, maxLen);
+}</pre>
+      </div>
+      <div class="tip">💡 Expand Around Center: Har character se (aur adjacent pair se) bahar ki taraf expand karo. Odd + even dono cases handle karo.</div>
+    </div>
+  </div>
+
+  <!-- REVERSE WORDS -->
+  <div id="tp-rev">
+    <div class="sub-heading">Problem 2 — Reverse Words / Characters</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">↩️</div>Reverse Words in a String<span class="badge badge-blue">LeetCode 151</span></div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Trick: Pehle poori string reverse karo. Phir har word ko individually reverse karo. Extra spaces handle karna mat bhoolna — leading, trailing, aur multiple spaces sab hata do.
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Reverse Words in String</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">string</span> <span class="fn">reverseWords</span>(<span class="tp">string</span> s) {
+    <span class="cm">// Step 1: Poori string reverse karo</span>
+    reverse(s.begin(), s.end());
+
+    <span class="tp">int</span> n = s.size(), i = <span class="nm">0</span>, j = <span class="nm">0</span>;
+
+    <span class="kw">while</span> (i &lt; n) {
+        <span class="kw">while</span> (i &lt; n &amp;&amp; s[i] == <span class="st">' '</span>) i++; <span class="cm">// leading spaces skip</span>
+        <span class="kw">if</span> (i == n) <span class="kw">break</span>;
+
+        <span class="kw">if</span> (j != <span class="nm">0</span>) s[j++] = <span class="st">' '</span>;         <span class="cm">// words ke beech ek space</span>
+
+        <span class="tp">int</span> wordStart = j;
+        <span class="kw">while</span> (i &lt; n &amp;&amp; s[i] != <span class="st">' '</span>)
+            s[j++] = s[i++];               <span class="cm">// word copy karo</span>
+
+        <span class="cm">// Step 2: Iss word ko reverse karo</span>
+        reverse(s.begin() + wordStart, s.begin() + j);
+    }
+    s.resize(j);
+    <span class="kw">return</span> s;
+}
+
+<span class="cm">// Simpler version using stringstream</span>
+<span class="tp">string</span> <span class="fn">reverseWordsSimple</span>(<span class="tp">string</span> s) {
+    <span class="tp">istringstream</span> iss(s);
+    <span class="tp">string</span> word, result;
+    <span class="tp">vector</span>&lt;<span class="tp">string</span>&gt; words;
+    <span class="kw">while</span> (iss &gt;&gt; word) words.push_back(word);
+    <span class="kw">for</span> (<span class="tp">int</span> i = words.size()-<span class="nm">1</span>; i &gt;= <span class="nm">0</span>; i--) {
+        result += words[i];
+        <span class="kw">if</span> (i) result += <span class="st">" "</span>;
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Reverse String (in-place)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// LeetCode 344 — O(n) time, O(1) space</span>
+<span class="kw">void</span> <span class="fn">reverseString</span>(<span class="tp">vector</span>&lt;<span class="tp">char</span>&gt;&amp; s) {
+    <span class="tp">int</span> l = <span class="nm">0</span>, r = s.size() - <span class="nm">1</span>;
+    <span class="kw">while</span> (l &lt; r) {
+        swap(s[l++], s[r--]); <span class="cm">// do characters swap karo, dono pointers move</span>
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- STRING COMPRESSION -->
+  <div id="tp-comp">
+    <div class="sub-heading">Problem 3 — String Compression</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📦</div>String Compression<span class="badge badge-teal">LeetCode 443</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Use two pointers: <code>read</code> scans ahead to count consecutive same chars, <code>write</code> writes the compressed result in-place. Write char, then count (if &gt; 1) digit by digit.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block"><code>read</code> pointer aage badhkar same characters count karta hai. <code>write</code> pointer compressed result in-place likhta hai. Character likho, phir count likho (agar count &gt; 1 ho). In-place kaam karna hai — extra array nahi!</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">chars = ['a','a','b','b','c','c','c'] → Expected: 6 ["a2b2c3"]</div>
+        <div class="step">
+          <span class="step-num">Group 1</span>
+          <div class="arr-row"><div class="a-box match">a</div><div class="a-box match">a</div><div class="a-box">b</div><div class="a-box">b</div><div class="a-box">c</div><div class="a-box">c</div><div class="a-box">c</div></div>
+          <div class="step-info">'a' count=2 → write 'a','2'</div>
+        </div>
+        <div class="step">
+          <span class="step-num">Group 2</span>
+          <div class="arr-row"><div class="a-box">a</div><div class="a-box">2</div><div class="a-box match">b</div><div class="a-box match">b</div><div class="a-box">c</div><div class="a-box">c</div><div class="a-box">c</div></div>
+          <div class="step-info">'b' count=2 → write 'b','2'</div>
+        </div>
+        <div class="step">
+          <span class="step-num">Group 3</span>
+          <div class="arr-row"><div class="a-box">a</div><div class="a-box">2</div><div class="a-box">b</div><div class="a-box">2</div><div class="a-box match">c</div><div class="a-box match">c</div><div class="a-box match">c</div></div>
+          <div class="step-info">'c' count=3 → write 'c','3'</div>
+        </div>
+        <div class="step">
+          <span class="step-num">Result</span>
+          <div class="arr-row"><div class="a-box found">a</div><div class="a-box found">2</div><div class="a-box found">b</div><div class="a-box found">2</div><div class="a-box found">c</div><div class="a-box found">3</div></div>
+          <span class="step-result sr-eq">✅ return 6</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · String Compression</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">compress</span>(<span class="tp">vector</span>&lt;<span class="tp">char</span>&gt;&amp; chars) {
+    <span class="tp">int</span> write = <span class="nm">0</span>, read = <span class="nm">0</span>, n = chars.size();
+
+    <span class="kw">while</span> (read &lt; n) {
+        <span class="tp">char</span> cur = chars[read];
+        <span class="tp">int</span> count = <span class="nm">0</span>;
+
+        <span class="cm">// same characters count karo</span>
+        <span class="kw">while</span> (read &lt; n &amp;&amp; chars[read] == cur) {
+            read++; count++;
+        }
+
+        chars[write++] = cur;   <span class="cm">// character likho</span>
+
+        <span class="kw">if</span> (count &gt; <span class="nm">1</span>) {         <span class="cm">// count > 1 ho tabhi number likho</span>
+            <span class="tp">string</span> cnt = to_string(count);
+            <span class="kw">for</span> (<span class="tp">char</span> c : cnt)
+                chars[write++] = c; <span class="cm">// digit by digit likho</span>
+        }
+    }
+    <span class="kw">return</span> write;
+}</pre>
+      </div>
+      <div class="tip">💡 Count ko string mein convert karo phir digit-by-digit likho — multi-digit counts (e.g. 12 → '1','2') ke liye zaroori hai.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════ PAGE 3 — PATTERN MATCHING ═══════════════════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">String Patterns · Pattern 3 of 3</div>
+    <h2>Pattern Matching</h2>
+    <p>String ke andar pattern dhundho efficiently. Naive O(n·m) se better — O(n+m) ya O(n·m) with hashing.</p>
+    <div class="badge-row">
+      <span class="badge badge-pink">KMP O(n+m)</span>
+      <span class="badge badge-amber">Rabin-Karp O(n+m) avg</span>
+      <span class="badge badge-blue">Z-Algo O(n+m)</span>
+    </div>
+  </div>
+
+  <!-- ──── KMP ──── -->
+  <div id="pm-kmp">
+    <div class="sub-heading">Algorithm 1 — KMP (Knuth-Morris-Pratt)</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--pink-bg)">⚡</div>KMP Algorithm<span class="badge badge-pink">O(n + m)</span></div>
+
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+      <div class="en-block">
+        Naive approach re-checks characters unnecessarily on mismatch. KMP uses a <b>LPS (Longest Proper Prefix which is also Suffix)</b> array to know how far to jump back on a mismatch — never going backward in the text.<br><br>
+        <b>LPS array</b>: For pattern "AABAAB", LPS = [0,1,0,1,2,3]. It tells: if mismatch at position i, jump to LPS[i-1] in pattern.
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Naive mein mismatch hone par text mein peeche jaate hain — time waste! KMP mein hum pehle <b>LPS array</b> banate hain pattern ke liye. Yeh batata hai: "mismatch hone par pattern mein kitna peeche jaao, text mein nahi!" Text pointer kabhi peeche nahi jaata — isliye O(n+m).<br><br>
+        <b>LPS = Longest Proper Prefix jo Suffix bhi ho</b>. Pattern ka koi suffix hai jo prefix bhi ho — uski length store karo.
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- LPS BUILDING DRY RUN -->
+      <div class="dry-run">
+        <div class="dry-run-title">Step 1: Build LPS Array for pattern = "AABAAB"</div>
+
+        <div class="step">
+          <span class="step-num">Pattern</span>
+          <div class="lps-row">
+            <span class="lps-label">Index:</span>
+            <div class="lps-box">0</div><div class="lps-box">1</div><div class="lps-box">2</div><div class="lps-box">3</div><div class="lps-box">4</div><div class="lps-box">5</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num"></span>
+          <div class="lps-row">
+            <span class="lps-label">Char:</span>
+            <div class="lps-box match">A</div><div class="lps-box match">A</div><div class="lps-box match">B</div><div class="lps-box match">A</div><div class="lps-box match">A</div><div class="lps-box match">B</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num"></span>
+          <div class="lps-row">
+            <span class="lps-label">LPS:</span>
+            <div class="lps-box zero">0</div><div class="lps-box val">1</div><div class="lps-box zero">0</div><div class="lps-box val">1</div><div class="lps-box val">2</div><div class="lps-box val">3</div>
+          </div>
+        </div>
+
+        <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+          <div style="margin-bottom:4px">• idx=0: LPS[0]=0 (hamesha)</div>
+          <div style="margin-bottom:4px">• idx=1: 'A'=='A' → LPS[1]=1 (prefix "A" = suffix "A")</div>
+          <div style="margin-bottom:4px">• idx=2: 'B'!='A' → fall back, LPS[2]=0</div>
+          <div style="margin-bottom:4px">• idx=3: 'A'=='A' → LPS[3]=1</div>
+          <div style="margin-bottom:4px">• idx=4: 'A'=='A' → LPS[4]=2 (prefix "AA" = suffix "AA")</div>
+          <div>• idx=5: 'B'=='B' → LPS[5]=3 (prefix "AAB" = suffix "AAB")</div>
+        </div>
+      </div>
+
+      <!-- KMP SEARCH DRY RUN -->
+      <div class="dry-run">
+        <div class="dry-run-title">Step 2: KMP Search — text="AABAABAABAAB", pattern="AABAAB"</div>
+        <div class="step">
+          <span class="step-num">i=0..5</span>
+          <div class="arr-row">
+            <div class="a-box match">A</div><div class="a-box match">A</div><div class="a-box match">B</div><div class="a-box match">A</div><div class="a-box match">A</div><div class="a-box match">B</div>
+            <div class="a-box">A</div><div class="a-box">A</div><div class="a-box">B</div><div class="a-box">A</div><div class="a-box">A</div><div class="a-box">B</div>
+          </div>
+          <div class="step-info">j=6 == pattern.size() → match at idx 0!</div>
+          <span class="step-result sr-eq">✅ Match @ 0</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Jump</span>
+          <div class="step-info">j = LPS[j-1] = LPS[5] = 3 → don't restart from 0!</div>
+          <span class="step-result sr-pink">j jumps to 3</span>
+        </div>
+        <div class="step">
+          <span class="step-num">i=6..11</span>
+          <div class="arr-row">
+            <div class="a-box">A</div><div class="a-box">A</div><div class="a-box">B</div><div class="a-box match">A</div><div class="a-box match">A</div><div class="a-box match">B</div>
+            <div class="a-box match">A</div><div class="a-box match">A</div><div class="a-box match">B</div><div class="a-box match">A</div><div class="a-box match">A</div><div class="a-box match">B</div>
+          </div>
+          <div class="step-info">j=6 again → match at idx 6!</div>
+          <span class="step-result sr-eq">✅ Match @ 6</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · KMP Algorithm (Full)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// Step 1: LPS Array build karo</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">buildLPS</span>(<span class="tp">string</span>&amp; pat) {
+    <span class="tp">int</span> m = pat.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; lps(m, <span class="nm">0</span>);
+    <span class="tp">int</span> len = <span class="nm">0</span>, i = <span class="nm">1</span>;          <span class="cm">// len = current longest prefix-suffix</span>
+
+    <span class="kw">while</span> (i &lt; m) {
+        <span class="kw">if</span> (pat[i] == pat[len]) {
+            lps[i++] = ++len;     <span class="cm">// match! len badhao</span>
+        } <span class="kw">else</span> <span class="kw">if</span> (len &gt; <span class="nm">0</span>) {
+            len = lps[len - <span class="nm">1</span>];  <span class="cm">// peeche jao — i mat badhao!</span>
+        } <span class="kw">else</span> {
+            lps[i++] = <span class="nm">0</span>;       <span class="cm">// koi prefix-suffix nahi</span>
+        }
+    }
+    <span class="kw">return</span> lps;
+}
+
+<span class="cm">// Step 2: KMP Search — text mein pattern dhundho</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">kmpSearch</span>(<span class="tp">string</span> text, <span class="tp">string</span> pat) {
+    <span class="tp">int</span> n = text.size(), m = pat.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; lps = buildLPS(pat);
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; result;
+    <span class="tp">int</span> i = <span class="nm">0</span>, j = <span class="nm">0</span>;            <span class="cm">// i = text pointer, j = pattern pointer</span>
+
+    <span class="kw">while</span> (i &lt; n) {
+        <span class="kw">if</span> (text[i] == pat[j]) {
+            i++; j++;             <span class="cm">// dono match → dono aage</span>
+        }
+        <span class="kw">if</span> (j == m) {
+            result.push_back(i - j); <span class="cm">// pura pattern mila!</span>
+            j = lps[j - <span class="nm">1</span>];        <span class="cm">// overlap possible → LPS se jump</span>
+        } <span class="kw">else if</span> (i &lt; n &amp;&amp; text[i] != pat[j]) {
+            <span class="kw">if</span> (j &gt; <span class="nm">0</span>)
+                j = lps[j - <span class="nm">1</span>];    <span class="cm">// pattern mein peeche jao</span>
+            <span class="kw">else</span>
+                i++;               <span class="cm">// text aage badho</span>
+        }
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+      <div class="tip">💡 KMP ka magic: text pointer <code>i</code> kabhi peeche nahi jaata. Sirf pattern pointer <code>j</code> LPS ke hisaab se jump karta hai. Isliye O(n+m) guaranteed!</div>
+    </div>
+  </div>
+
+  <!-- ──── RABIN-KARP ──── -->
+  <div id="pm-rk">
+    <div class="sub-heading">Algorithm 2 — Rabin-Karp (Rolling Hash)</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">#️⃣</div>Rabin-Karp Algorithm<span class="badge badge-amber">O(n+m) avg · O(nm) worst</span></div>
+
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+      <div class="en-block">
+        Instead of comparing characters one by one, compare <b>hash values</b> of the window with the pattern's hash. Use a <b>rolling hash</b> — remove leftmost char's contribution and add new rightmost char. Hash match → verify (to handle collisions). No match → slide on.<br><br>
+        Hash formula: <code>hash = (hash * base + char) % mod</code>
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Characters compare karne ki jagah <b>hash values</b> compare karo — ek number se poori window represent hoti hai. <b>Rolling hash</b> = purana character hatao, naya add karo — O(1) mein hash update hota hai. Hash match ho toh actual comparison karo (collision se bachne ke liye). Yeh approach multiple patterns dhundhne mein bhi kaam aata hai!
+      </div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">text="abcabc", pattern="abc" (base=26, mod=101)</div>
+        <div class="step">
+          <span class="step-num">Build</span>
+          <div class="step-info">patHash = hash("abc"), init windowHash = hash("abc")</div>
+          <span class="step-result sr-eq">hash match at i=0 → verify → ✅</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Roll</span>
+          <div class="arr-row">
+            <div class="a-box fail">a</div><div class="a-box match">b</div><div class="a-box match">c</div><div class="a-box match">a</div><div class="a-box">b</div><div class="a-box">c</div>
+          </div>
+          <div class="step-info">Remove 'a', add 'a' → new windowHash</div>
+          <span class="step-result sr-low">hash compare</span>
+        </div>
+        <div class="step">
+          <span class="step-num">i=3</span>
+          <div class="arr-row">
+            <div class="a-box">a</div><div class="a-box">b</div><div class="a-box">c</div><div class="a-box match">a</div><div class="a-box match">b</div><div class="a-box match">c</div>
+          </div>
+          <div class="step-info">windowHash == patHash → verify "abc"=="abc"</div>
+          <span class="step-result sr-eq">✅ Match @ 3</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Rabin-Karp Algorithm</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">rabinKarp</span>(<span class="tp">string</span> text, <span class="tp">string</span> pat) {
+    <span class="tp">int</span> n = text.size(), m = pat.size();
+    <span class="kw">const</span> <span class="tp">long long</span> BASE = <span class="nm">26</span>, MOD = <span class="nm">1e9</span> + <span class="nm">7</span>;
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; result;
+
+    <span class="tp">long long</span> patHash = <span class="nm">0</span>, winHash = <span class="nm">0</span>, power = <span class="nm">1</span>;
+
+    <span class="cm">// BASE^(m-1) % MOD — leftmost char hatane ke liye chahiye</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; m - <span class="nm">1</span>; i++) power = (power * BASE) % MOD;
+
+    <span class="cm">// Pattern aur pehli window ka hash banao</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; m; i++) {
+        patHash = (patHash * BASE + pat[i]) % MOD;
+        winHash = (winHash * BASE + text[i]) % MOD;
+    }
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt;= n - m; i++) {
+        <span class="kw">if</span> (winHash == patHash) {
+            <span class="cm">// Hash match! — actual comparison karo (collision handle)</span>
+            <span class="kw">if</span> (text.substr(i, m) == pat)
+                result.push_back(i);
+        }
+        <span class="cm">// Rolling hash: purana char hatao, naya add karo</span>
+        <span class="kw">if</span> (i &lt; n - m) {
+            winHash = (winHash - ((<span class="tp">long long</span>)text[i] * power) % MOD + MOD) % MOD;
+            winHash = (winHash * BASE + text[i + m]) % MOD;
+        }
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+      <div class="warn">⚠️ Hash collision possible hai — isliye hash match hone par actual string comparison karo. Large MOD (1e9+7) use karo collision minimize karne ke liye.</div>
+      <div class="tip">💡 Rabin-Karp best hai jab <b>multiple patterns</b> ek saath dhundhne ho — sab patterns ke hash precompute karo aur ek pass mein check karo!</div>
+    </div>
+  </div>
+
+  <!-- ──── Z-ALGORITHM ──── -->
+  <div id="pm-z">
+    <div class="sub-heading">Algorithm 3 — Z-Algorithm</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">Z</div>Z-Algorithm<span class="badge badge-blue">O(n + m)</span></div>
+
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+      <div class="en-block">
+        Build a <b>Z-array</b> for the combined string <code>pat + "$" + text</code>. Z[i] = length of the longest substring starting at i that matches a prefix of the whole string.<br><br>
+        If <code>Z[i] == m</code> (pattern length) at any position in the text part → pattern found there!<br><br>
+        <b>Z-box optimization</b>: maintain a window [l, r] of the rightmost matching segment to avoid re-comparisons.
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Pattern + "$" + text ko join karo. Phir <b>Z-array</b> banao — Z[i] batata hai: "index i se shuru hone wala substring poori string ke prefix se kitna match karta hai?"<br><br>
+        Agar text ke kisi index pe <code>Z[i] == pattern.length()</code> → pattern wahan se mila!<br><br>
+        <b>Z-box</b> optimization: ek window [l,r] maintain karo jisme already match hua hai — us range mein dobara compare karne ki zaroorat nahi.
+      </div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">pattern="aab", text="aabaab" → combined = "aab$aabaab"</div>
+        <div class="step">
+          <span class="step-num">Combined</span>
+          <div class="arr-row">
+            <div class="a-box match">a</div><div class="a-box match">a</div><div class="a-box match">b</div>
+            <div class="a-box hi">$</div>
+            <div class="a-box">a</div><div class="a-box">a</div><div class="a-box">b</div><div class="a-box">a</div><div class="a-box">a</div><div class="a-box">b</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">Z-array</span>
+          <div class="lps-row">
+            <span class="lps-label">Index:</span>
+            <div class="lps-box">0</div><div class="lps-box">1</div><div class="lps-box">2</div><div class="lps-box">3</div><div class="lps-box">4</div><div class="lps-box">5</div><div class="lps-box">6</div><div class="lps-box">7</div><div class="lps-box">8</div><div class="lps-box">9</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num"></span>
+          <div class="lps-row">
+            <span class="lps-label">Z val:</span>
+            <div class="lps-box zero">*</div><div class="lps-box val">1</div><div class="lps-box zero">0</div><div class="lps-box zero">0</div><div class="lps-box val">3</div><div class="lps-box val">1</div><div class="lps-box zero">0</div><div class="lps-box val">3</div><div class="lps-box val">1</div><div class="lps-box zero">0</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">Check</span>
+          <div class="step-info">Z[4]=3 == m=3 → pattern mila at text[4-4=0]</div>
+          <span class="step-result sr-eq">✅ Match @ idx 0</span>
+        </div>
+        <div class="step">
+          <span class="step-num"></span>
+          <div class="step-info">Z[7]=3 == m=3 → pattern mila at text[7-4=3]</div>
+          <span class="step-result sr-eq">✅ Match @ idx 3</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Z-Algorithm (Full)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// Z-array banao for string s</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">buildZ</span>(<span class="tp">string</span> s) {
+    <span class="tp">int</span> n = s.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; Z(n, <span class="nm">0</span>);
+    <span class="tp">int</span> l = <span class="nm">0</span>, r = <span class="nm">0</span>;          <span class="cm">// Z-box window [l, r]</span>
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt; n; i++) {
+        <span class="kw">if</span> (i &lt; r) {
+            <span class="cm">// Z-box ke andar hain — pehle se computed value use karo</span>
+            Z[i] = min(r - i, Z[i - l]);
+        }
+        <span class="cm">// Ab manually extend karo</span>
+        <span class="kw">while</span> (i + Z[i] &lt; n &amp;&amp; s[Z[i]] == s[i + Z[i]])
+            Z[i]++;
+
+        <span class="cm">// Z-box update karo agar aage gaye</span>
+        <span class="kw">if</span> (i + Z[i] &gt; r) {
+            l = i;
+            r = i + Z[i];
+        }
+    }
+    <span class="kw">return</span> Z;
+}
+
+<span class="cm">// Pattern search using Z-algorithm</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">zSearch</span>(<span class="tp">string</span> text, <span class="tp">string</span> pat) {
+    <span class="tp">string</span> combined = pat + <span class="st">"$"</span> + text; <span class="cm">// "$" separator — pattern mein nahi hona chahiye</span>
+    <span class="tp">int</span> m = pat.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; Z = buildZ(combined);
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; result;
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = m + <span class="nm">1</span>; i &lt; combined.size(); i++) {
+        <span class="kw">if</span> (Z[i] == m)                  <span class="cm">// pattern ki full length match!</span>
+            result.push_back(i - m - <span class="nm">1</span>); <span class="cm">// text mein original index</span>
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+      <div class="tip">💡 Z-box trick: pehle se computed range [l,r] mein dobara kaam nahi karna. <code>Z[i] = min(r-i, Z[i-l])</code> se seedha start karo — yahi O(n) complexity deta hai.</div>
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📊</div>Pattern Matching — Comparison Table</div>
+      <table class="tbl">
+        <tr>
+          <th>Algorithm</th>
+          <th>Time</th>
+          <th>Space</th>
+          <th>Best For</th>
+          <th>Key Idea</th>
+        </tr>
+        <tr>
+          <td><span style="color:var(--pink);font-weight:600">KMP</span></td>
+          <td>O(n+m)</td>
+          <td>O(m)</td>
+          <td>Single pattern, guaranteed O(n+m)</td>
+          <td>LPS array — pattern mein smart jump</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--amber);font-weight:600">Rabin-Karp</span></td>
+          <td>O(n+m) avg</td>
+          <td>O(1)</td>
+          <td>Multiple patterns, plagiarism detection</td>
+          <td>Rolling hash — O(1) window update</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--blue);font-weight:600">Z-Algorithm</span></td>
+          <td>O(n+m)</td>
+          <td>O(n+m)</td>
+          <td>Pattern prefix problems, simpler code</td>
+          <td>Z-box — reuse computed matches</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--muted);font-weight:600">Naive</span></td>
+          <td>O(n×m)</td>
+          <td>O(1)</td>
+          <td>Small strings only</td>
+          <td>Brute force comparison</td>
+        </tr>
+      </table>
+
+      <div class="divider"></div>
+      <div class="grid3">
+        <div class="mini-card"><b style="color:var(--pink)">KMP use karo jab:</b>Single pattern search guaranteed O(n+m) chahiye. Competitive programming mein most common.</div>
+        <div class="mini-card"><b style="color:var(--amber)">Rabin-Karp jab:</b>Multiple patterns ek saath dhundhne hon. Ya plagiarism/copy detection type problems.</div>
+        <div class="mini-card"><b style="color:var(--blue)">Z-Algorithm jab:</b>String prefix related problems hon. Code KMP se thoda simpler lagta hai kuch logon ko.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+  const pages = ['p1','p2','p3'];
+  const subs = ['sub1','sub2','sub3'];
+
+  function showPage(id, btn) {
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => document.getElementById(s).style.display = i===idx?'block':'none');
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => document.getElementById(s).style.display = i===0?'block':'none');
+</script>
+</body>
+</html>

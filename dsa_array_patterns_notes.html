@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Array Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #161b27;
+    --bg3: #1e2535;
+    --border: #2a3245;
+    --text: #e8eaf6;
+    --muted: #8892a4;
+    --teal: #1dd6a0;
+    --teal-bg: #0d2e24;
+    --purple: #a78bfa;
+    --purple-bg: #1e1633;
+    --amber: #fbbf24;
+    --amber-bg: #2a1f0a;
+    --blue: #60a5fa;
+    --blue-bg: #0e1f35;
+    --coral: #fb7185;
+    --coral-bg: #2a0e16;
+    --green: #86efac;
+    --green-bg: #0b2018;
+    --code-bg: #0a0d14;
+    --kw: #f9a870;
+    --fn: #79c0ff;
+    --cm: #5a6478;
+    --tp: #f472b6;
+    --str: #a5d6a7;
+    --num: #ce93d8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 240px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-logo h1 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--teal);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .sidebar-logo p {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .nav-section {
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0 8px;
+    margin-bottom: 4px;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-link:hover { background: var(--bg3); color: var(--text); }
+  .nav-link.active { background: var(--bg3); color: var(--teal); font-weight: 500; }
+
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .sub-links {
+    padding-left: 24px;
+    margin-top: 2px;
+  }
+
+  .sub-link {
+    display: block;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .sub-link:hover { color: var(--text); background: var(--bg3); }
+
+  /* MAIN */
+  .main {
+    margin-left: 240px;
+    padding: 40px 48px;
+    max-width: 960px;
+  }
+
+  /* SECTION PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header .breadcrumb {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .page-header h2 {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .page-header p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .badge-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid #1a5c44; }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid #3d2d6e; }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid #6b4c0f; }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid #1a3a5c; }
+  .badge-coral { background: var(--coral-bg); color: var(--coral); border: 1px solid #5c1a27; }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #155a30; }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title .icon {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* LANG BLOCKS */
+  .lang-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 12px 0 5px;
+  }
+
+  .en-block {
+    background: var(--bg3);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .hi-block {
+    background: var(--purple-bg);
+    border-left: 3px solid var(--purple);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: #c4b5fd;
+    margin-bottom: 8px;
+  }
+
+  /* CODE */
+  .code-wrap { position: relative; margin: 12px 0; }
+
+  .code-label {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    padding: 7px 14px;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .code-label span { display: flex; align-items: center; gap: 6px; }
+
+  .copy-btn {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover { color: var(--teal); border-color: var(--teal); }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 0 0 8px 8px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    white-space: pre;
+  }
+
+  .kw { color: var(--kw); }
+  .fn { color: var(--fn); }
+  .cm { color: var(--cm); font-style: italic; }
+  .tp { color: var(--tp); }
+  .st { color: var(--str); }
+  .nm { color: var(--num); }
+
+  /* DRY RUN */
+  .dry-run {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 12px 0;
+    overflow-x: auto;
+  }
+
+  .dry-run-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .step-num {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 40px;
+  }
+
+  .arr-row { display: flex; gap: 4px; align-items: flex-end; }
+
+  .a-box {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--muted);
+    flex-direction: column;
+    position: relative;
+  }
+
+  .a-box.L { background: var(--teal-bg); color: var(--teal); border-color: #1a5c44; }
+  .a-box.R { background: var(--purple-bg); color: var(--purple); border-color: #3d2d6e; }
+  .a-box.found { background: var(--green-bg); color: var(--green); border-color: #155a30; }
+  .a-box.hi { background: var(--amber-bg); color: var(--amber); border-color: #6b4c0f; }
+
+  .ptr-lbl { font-size: 9px; color: var(--muted); margin-top: 1px; }
+
+  .step-info {
+    font-size: 12px;
+    color: var(--muted);
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .step-result {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .sr-high { background: var(--coral-bg); color: var(--coral); }
+  .sr-low { background: var(--amber-bg); color: var(--amber); }
+  .sr-eq { background: var(--green-bg); color: var(--green); }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+
+  /* TIP / WARN */
+  .tip {
+    border-left: 3px solid var(--teal);
+    background: var(--teal-bg);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #6ee7c0;
+    margin: 12px 0;
+    line-height: 1.7;
+  }
+
+  .warn {
+    border-left: 3px solid var(--amber);
+    background: var(--amber-bg);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #fcd97a;
+    margin: 12px 0;
+    line-height: 1.7;
+  }
+
+  /* GRID */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+
+  .mini-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .mini-card b { font-weight: 600; display: block; margin-bottom: 4px; font-size: 13px; }
+
+  /* COMPLEXITY */
+  .cx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .cx-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .cx-val { font-size: 22px; font-weight: 600; font-family: 'JetBrains Mono', monospace; margin: 4px 0; }
+  .cx-label { font-size: 11px; color: var(--muted); }
+
+  /* SUB SECTION */
+  .sub-heading {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 20px 0 8px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sub-heading::before {
+    content: '';
+    width: 3px; height: 14px;
+    border-radius: 2px;
+    background: var(--teal);
+    display: block;
+  }
+
+  /* PROBLEM STATEMENT */
+  .problem-box {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin: 10px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* PILLS */
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+  .pill {
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--bg3);
+  }
+
+  /* VARIATIONS */
+  .var-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  /* SUMMARY TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--bg3); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.6; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg3); }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--bg3);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--teal);
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px 16px; }
+    .grid2, .grid3, .cx-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Array Patterns · Gaurav</p>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Array Patterns</div>
+
+    <button class="nav-link active" onclick="showPage('p1', this)">
+      <span class="nav-dot" style="background:#1dd6a0"></span>
+      Two Pointer
+    </button>
+    <div class="sub-links" id="sub1">
+      <button class="sub-link" onclick="scrollTo('tp-opp')">Opposite Ends</button>
+      <button class="sub-link" onclick="scrollTo('tp-same')">Same Direction</button>
+      <button class="sub-link" onclick="scrollTo('tp-part')">Partition</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2', this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>
+      Sliding Window
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo('sw-fixed')">Fixed Size</button>
+      <button class="sub-link" onclick="scrollTo('sw-var')">Variable Size</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3', this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>
+      Prefix Based
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo('pre-sum')">Prefix Sum</button>
+      <button class="sub-link" onclick="scrollTo('pre-xor')">Prefix XOR</button>
+      <button class="sub-link" onclick="scrollTo('pre-2d')">2D Prefix</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p4', this)">
+      <span class="nav-dot" style="background:#fb7185"></span>
+      Kadane's
+    </button>
+    <div class="sub-links" id="sub4" style="display:none">
+      <button class="sub-link" onclick="scrollTo('kad-sum')">Max Subarray Sum</button>
+      <button class="sub-link" onclick="scrollTo('kad-prod')">Max Product</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p5', this)">
+      <span class="nav-dot" style="background:#60a5fa"></span>
+      Binary Search
+    </button>
+    <div class="sub-links" id="sub5" style="display:none">
+      <button class="sub-link" onclick="scrollTo('bs-index')">On Index</button>
+      <button class="sub-link" onclick="scrollTo('bs-ans')">On Answer</button>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 1 — TWO POINTER
+═══════════════════════════════════════════════ -->
+<div class="page active" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">Array Patterns · Pattern 1 of 5</div>
+    <h2>Two Pointer</h2>
+    <p>Do pointers use karke array traverse karo — nested loops ki zaroorat nahi. O(n²) → O(n).</p>
+    <div class="badge-row">
+      <span class="badge badge-teal">O(n) time</span>
+      <span class="badge badge-blue">O(1) space</span>
+      <span class="badge badge-purple">Sorted Array</span>
+      <span class="badge badge-amber">Pair / Triplet</span>
+    </div>
+  </div>
+
+  <!-- CORE CONCEPT -->
+  <div class="card">
+    <div class="card-title">
+      <div class="icon" style="background:var(--teal-bg)">👆</div>
+      Core Concept
+    </div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      Two Pointer is a technique where we maintain two index variables — typically <code>left</code> and <code>right</code> — and move them based on conditions. This avoids the need for nested loops, reducing time complexity from O(n²) to O(n). It works best on sorted arrays or problems involving pairs/comparisons.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Is technique mein hum do variables lete hain — <code>left</code> aur <code>right</code>. Conditions ke hisaab se inhe move karte hain. Iska fayda yeh hai ki hume har element ko har doosre element se compare nahi karna padta — ek hi pass mein kaam ho jaata hai. Sorted arrays mein yeh bahut powerful hota hai!
+    </div>
+    <div class="cx-grid">
+      <div class="cx-card">
+        <div class="cx-label">Brute Force (Nested Loops)</div>
+        <div class="cx-val" style="color:var(--coral)">O(n²)</div>
+        <div class="cx-label">Har element ko har se compare karo</div>
+      </div>
+      <div class="cx-card">
+        <div class="cx-label">Two Pointer</div>
+        <div class="cx-val" style="color:var(--teal)">O(n)</div>
+        <div class="cx-label">Ek hi pass, dono ends se</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHEN TO USE -->
+  <div class="card">
+    <div class="card-title">
+      <div class="icon" style="background:var(--amber-bg)">🔍</div>
+      When to use? — Pehchaanoge kaise?
+    </div>
+    <div class="grid2">
+      <div class="mini-card"><b>✅ Array sorted hai</b>Ya sorting se sort karna padega pehle. Sorted hone ka fayda utha sakte hain.</div>
+      <div class="mini-card"><b>✅ Pair / Triplet dhundna hai</b>Sum equal to target, ya do numbers ka koi condition match karna ho.</div>
+      <div class="mini-card"><b>✅ Palindrome / Reverse check</b>Dono ends se ek saath compare karna ho to yahi pattern use hota hai.</div>
+      <div class="mini-card"><b>✅ O(n²) → O(n) karna ho</b>Jab nested loop solution obvious lage, two pointer se optimize karo.</div>
+    </div>
+    <div class="tip">💡 Quick test: Kya array sorted hai? Kya pair/triplet dhundna hai? Haan toh → Two Pointer try karo!</div>
+  </div>
+
+  <!-- ─── SECTION: OPPOSITE ENDS ─── -->
+  <div id="tp-opp">
+    <div class="sub-heading">Type 1 — Opposite Ends (Left + Right)</div>
+
+    <div class="card">
+      <div class="card-title">
+        <div class="icon" style="background:var(--teal-bg)">↔️</div>
+        Two Sum II — Sorted Array
+        <span class="badge badge-teal">LeetCode 167</span>
+      </div>
+
+      <div class="problem-box">
+        Given a sorted array numbers[], find two indices (1-indexed) such that:<br>
+        numbers[i] + numbers[j] == target
+      </div>
+
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">
+        Since the array is sorted, we place <code>left=0</code> and <code>right=n-1</code>.<br>
+        • If <code>sum &gt; target</code> → we need a smaller sum → move <code>right--</code> (smaller numbers on left)<br>
+        • If <code>sum &lt; target</code> → we need a larger sum → move <code>left++</code> (larger numbers on right)<br>
+        • If <code>sum == target</code> → found it! Return indices.
+      </div>
+
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish Intuition</div>
+      <div class="hi-block">
+        Array sorted hai toh iska fayda uthao!<br>
+        • <code>sum &gt; target</code> → sum chota karna hai → <code>right--</code> karo (right pe bade numbers hain)<br>
+        • <code>sum &lt; target</code> → sum bada karna hai → <code>left++</code> karo (left pe chhote numbers hain)<br>
+        • <code>sum == target</code> → mil gaya! Return karo.
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="sub-heading" style="margin-top:0">Step-by-step Dry Run</div>
+      <div class="dry-run">
+        <div class="dry-run-title">arr = [2, 7, 11, 15], target = 9</div>
+
+        <div class="step">
+          <span class="step-num">Step 1</span>
+          <div class="arr-row">
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">2</div><div class="ptr-lbl" style="color:var(--teal)">L</div></div>
+            <div class="a-box">7</div>
+            <div class="a-box">11</div>
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box R">15</div><div class="ptr-lbl" style="color:var(--purple)">R</div></div>
+          </div>
+          <div class="step-info">2 + 15 = 17</div>
+          <span class="step-result sr-high">17 &gt; 9 → right--</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">Step 2</span>
+          <div class="arr-row">
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">2</div><div class="ptr-lbl" style="color:var(--teal)">L</div></div>
+            <div class="a-box">7</div>
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box R">11</div><div class="ptr-lbl" style="color:var(--purple)">R</div></div>
+            <div class="a-box">15</div>
+          </div>
+          <div class="step-info">2 + 11 = 13</div>
+          <span class="step-result sr-high">13 &gt; 9 → right--</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">Step 3</span>
+          <div class="arr-row">
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">2</div><div class="ptr-lbl" style="color:var(--teal)">L</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box R">7</div><div class="ptr-lbl" style="color:var(--purple)">R</div></div>
+            <div class="a-box">11</div>
+            <div class="a-box">15</div>
+          </div>
+          <div class="step-info">2 + 7 = 9</div>
+          <span class="step-result sr-eq">✅ == 9 → Return [1, 2]</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>🔵 C++ · Two Sum II</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre id="codeBlock"><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">twoSum</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; numbers, <span class="tp">int</span> target) {
+    <span class="tp">int</span> l = <span class="nm">0</span>, r = numbers.size() - <span class="nm">1</span>;
+
+    <span class="kw">while</span> (l &lt; r) {                        <span class="cm">// jab tak pointers cross na karein</span>
+        <span class="tp">int</span> sum = numbers[l] + numbers[r];
+
+        <span class="kw">if</span> (sum == target)
+            <span class="kw">return</span> {l + <span class="nm">1</span>, r + <span class="nm">1</span>};         <span class="cm">// 1-indexed answer return karo</span>
+        <span class="kw">else if</span> (sum &lt; target)
+            l++;                              <span class="cm">// sum chhota → left badhao</span>
+        <span class="kw">else</span>
+            r--;                              <span class="cm">// sum bada → right ghataao</span>
+    }
+    <span class="kw">return</span> {<span class="nm">-1</span>, <span class="nm">-1</span>};
+}</pre>
+      </div>
+
+      <div class="tip">💡 Yeh array sorted hone par hi kaam karta hai. Unsorted array ke liye HashMap (Two Sum I) use karo.</div>
+    </div>
+
+    <!-- PALINDROME -->
+    <div class="card">
+      <div class="card-title">
+        <div class="icon" style="background:var(--purple-bg)">🔁</div>
+        Valid Palindrome
+        <span class="badge badge-purple">LeetCode 125</span>
+      </div>
+      <div class="hi-block">Dono ends se characters compare karo. Non-alphanumeric skip karo. Mismatch mile toh false, warna loop ke end pe true return karo.</div>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>🔵 C++ · Valid Palindrome</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="tp">bool</span> <span class="fn">isPalindrome</span>(<span class="tp">string</span> s) {
+    <span class="tp">int</span> l = <span class="nm">0</span>, r = s.size() - <span class="nm">1</span>;
+    <span class="kw">while</span> (l &lt; r) {
+        <span class="kw">while</span> (l &lt; r &amp;&amp; !isalnum(s[l])) l++;  <span class="cm">// non-alphanumeric skip karo</span>
+        <span class="kw">while</span> (l &lt; r &amp;&amp; !isalnum(s[r])) r--;  <span class="cm">// right se bhi skip</span>
+        <span class="kw">if</span> (tolower(s[l]) != tolower(s[r]))
+            <span class="kw">return false</span>;                     <span class="cm">// mismatch → palindrome nahi</span>
+        l++; r--;
+    }
+    <span class="kw">return true</span>;
+}</pre>
+      </div>
+    </div>
+
+    <!-- CONTAINER WITH MOST WATER -->
+    <div class="card">
+      <div class="card-title">
+        <div class="icon" style="background:var(--blue-bg)">💧</div>
+        Container With Most Water
+        <span class="badge badge-blue">LeetCode 11</span>
+      </div>
+      <div class="hi-block">Chhoti line wale pointer ko move karo — badi line move karne se paani kabhi nahi badhega. Width bhi ghatti hai, toh chhoti height hi bottleneck hai.</div>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>🔵 C++ · Container With Most Water</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="tp">int</span> <span class="fn">maxArea</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; height) {
+    <span class="tp">int</span> l = <span class="nm">0</span>, r = height.size() - <span class="nm">1</span>, maxWater = <span class="nm">0</span>;
+    <span class="kw">while</span> (l &lt; r) {
+        <span class="tp">int</span> water = min(height[l], height[r]) * (r - l); <span class="cm">// area calculate karo</span>
+        maxWater = max(maxWater, water);
+        <span class="kw">if</span> (height[l] &lt; height[r]) l++;  <span class="cm">// chhoti line ko move karo</span>
+        <span class="kw">else</span> r--;
+    }
+    <span class="kw">return</span> maxWater;
+}</pre>
+      </div>
+    </div>
+
+    <!-- THREE SUM -->
+    <div class="card">
+      <div class="card-title">
+        <div class="icon" style="background:var(--amber-bg)">3️⃣</div>
+        Three Sum
+        <span class="badge badge-amber">LeetCode 15</span>
+      </div>
+      <div class="hi-block">Ek element fix karo (outer loop = i), baaki do ke liye two pointer lagao (l = i+1, r = n-1). Sort karna mandatory hai. Duplicates skip karna zaroori hai — warna same triplet baar baar aayega!</div>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>🔵 C++ · Three Sum</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; <span class="fn">threeSum</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    sort(nums.begin(), nums.end());         <span class="cm">// pehle sort karo — must!</span>
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; result;
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; nums.size(); i++) {
+        <span class="kw">if</span> (i &gt; <span class="nm">0</span> &amp;&amp; nums[i] == nums[i - <span class="nm">1</span>]) <span class="kw">continue</span>; <span class="cm">// outer duplicate skip</span>
+
+        <span class="tp">int</span> l = i + <span class="nm">1</span>, r = nums.size() - <span class="nm">1</span>;
+        <span class="kw">while</span> (l &lt; r) {
+            <span class="tp">int</span> sum = nums[i] + nums[l] + nums[r];
+            <span class="kw">if</span> (sum == <span class="nm">0</span>) {
+                result.push_back({nums[i], nums[l], nums[r]});
+                <span class="kw">while</span> (l &lt; r &amp;&amp; nums[l] == nums[l + <span class="nm">1</span>]) l++; <span class="cm">// dup skip</span>
+                <span class="kw">while</span> (l &lt; r &amp;&amp; nums[r] == nums[r - <span class="nm">1</span>]) r--; <span class="cm">// dup skip</span>
+                l++; r--;
+            }
+            <span class="kw">else if</span> (sum &lt; <span class="nm">0</span>) l++;  <span class="cm">// sum chhota → left badhao</span>
+            <span class="kw">else</span> r--;               <span class="cm">// sum bada → right ghataao</span>
+        }
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+      <div class="warn">⚠️ Three Sum mein sort + duplicate skip dono zaroori hain. Bhool gaye toh wrong answer aayega!</div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION: SAME DIRECTION ─── -->
+  <div id="tp-same">
+    <div class="sub-heading">Type 2 — Same Direction (Fast &amp; Slow)</div>
+    <div class="card">
+      <div class="card-title">
+        <div class="icon" style="background:var(--teal-bg)">⏩</div>
+        Remove Duplicates from Sorted Array
+        <span class="badge badge-teal">LeetCode 26</span>
+      </div>
+      <div class="hi-block">Slow pointer unique elements track karta hai. Fast pointer aage badhta jaata hai. Jab fast ko naya unique element mile, slow ko aage badhao aur wahan place karo.</div>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>🔵 C++ · Remove Duplicates</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="tp">int</span> <span class="fn">removeDuplicates</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr) {
+    <span class="tp">int</span> slow = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> fast = <span class="nm">1</span>; fast &lt; arr.size(); fast++) {
+        <span class="kw">if</span> (arr[fast] != arr[slow]) { <span class="cm">// naya unique element mila</span>
+            slow++;
+            arr[slow] = arr[fast];    <span class="cm">// us jagah rakh do</span>
+        }
+        <span class="cm">// duplicate hai toh fast aage badhta rahe, slow rukta hai</span>
+    }
+    <span class="kw">return</span> slow + <span class="nm">1</span>;              <span class="cm">// unique elements ki count</span>
+}</pre>
+      </div>
+      <div class="tip">💡 Slow = "write position", Fast = "read position". Fast aage badhta hai, slow sirf unique milne par badhta hai.</div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION: PARTITION ─── -->
+  <div id="tp-part">
+    <div class="sub-heading">Type 3 — Partition / Dutch National Flag</div>
+    <div class="card">
+      <div class="card-title">
+        <div class="icon" style="background:var(--coral-bg)">🚩</div>
+        Sort Colors (Dutch National Flag)
+        <span class="badge badge-coral">LeetCode 75</span>
+      </div>
+      <div class="hi-block">Teen pointers use karo — <code>low</code>, <code>mid</code>, <code>high</code>. 0 ko start mein, 2 ko end mein daalo. 1 apni jagah rehte hain. Single pass mein sort ho jaata hai!</div>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>🔵 C++ · Dutch National Flag</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><span class="kw">void</span> <span class="fn">sortColors</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> low = <span class="nm">0</span>, mid = <span class="nm">0</span>, high = nums.size() - <span class="nm">1</span>;
+
+    <span class="kw">while</span> (mid &lt;= high) {
+        <span class="kw">if</span> (nums[mid] == <span class="nm">0</span>) {
+            swap(nums[low++], nums[mid++]); <span class="cm">// 0 ko front mein bhejo</span>
+        } <span class="kw">else if</span> (nums[mid] == <span class="nm">1</span>) {
+            mid++;                          <span class="cm">// 1 sahi jagah hai, aage badho</span>
+        } <span class="kw">else</span> {
+            swap(nums[mid], nums[high--]);  <span class="cm">// 2 ko end mein bhejo</span>
+            <span class="cm">// mid++ mat karo — naya element check karna hai</span>
+        }
+    }
+}</pre>
+      </div>
+      <div class="tip">💡 Dutch Flag = low boundary (for 0s), mid = current, high boundary (for 2s). Ek pass mein teen sections ban jaate hain.</div>
+    </div>
+  </div>
+</div>
+<!-- END PAGE 1 -->
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 2 — SLIDING WINDOW
+═══════════════════════════════════════════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">Array Patterns · Pattern 2 of 5</div>
+    <h2>Sliding Window</h2>
+    <p>Ek khidki (window) array pe khiskaate hain — right se add, left se remove. Subarray/substring problems ke liye perfect.</p>
+    <div class="badge-row">
+      <span class="badge badge-amber">O(n) time</span>
+      <span class="badge badge-blue">O(1) or O(k) space</span>
+      <span class="badge badge-teal">Subarray / Substring</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🪟</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Instead of recalculating from scratch each time, slide the window: add the new right element, remove the old left element. Two types: <b>Fixed size</b> (window size = k, constant) and <b>Variable size</b> (expand until condition fails, then shrink from left).</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Socho ek train ki khidki — jaise train aage badhti hai, scene change hota hai. Usi tarah window right mein badhti hai, naya element add hota hai, purana left se remove hota hai. Baar baar poori calculation nahi karni!</div>
+    <div class="cx-grid">
+      <div class="cx-card">
+        <div class="cx-label">Fixed Window</div>
+        <div class="cx-val" style="color:var(--amber)">k = const</div>
+        <div class="cx-label">Size change nahi hoti</div>
+      </div>
+      <div class="cx-card">
+        <div class="cx-label">Variable Window</div>
+        <div class="cx-val" style="color:var(--teal)">Expand-Shrink</div>
+        <div class="cx-label">Condition ke hisaab se size change</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sw-fixed">
+    <div class="sub-heading">Type 1 — Fixed Size Window</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">📏</div>Max Sum of K Consecutive Elements<span class="badge badge-amber">Classic</span></div>
+      <div class="hi-block">Pehle k elements ki window banao. Phir ek ek karke window khiskaao — right side se naya add karo, left side se purana hatao. Max track karte raho.</div>
+      <div class="dry-run">
+        <div class="dry-run-title">arr = [2, 3, 5, 1, 4, 6], k = 3 → Expected: 11</div>
+        <div class="step">
+          <span class="step-num">Init</span>
+          <div class="arr-row">
+            <div class="a-box hi">2</div><div class="a-box hi">3</div><div class="a-box hi">5</div>
+            <div class="a-box">1</div><div class="a-box">4</div><div class="a-box">6</div>
+          </div>
+          <div class="step-info">window sum = 10</div>
+          <span class="step-result sr-low">max = 10</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Slide 1</span>
+          <div class="arr-row">
+            <div class="a-box">2</div><div class="a-box hi">3</div><div class="a-box hi">5</div><div class="a-box hi">1</div>
+            <div class="a-box">4</div><div class="a-box">6</div>
+          </div>
+          <div class="step-info">-2 +1 = 9</div>
+          <span class="step-result sr-low">max = 10</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Slide 2</span>
+          <div class="arr-row">
+            <div class="a-box">2</div><div class="a-box">3</div><div class="a-box hi">5</div><div class="a-box hi">1</div><div class="a-box hi">4</div>
+            <div class="a-box">6</div>
+          </div>
+          <div class="step-info">-3 +4 = 10</div>
+          <span class="step-result sr-low">max = 10</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Slide 3</span>
+          <div class="arr-row">
+            <div class="a-box">2</div><div class="a-box">3</div><div class="a-box">5</div><div class="a-box hi">1</div><div class="a-box hi">4</div><div class="a-box hi found">6</div>
+          </div>
+          <div class="step-info">-5 +6 = 11</div>
+          <span class="step-result sr-eq">✅ max = 11</span>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Max Sum of K Elements</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">maxSumK</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr, <span class="tp">int</span> k) {
+    <span class="tp">int</span> windowSum = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; k; i++)
+        windowSum += arr[i];     <span class="cm">// pehli window ka sum banao</span>
+
+    <span class="tp">int</span> maxSum = windowSum;
+    <span class="kw">for</span> (<span class="tp">int</span> i = k; i &lt; arr.size(); i++) {
+        windowSum += arr[i] - arr[i - k]; <span class="cm">// right add, left remove</span>
+        maxSum = max(maxSum, windowSum);
+    }
+    <span class="kw">return</span> maxSum;
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div id="sw-var">
+    <div class="sub-heading">Type 2 — Variable Size (Expand-Shrink)</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">↔️</div>Longest Subarray with Sum ≤ k<span class="badge badge-teal">Variable</span></div>
+      <div class="hi-block">Right pointer se expand karo. Jab condition fail ho (sum &gt; k), left se shrink karo jab tak condition valid na ho jaaye. Har step pe max length track karo.</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Longest Subarray Sum ≤ k</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">longestSubarray</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr, <span class="tp">int</span> k) {
+    <span class="tp">int</span> l = <span class="nm">0</span>, currSum = <span class="nm">0</span>, maxLen = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> r = <span class="nm">0</span>; r &lt; arr.size(); r++) {
+        currSum += arr[r];             <span class="cm">// window expand karo (right se add)</span>
+        <span class="kw">while</span> (currSum &gt; k) {          <span class="cm">// condition fail → shrink karo</span>
+            currSum -= arr[l];
+            l++;
+        }
+        maxLen = max(maxLen, r - l + <span class="nm">1</span>);
+    }
+    <span class="kw">return</span> maxLen;
+}</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🔤</div>Longest Substring Without Repeating Characters<span class="badge badge-purple">LeetCode 3</span></div>
+      <div class="hi-block">HashMap mein har character ki last position track karo. Jab duplicate mile, left pointer ko us character ke baad le jao. Window ka size = r - l + 1.</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Longest Unique Substring</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">lengthOfLongestSubstring</span>(<span class="tp">string</span> s) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>, <span class="tp">int</span>&gt; lastSeen;
+    <span class="tp">int</span> l = <span class="nm">0</span>, maxLen = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> r = <span class="nm">0</span>; r &lt; s.size(); r++) {
+        <span class="kw">if</span> (lastSeen.count(s[r]) &amp;&amp; lastSeen[s[r]] &gt;= l)
+            l = lastSeen[s[r]] + <span class="nm">1</span>;   <span class="cm">// duplicate mila → window shrink</span>
+        lastSeen[s[r]] = r;            <span class="cm">// position update karo</span>
+        maxLen = max(maxLen, r - l + <span class="nm">1</span>);
+    }
+    <span class="kw">return</span> maxLen;
+}</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🍊</div>Minimum Window Substring<span class="badge badge-blue">LeetCode 76 · Hard</span></div>
+      <div class="hi-block">Pehle expand karo jab tak sab required characters na aa jaayein. Phir shrink karo minimum window ke liye. Need map se required characters track karo, have se current window mein kitne hain.</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Minimum Window Substring</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">string</span> <span class="fn">minWindow</span>(<span class="tp">string</span> s, <span class="tp">string</span> t) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>, <span class="tp">int</span>&gt; need, have_map;
+    <span class="kw">for</span> (<span class="tp">char</span> c : t) need[c]++;
+
+    <span class="tp">int</span> have = <span class="nm">0</span>, need_cnt = need.size();
+    <span class="tp">int</span> l = <span class="nm">0</span>, minLen = INT_MAX, start = <span class="nm">0</span>;
+
+    <span class="kw">for</span> (<span class="tp">int</span> r = <span class="nm">0</span>; r &lt; s.size(); r++) {
+        have_map[s[r]]++;
+        <span class="kw">if</span> (need.count(s[r]) &amp;&amp; have_map[s[r]] == need[s[r]])
+            have++;                           <span class="cm">// ek aur char ki zaroorat poori hui</span>
+
+        <span class="kw">while</span> (have == need_cnt) {            <span class="cm">// sab mil gaye → shrink karo</span>
+            <span class="kw">if</span> (r - l + <span class="nm">1</span> &lt; minLen) {
+                minLen = r - l + <span class="nm">1</span>;
+                start = l;
+            }
+            have_map[s[l]]--;
+            <span class="kw">if</span> (need.count(s[l]) &amp;&amp; have_map[s[l]] &lt; need[s[l]])
+                have--;                       <span class="cm">// char remove kiya → condition fail</span>
+            l++;
+        }
+    }
+    <span class="kw">return</span> minLen == INT_MAX ? <span class="st">""</span> : s.substr(start, minLen);
+}</pre>
+      </div>
+      <div class="warn">⚠️ Yeh Hard level problem hai. have == need_cnt tab hota hai jab t ke sab unique characters required frequency ke saath window mein aa jaayein.</div>
+    </div>
+  </div>
+
+  <div class="tip">💡 Sliding Window yaad rakho: Fixed → size fixed rakho. Variable → condition fail hone par left badhao (shrink). Expand-Shrink is the key idea!</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 3 — PREFIX BASED
+═══════════════════════════════════════════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">Array Patterns · Pattern 3 of 5</div>
+    <h2>Prefix Based</h2>
+    <p>Pehle cumulative sum/XOR precompute karo. Phir kisi bhi range query O(1) mein nikaalo.</p>
+    <div class="badge-row">
+      <span class="badge badge-purple">O(n) build</span>
+      <span class="badge badge-teal">O(1) query</span>
+      <span class="badge badge-blue">Range Queries</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">∑</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Pre-compute a prefix array where <code>pre[i]</code> stores the cumulative sum from index 0 to i-1. Then any range sum [l, r] = <code>pre[r+1] - pre[l]</code> in O(1). Combine with a HashMap to solve "subarray with sum = k" in O(n).</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Ek prefix array banao jisme har jagah tak ka cumulative sum hota hai. Phir kisi bhi range ka sum nikalna? Sirf do values ka difference — O(1) mein! HashMap ke saath combine karo toh "subarray with sum = k" bhi O(n) mein solve ho jaata hai.</div>
+  </div>
+
+  <div id="pre-sum">
+    <div class="sub-heading">Type 1 — Prefix Sum</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--purple-bg)">➕</div>Build Prefix + Range Sum Query</div>
+      <div class="dry-run">
+        <div class="dry-run-title">arr = [2, 4, 1, 3, 5]</div>
+        <div class="step">
+          <span class="step-num">arr</span>
+          <div class="arr-row">
+            <div class="a-box">2</div><div class="a-box">4</div><div class="a-box">1</div><div class="a-box">3</div><div class="a-box">5</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">pre[]</span>
+          <div class="arr-row">
+            <div class="a-box hi">0</div><div class="a-box hi">2</div><div class="a-box hi">6</div><div class="a-box hi">7</div><div class="a-box hi">10</div><div class="a-box hi">15</div>
+          </div>
+          <div class="step-info">pre[0]=0, pre[1]=2, pre[2]=6...</div>
+        </div>
+        <div class="step">
+          <span class="step-num">Query</span>
+          <div class="step-info">Range [1,3] sum = pre[4] - pre[1] = 10 - 2 = 8</div>
+          <span class="step-result sr-eq">✅ 4+1+3 = 8</span>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Prefix Sum + Range Query</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">buildPrefix</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr) {
+    <span class="tp">int</span> n = arr.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; pre(n + <span class="nm">1</span>, <span class="nm">0</span>);
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; n; i++)
+        pre[i + <span class="nm">1</span>] = pre[i] + arr[i];  <span class="cm">// cumulative sum banao</span>
+    <span class="kw">return</span> pre;
+}
+
+<span class="cm">// Range [l, r] ka sum — O(1) query!</span>
+<span class="tp">int</span> <span class="fn">rangeSum</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; pre, <span class="tp">int</span> l, <span class="tp">int</span> r) {
+    <span class="kw">return</span> pre[r + <span class="nm">1</span>] - pre[l];
+}
+
+<span class="cm">// Subarray with sum == k (HashMap ke saath)</span>
+<span class="tp">int</span> <span class="fn">subarraySum</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> k) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>, <span class="tp">int</span>&gt; freq;
+    freq[<span class="nm">0</span>] = <span class="nm">1</span>;  <span class="cm">// empty prefix ki count</span>
+    <span class="tp">int</span> count = <span class="nm">0</span>, prefSum = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> num : nums) {
+        prefSum += num;
+        count += freq[prefSum - k]; <span class="cm">// (prefSum - k) pehle mila tha?</span>
+        freq[prefSum]++;
+    }
+    <span class="kw">return</span> count;
+}</pre>
+      </div>
+      <div class="tip">💡 Prefix Sum + HashMap = "Subarray with sum = k" ka O(n) solution. Ek pass mein sab kuch!</div>
+    </div>
+  </div>
+
+  <div id="pre-xor">
+    <div class="sub-heading">Type 2 — Prefix XOR</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">⊕</div>Count Subarrays with XOR = k<span class="badge badge-blue">GFG / Amazon</span></div>
+      <div class="hi-block">XOR ka property: <code>A⊕B = C</code> toh <code>A⊕C = B</code>. Prefix XOR track karo. Agar <code>prefXOR ⊕ k</code> pehle mila tha toh ek valid subarray mila!</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Subarrays with XOR = k</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">countXorSubarrays</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr, <span class="tp">int</span> k) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>, <span class="tp">int</span>&gt; freq;
+    freq[<span class="nm">0</span>] = <span class="nm">1</span>;     <span class="cm">// XOR=0 start mein ek baar</span>
+    <span class="tp">int</span> count = <span class="nm">0</span>, prefXor = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> num : arr) {
+        prefXor ^= num;
+        <span class="cm">// agar (prefXor ^ k) pehle tha → subarray mila!</span>
+        count += freq[prefXor ^ k];
+        freq[prefXor]++;
+    }
+    <span class="kw">return</span> count;
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div id="pre-2d">
+    <div class="sub-heading">Type 3 — 2D Prefix Sum</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">⊞</div>2D Matrix Range Sum Query<span class="badge badge-teal">LeetCode 304</span></div>
+      <div class="hi-block">2D matrix ka prefix sum banao. Kisi bhi rectangular region ka sum O(1) mein nikaalo — inclusion-exclusion principle use karo!</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · 2D Prefix Sum</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">class</span> <span class="fn">NumMatrix</span> {
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; pre;
+<span class="kw">public</span>:
+    NumMatrix(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; matrix) {
+        <span class="tp">int</span> m = matrix.size(), n = matrix[<span class="nm">0</span>].size();
+        pre.assign(m + <span class="nm">1</span>, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;(n + <span class="nm">1</span>, <span class="nm">0</span>));
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt;= m; i++)
+            <span class="kw">for</span> (<span class="tp">int</span> j = <span class="nm">1</span>; j &lt;= n; j++)
+                pre[i][j] = matrix[i-<span class="nm">1</span>][j-<span class="nm">1</span>]
+                           + pre[i-<span class="nm">1</span>][j] + pre[i][j-<span class="nm">1</span>]
+                           - pre[i-<span class="nm">1</span>][j-<span class="nm">1</span>];  <span class="cm">// overlap na double count ho</span>
+    }
+
+    <span class="tp">int</span> <span class="fn">sumRegion</span>(<span class="tp">int</span> r1, <span class="tp">int</span> c1, <span class="tp">int</span> r2, <span class="tp">int</span> c2) {
+        <span class="kw">return</span> pre[r2+<span class="nm">1</span>][c2+<span class="nm">1</span>]
+             - pre[r1][c2+<span class="nm">1</span>]
+             - pre[r2+<span class="nm">1</span>][c1]
+             + pre[r1][c1];                 <span class="cm">// inclusion-exclusion</span>
+    }
+};</pre>
+      </div>
+      <div class="tip">💡 2D Prefix = 1D ka extension. Build O(mn), Query O(1). Rectangle sum = bottom-right − top − left + top-left.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 4 — KADANE'S
+═══════════════════════════════════════════════ -->
+<div class="page" id="p4">
+  <div class="page-header">
+    <div class="breadcrumb">Array Patterns · Pattern 4 of 5</div>
+    <h2>Kadane's / Subarray</h2>
+    <p>Har index pe decide karo — purana subarray extend karun ya fresh start karun? Greedy + DP ka mix.</p>
+    <div class="badge-row">
+      <span class="badge badge-coral">O(n) time</span>
+      <span class="badge badge-blue">O(1) space</span>
+      <span class="badge badge-amber">DP flavour</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">🧠</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">At each index, make a local decision: extend the previous subarray (<code>curr + arr[i]</code>) OR start fresh (<code>arr[i]</code>). Take the max. Track the global max at every step. This single-pass O(n) approach is Kadane's algorithm.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Har index pe ek simple sawaal: "Kya main purana subarray extend karun, ya naya shuru karun?" Agar purana carry karna faydemand hai toh extend karo, warna fresh start. Har step pe global max update karo. Yahi Kadane ka idea hai!</div>
+  </div>
+
+  <div id="kad-sum">
+    <div class="sub-heading">Type 1 — Max Subarray Sum (Classic Kadane's)</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--coral-bg)">📈</div>Maximum Subarray<span class="badge badge-coral">LeetCode 53</span></div>
+      <div class="dry-run">
+        <div class="dry-run-title">arr = [-2, 1, -3, 4, -1, 2, 1, -5, 4] → Expected: 6</div>
+        <div class="step">
+          <span class="step-num">i=0</span>
+          <div class="arr-row"><div class="a-box L">-2</div><div class="a-box">1</div><div class="a-box">-3</div><div class="a-box">4</div><div class="a-box">-1</div><div class="a-box">2</div><div class="a-box">1</div><div class="a-box">-5</div><div class="a-box">4</div></div>
+          <div class="step-info">curr=-2, max=-2</div>
+        </div>
+        <div class="step">
+          <span class="step-num">i=1</span>
+          <div class="step-info">max(1, -2+1)=1 → curr=1, max=1</div>
+          <span class="step-result sr-low">Fresh start!</span>
+        </div>
+        <div class="step">
+          <span class="step-num">i=3</span>
+          <div class="step-info">max(4, -2+4)=4 → curr=4, max=4</div>
+          <span class="step-result sr-low">Fresh start!</span>
+        </div>
+        <div class="step">
+          <span class="step-num">i=5</span>
+          <div class="step-info">max(2, 3+2)=5 → curr=5, max=5</div>
+        </div>
+        <div class="step">
+          <span class="step-num">i=6</span>
+          <div class="step-info">max(1, 5+1)=6 → curr=6</div>
+          <span class="step-result sr-eq">✅ max = 6</span>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Kadane's Algorithm</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">maxSubArray</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> maxSum = nums[<span class="nm">0</span>], curr = nums[<span class="nm">0</span>];
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt; nums.size(); i++) {
+        curr = max(nums[i], curr + nums[i]); <span class="cm">// extend ya fresh start?</span>
+        maxSum = max(maxSum, curr);          <span class="cm">// global max update karo</span>
+    }
+    <span class="kw">return</span> maxSum;
+}
+
+<span class="cm">// Bonus: Subarray ka actual range bhi track karo</span>
+<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; <span class="fn">maxSubarrayRange</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> maxSum = nums[<span class="nm">0</span>], curr = nums[<span class="nm">0</span>];
+    <span class="tp">int</span> start = <span class="nm">0</span>, end = <span class="nm">0</span>, tempStart = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt; nums.size(); i++) {
+        <span class="kw">if</span> (nums[i] &gt; curr + nums[i]) {
+            curr = nums[i];
+            tempStart = i;            <span class="cm">// fresh start ki position save karo</span>
+        } <span class="kw">else</span> {
+            curr += nums[i];
+        }
+        <span class="kw">if</span> (curr &gt; maxSum) {
+            maxSum = curr;
+            start = tempStart;
+            end = i;
+        }
+    }
+    <span class="kw">return</span> {start, end};
+}</pre>
+      </div>
+      <div class="tip">💡 Kadane ka decision: <code>curr = max(nums[i], curr + nums[i])</code>. Agar curr negative hai aur nums[i] positive hai toh fresh start always better hai.</div>
+    </div>
+  </div>
+
+  <div id="kad-prod">
+    <div class="sub-heading">Type 2 — Max Product Subarray</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">✖️</div>Maximum Product Subarray<span class="badge badge-amber">LeetCode 152</span></div>
+      <div class="hi-block">Product mein negative numbers tricky hain — negative × negative = positive! Isliye sirf maxP nahi, minP bhi track karna padta hai. Har step pe dono flip ho sakte hain.</div>
+      <div class="dry-run">
+        <div class="dry-run-title">arr = [2, 3, -2, 4] → Expected: 6</div>
+        <div class="step"><span class="step-num">i=0</span><div class="step-info">maxP=2, minP=2, res=2</div></div>
+        <div class="step"><span class="step-num">i=1</span><div class="step-info">maxP=max(3,6,-6)=6, minP=-6, res=6</div></div>
+        <div class="step"><span class="step-num">i=2</span><div class="step-info">maxP=max(-2,-12,12)=-2, minP=-12, res=6</div><span class="step-result sr-eq">✅ res=6</span></div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Max Product Subarray</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">maxProduct</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> maxP = nums[<span class="nm">0</span>], minP = nums[<span class="nm">0</span>], result = nums[<span class="nm">0</span>];
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt; nums.size(); i++) {
+        <span class="cm">// negative × negative = positive → isliye minP bhi track karo!</span>
+        <span class="tp">int</span> tempMax = max({nums[i], maxP * nums[i], minP * nums[i]});
+        minP        = min({nums[i], maxP * nums[i], minP * nums[i]});
+        maxP = tempMax;
+        result = max(result, maxP);
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+      <div class="warn">⚠️ tempMax pehle save karna zaroori hai! Agar seedha maxP update karo toh minP calculation mein galat value aayegi.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--purple-bg)">0️⃣</div>Subarray with Given XOR / Sum = k</div>
+      <div class="hi-block">Prefix + HashMap use karo. Subarray sum = k ke liye: <code>freq[prefSum - k]</code> check karo. Subarray XOR = k ke liye: <code>freq[prefXOR ^ k]</code> check karo. Same pattern, alag operator!</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Subarray Sum = k AND XOR = k</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// Subarray with sum = k</span>
+<span class="tp">int</span> <span class="fn">subarraySum</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> k) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; freq;
+    freq[<span class="nm">0</span>] = <span class="nm">1</span>;
+    <span class="tp">int</span> count = <span class="nm">0</span>, pSum = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> n : nums) {
+        pSum += n;
+        count += freq[pSum - k]; <span class="cm">// kya (pSum-k) pehle tha?</span>
+        freq[pSum]++;
+    }
+    <span class="kw">return</span> count;
+}
+
+<span class="cm">// Subarray with XOR = k (same pattern, ^ operator)</span>
+<span class="tp">int</span> <span class="fn">subarrayXOR</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr, <span class="tp">int</span> k) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; freq;
+    freq[<span class="nm">0</span>] = <span class="nm">1</span>;
+    <span class="tp">int</span> count = <span class="nm">0</span>, pXor = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> n : arr) {
+        pXor ^= n;
+        count += freq[pXor ^ k];  <span class="cm">// kya (pXor^k) pehle tha?</span>
+        freq[pXor]++;
+    }
+    <span class="kw">return</span> count;
+}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 5 — BINARY SEARCH
+═══════════════════════════════════════════════ -->
+<div class="page" id="p5">
+  <div class="page-header">
+    <div class="breadcrumb">Array Patterns · Pattern 5 of 5</div>
+    <h2>Binary Search</h2>
+    <p>Search space ko har baar half karo. Sorted arrays ya monotonic conditions pe kaam karta hai.</p>
+    <div class="badge-row">
+      <span class="badge badge-blue">O(log n) time</span>
+      <span class="badge badge-teal">O(1) space</span>
+      <span class="badge badge-purple">Sorted / Monotonic</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🔍</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Binary Search eliminates half the search space each iteration. Works on sorted arrays (classic "on index") OR when you can define a monotonic condition — "if X is valid, X+1 is also valid" (search "on answer"). Always ask yourself: <em>"Can I binary search the answer?"</em></div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Har baar search space aadha karo. Sorted array mein element dhundna ho (on index), ya koi minimum/maximum answer range mein ho (on answer) — dono mein binary search kaam aata hai. Jab bhi "minimum valid X kya hai" type question ho — pehle binary search try karo!</div>
+    <div class="cx-grid">
+      <div class="cx-card">
+        <div class="cx-label">Linear Search</div>
+        <div class="cx-val" style="color:var(--coral)">O(n)</div>
+        <div class="cx-label">Har element check karo</div>
+      </div>
+      <div class="cx-card">
+        <div class="cx-label">Binary Search</div>
+        <div class="cx-val" style="color:var(--teal)">O(log n)</div>
+        <div class="cx-label">Har step pe half eliminate</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="bs-index">
+    <div class="sub-heading">Type 1 — On Index (Classic)</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">📍</div>Classic Binary Search<span class="badge badge-blue">LeetCode 704</span></div>
+      <div class="dry-run">
+        <div class="dry-run-title">arr = [1, 3, 5, 7, 9, 11], target = 7</div>
+        <div class="step">
+          <span class="step-num">Step 1</span>
+          <div class="arr-row">
+            <div class="a-box L">1</div><div class="a-box">3</div><div class="a-box">5</div><div class="a-box hi">7</div><div class="a-box">9</div><div class="a-box R">11</div>
+          </div>
+          <div class="step-info">mid=2 (val=5), 5&lt;7</div>
+          <span class="step-result sr-low">l = mid+1 = 3</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Step 2</span>
+          <div class="arr-row">
+            <div class="a-box">1</div><div class="a-box">3</div><div class="a-box">5</div><div class="a-box L">7</div><div class="a-box hi">9</div><div class="a-box R">11</div>
+          </div>
+          <div class="step-info">mid=4 (val=9), 9&gt;7</div>
+          <span class="step-result sr-high">r = mid-1 = 3</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Step 3</span>
+          <div class="arr-row">
+            <div class="a-box">1</div><div class="a-box">3</div><div class="a-box">5</div><div class="a-box found">7</div><div class="a-box">9</div><div class="a-box">11</div>
+          </div>
+          <div class="step-info">mid=3 (val=7) == target</div>
+          <span class="step-result sr-eq">✅ Return 3</span>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Classic Binary Search</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">binarySearch</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr, <span class="tp">int</span> target) {
+    <span class="tp">int</span> l = <span class="nm">0</span>, r = arr.size() - <span class="nm">1</span>;
+    <span class="kw">while</span> (l &lt;= r) {
+        <span class="tp">int</span> mid = l + (r - l) / <span class="nm">2</span>;  <span class="cm">// overflow se bachne ka C++ trick</span>
+        <span class="kw">if</span> (arr[mid] == target)
+            <span class="kw">return</span> mid;
+        <span class="kw">else if</span> (arr[mid] &lt; target)
+            l = mid + <span class="nm">1</span>;              <span class="cm">// target right half mein hai</span>
+        <span class="kw">else</span>
+            r = mid - <span class="nm">1</span>;              <span class="cm">// target left half mein hai</span>
+    }
+    <span class="kw">return</span> -<span class="nm">1</span>;                     <span class="cm">// nahi mila</span>
+}
+
+<span class="cm">// Lower Bound — pehla index jahan arr[i] >= target</span>
+<span class="tp">int</span> <span class="fn">lowerBound</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr, <span class="tp">int</span> target) {
+    <span class="tp">int</span> l = <span class="nm">0</span>, r = arr.size();
+    <span class="kw">while</span> (l &lt; r) {
+        <span class="tp">int</span> mid = l + (r - l) / <span class="nm">2</span>;
+        <span class="kw">if</span> (arr[mid] &lt; target) l = mid + <span class="nm">1</span>;
+        <span class="kw">else</span> r = mid;
+    }
+    <span class="kw">return</span> l;
+}</pre>
+      </div>
+      <div class="tip">💡 Overflow trick: <code>mid = l + (r-l)/2</code> use karo, <code>(l+r)/2</code> nahi — bade numbers mein integer overflow ho sakta hai.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🔎</div>Search in Rotated Sorted Array<span class="badge badge-purple">LeetCode 33</span></div>
+      <div class="hi-block">Array rotated hai lekin binary search phir bhi chalega! Har step pe check karo — left half sorted hai ya right half? Sorted half mein target fit hota hai kya? Usi side jao.</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Rotated Sorted Array Search</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">search</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> target) {
+    <span class="tp">int</span> l = <span class="nm">0</span>, r = nums.size() - <span class="nm">1</span>;
+    <span class="kw">while</span> (l &lt;= r) {
+        <span class="tp">int</span> mid = l + (r - l) / <span class="nm">2</span>;
+        <span class="kw">if</span> (nums[mid] == target) <span class="kw">return</span> mid;
+
+        <span class="kw">if</span> (nums[l] &lt;= nums[mid]) {     <span class="cm">// left half sorted hai</span>
+            <span class="kw">if</span> (nums[l] &lt;= target &amp;&amp; target &lt; nums[mid])
+                r = mid - <span class="nm">1</span>;            <span class="cm">// target left mein fit hota hai</span>
+            <span class="kw">else</span>
+                l = mid + <span class="nm">1</span>;
+        } <span class="kw">else</span> {                         <span class="cm">// right half sorted hai</span>
+            <span class="kw">if</span> (nums[mid] &lt; target &amp;&amp; target &lt;= nums[r])
+                l = mid + <span class="nm">1</span>;            <span class="cm">// target right mein fit hota hai</span>
+            <span class="kw">else</span>
+                r = mid - <span class="nm">1</span>;
+        }
+    }
+    <span class="kw">return</span> -<span class="nm">1</span>;
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div id="bs-ans">
+    <div class="sub-heading">Type 2 — On Answer (Search Space)</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🍌</div>Koko Eating Bananas — Min Speed<span class="badge badge-amber">LeetCode 875</span></div>
+      <div class="hi-block">Answer ek range mein hai [1, max(piles)]. Check karo kya speed = mid mein Koko h hours mein finish kar sakti hai. Agar haan → speed aur kam bhi chal sakti hai (r=mid). Agar nahi → speed badhani padegi (l=mid+1).</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Koko Eating Bananas</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">minEatingSpeed</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; piles, <span class="tp">int</span> h) {
+    <span class="tp">int</span> l = <span class="nm">1</span>, r = *max_element(piles.begin(), piles.end());
+    <span class="kw">while</span> (l &lt; r) {
+        <span class="tp">int</span> mid = l + (r - l) / <span class="nm">2</span>;
+        <span class="tp">long long</span> hours = <span class="nm">0</span>;
+        <span class="kw">for</span> (<span class="tp">int</span> p : piles)
+            hours += (p + mid - <span class="nm">1</span>) / mid; <span class="cm">// ceil without float: (p+mid-1)/mid</span>
+        <span class="kw">if</span> (hours &lt;= h)
+            r = mid;    <span class="cm">// yeh speed kaam karti hai, aur kam try karo</span>
+        <span class="kw">else</span>
+            l = mid + <span class="nm">1</span>; <span class="cm">// speed bahut kam hai, badhao</span>
+    }
+    <span class="kw">return</span> l;
+}</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📦</div>Minimum Capacity to Ship Packages<span class="badge badge-teal">LeetCode 1011</span></div>
+      <div class="hi-block">Same "on answer" pattern! Capacity ki range [max(weights), sum(weights)] hai. Check karo kya capacity = mid se sab packages D days mein ship ho sakte hain.</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Ship Packages in D Days</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">shipWithinDays</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; weights, <span class="tp">int</span> days) {
+    <span class="tp">int</span> l = *max_element(weights.begin(), weights.end());
+    <span class="tp">int</span> r = accumulate(weights.begin(), weights.end(), <span class="nm">0</span>);
+
+    <span class="kw">while</span> (l &lt; r) {
+        <span class="tp">int</span> mid = l + (r - l) / <span class="nm">2</span>;
+        <span class="tp">int</span> daysNeeded = <span class="nm">1</span>, currLoad = <span class="nm">0</span>;
+        <span class="kw">for</span> (<span class="tp">int</span> w : weights) {
+            <span class="kw">if</span> (currLoad + w &gt; mid) {
+                daysNeeded++;        <span class="cm">// naya din shuru karo</span>
+                currLoad = <span class="nm">0</span>;
+            }
+            currLoad += w;
+        }
+        <span class="kw">if</span> (daysNeeded &lt;= days)
+            r = mid;                 <span class="cm">// capacity aur kam bhi chal sakti hai</span>
+        <span class="kw">else</span>
+            l = mid + <span class="nm">1</span>;           <span class="cm">// capacity badhani padegi</span>
+    }
+    <span class="kw">return</span> l;
+}</pre>
+      </div>
+      <div class="tip">💡 "On Answer" pattern pehchaan: Jab answer ek range mein ho + ek check function ho (valid/invalid) → binary search on that range! l=min_possible, r=max_possible.</div>
+    </div>
+
+    <!-- SUMMARY TABLE -->
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📋</div>Binary Search — Quick Pattern Summary</div>
+      <table>
+        <tr>
+          <th>Problem Type</th>
+          <th>l</th>
+          <th>r</th>
+          <th>Condition</th>
+        </tr>
+        <tr>
+          <td>Classic search</td>
+          <td><code>0</code></td>
+          <td><code>n-1</code></td>
+          <td>arr[mid] == target</td>
+        </tr>
+        <tr>
+          <td>Lower bound</td>
+          <td><code>0</code></td>
+          <td><code>n</code></td>
+          <td>arr[mid] &lt; target → l=mid+1</td>
+        </tr>
+        <tr>
+          <td>Rotated array</td>
+          <td><code>0</code></td>
+          <td><code>n-1</code></td>
+          <td>Check which half sorted hai</td>
+        </tr>
+        <tr>
+          <td>Min eating speed</td>
+          <td><code>1</code></td>
+          <td><code>max(arr)</code></td>
+          <td>hours &lt;= h → r=mid</td>
+        </tr>
+        <tr>
+          <td>Ship packages</td>
+          <td><code>max(w)</code></td>
+          <td><code>sum(w)</code></td>
+          <td>days &lt;= D → r=mid</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- END PAGE 5 -->
+
+</main>
+
+<script>
+  const subIds = ['sub1','sub2','sub3','sub4','sub5'];
+  const pageIds = ['p1','p2','p3','p4','p5'];
+
+  function showPage(id, btn) {
+    pageIds.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pageIds.indexOf(id);
+    subIds.forEach((s,i) => {
+      document.getElementById(s).style.display = i === idx ? 'block' : 'none';
+    });
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  // init sub menus
+  subIds.forEach((s,i) => {
+    document.getElementById(s).style.display = i === 0 ? 'block' : 'none';
+  });
+</script>
+</body>
+</html>

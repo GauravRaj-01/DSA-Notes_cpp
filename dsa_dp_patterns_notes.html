@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Dynamic Programming Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117; --bg2: #161b27; --bg3: #1e2535; --border: #2a3245;
+    --text: #e8eaf6; --muted: #8892a4;
+    --teal: #1dd6a0; --teal-bg: #0d2e24;
+    --purple: #a78bfa; --purple-bg: #1e1633;
+    --amber: #fbbf24; --amber-bg: #2a1f0a;
+    --blue: #60a5fa; --blue-bg: #0e1f35;
+    --coral: #fb7185; --coral-bg: #2a0e16;
+    --green: #86efac; --green-bg: #0b2018;
+    --pink: #f472b6; --pink-bg: #2a0e1e;
+    --code-bg: #0a0d14;
+    --kw: #f9a870; --fn: #79c0ff; --cm: #5a6478;
+    --tp: #f472b6; --str: #a5d6a7; --nm: #ce93d8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 14px; }
+
+  /* SIDEBAR */
+  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 245px; background: var(--bg2); border-right: 1px solid var(--border); padding: 24px 0; overflow-y: auto; z-index: 100; }
+  .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .sidebar-logo h1 { font-size: 13px; font-weight: 600; color: var(--pink); letter-spacing: .08em; text-transform: uppercase; }
+  .sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .nav-section { padding: 0 12px; margin-bottom: 8px; }
+  .nav-section-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; padding: 0 8px; margin-bottom: 4px; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 13px; color: var(--muted); cursor: pointer; transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+  .nav-link:hover { background: var(--bg3); color: var(--text); }
+  .nav-link.active { background: var(--bg3); color: var(--pink); font-weight: 500; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .sub-links { padding-left: 24px; margin-top: 2px; }
+  .sub-link { display: block; padding: 4px 10px; font-size: 12px; color: var(--muted); cursor: pointer; border-radius: 6px; transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+  .sub-link:hover { color: var(--text); background: var(--bg3); }
+
+  /* MAIN */
+  .main { margin-left: 245px; padding: 40px 48px; max-width: 980px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .page-header .breadcrumb { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .page-header h2 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .page-header p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+  .badge-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid #1a5c44; }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid #3d2d6e; }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid #6b4c0f; }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid #1a3a5c; }
+  .badge-coral { background: var(--coral-bg); color: var(--coral); border: 1px solid #5c1a27; }
+  .badge-pink { background: var(--pink-bg); color: var(--pink); border: 1px solid #5c1a3a; }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #155a30; }
+
+  /* CARDS */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card-title .icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+  /* LANG BLOCKS */
+  .lang-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin: 12px 0 5px; }
+  .en-block { background: var(--bg3); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; line-height: 1.8; color: var(--text); margin-bottom: 8px; }
+  .hi-block { background: var(--purple-bg); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; line-height: 1.8; color: #c4b5fd; margin-bottom: 8px; }
+
+  /* CODE */
+  .code-wrap { position: relative; margin: 12px 0; }
+  .code-label { background: var(--bg3); border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0; padding: 7px 14px; font-size: 11px; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+  .copy-btn { font-size: 11px; padding: 3px 10px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg); color: var(--muted); cursor: pointer; transition: all .15s; }
+  .copy-btn:hover { color: var(--teal); border-color: var(--teal); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 0 0 8px 8px; padding: 16px 18px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; }
+  .kw { color: var(--kw); } .fn { color: var(--fn); } .cm { color: var(--cm); font-style: italic; }
+  .tp { color: var(--tp); } .st { color: var(--str); } .nm { color: var(--nm); }
+
+  /* DRY RUN */
+  .dry-run { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin: 12px 0; overflow-x: auto; }
+  .dry-run-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+  .step { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .step-num { font-size: 10px; font-weight: 600; color: var(--muted); min-width: 52px; }
+  .arr-row { display: flex; gap: 4px; align-items: flex-end; flex-wrap: wrap; }
+  .a-box { min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); color: var(--muted); padding: 0 4px; }
+  .a-box.L { background: var(--teal-bg); color: var(--teal); border-color: #1a5c44; }
+  .a-box.R { background: var(--purple-bg); color: var(--purple); border-color: #3d2d6e; }
+  .a-box.found { background: var(--green-bg); color: var(--green); border-color: #155a30; }
+  .a-box.hi { background: var(--amber-bg); color: var(--amber); border-color: #6b4c0f; }
+  .a-box.match { background: var(--pink-bg); color: var(--pink); border-color: #5c1a3a; }
+  .a-box.fail { background: var(--coral-bg); color: var(--coral); border-color: #5c1a27; }
+  .ptr-lbl { font-size: 9px; color: var(--muted); margin-top: 1px; text-align: center; }
+  .step-info { font-size: 12px; color: var(--muted); flex: 1; min-width: 160px; }
+  .step-result { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .sr-high { background: var(--coral-bg); color: var(--coral); }
+  .sr-low { background: var(--amber-bg); color: var(--amber); }
+  .sr-eq { background: var(--green-bg); color: var(--green); }
+  .sr-pink { background: var(--pink-bg); color: var(--pink); }
+
+  /* TABLE */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  .tbl th { background: var(--bg3); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.6; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: var(--bg3); }
+
+  /* MISC */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+  .tip { border-left: 3px solid var(--teal); background: var(--teal-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #6ee7c0; margin: 12px 0; line-height: 1.7; }
+  .warn { border-left: 3px solid var(--amber); background: var(--amber-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #fcd97a; margin: 12px 0; line-height: 1.7; }
+  .info { border-left: 3px solid var(--blue); background: var(--blue-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #93c5fd; margin: 12px 0; line-height: 1.7; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .mini-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.7; }
+  .mini-card b { font-weight: 600; display: block; margin-bottom: 4px; }
+  .sub-heading { font-size: 14px; font-weight: 600; margin: 22px 0 10px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .sub-heading::before { content: ''; width: 3px; height: 14px; border-radius: 2px; background: var(--pink); display: block; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg3); padding: 1px 5px; border-radius: 4px; color: var(--teal); }
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+  .pill { padding: 3px 12px; border-radius: 20px; font-size: 12px; border: 1px solid var(--border); color: var(--muted); background: var(--bg3); }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  @media(max-width:768px){
+    .sidebar{display:none;}
+    .main{margin-left:0;padding:20px 16px;}
+    .grid2,.grid3{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>DP Patterns · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Dynamic Programming</div>
+
+    <!-- PAGE 1: 1D DP -->
+    <button class="nav-link active" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>1D &amp; Fibonacci DP
+    </button>
+    <div class="sub-links" id="sub1">
+      <button class="sub-link" onclick="scrollTo2('dp-climbing')">Climbing Stairs</button>
+      <button class="sub-link" onclick="scrollTo2('dp-house')">House Robber</button>
+    </div>
+
+    <!-- PAGE 2: KNAPSACK & SUBSET -->
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Knapsack &amp; Subsets
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('dp-knapsack')">0/1 Knapsack</button>
+      <button class="sub-link" onclick="scrollTo2('dp-subset')">Subset Sum</button>
+    </div>
+
+    <!-- PAGE 3: STRING DP -->
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#f472b6"></span>String &amp; Subsequence
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('dp-lcs')">Longest Common Subseq</button>
+      <button class="sub-link" onclick="scrollTo2('dp-lps')">Longest Palindromic Subseq</button>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ═══════════════════════ PAGE 1 — 1D & FIBONACCI DP ═══════════════════════ -->
+  <div class="page active" id="p1">
+    <div class="page-header">
+      <div class="breadcrumb">Dynamic Programming · Volume 3 · Page 1 of 3</div>
+      <h2>1D DP &amp; Fibonacci Style</h2>
+      <p>Linear states aur single dimension transitions. State transition equation completely 1D array ya variables pe compute ho sakti hai. O(N) space ko O(1) space me optimization ke liye perfect candidates.</p>
+      <div class="badge-row">
+        <span class="badge badge-amber">1D Subproblems</span>
+        <span class="badge badge-blue">O(N) Time</span>
+        <span class="badge badge-teal">O(1) Space Optimal</span>
+      </div>
+    </div>
+
+    <!-- CLIMBING STAIRS -->
+    <div id="dp-climbing">
+      <div class="sub-heading">Pattern 1 — Climbing Stairs (Fibonacci Transition)</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🧗</div>Climbing Stairs<span class="badge badge-amber">LeetCode 70</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Concept</div>
+        <div class="en-block">
+          You are climbing a staircase that takes <code>n</code> steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top? <br>
+          Mathematically: To reach step <code>i</code>, you must have either stepped from <code>i-1</code> (climbing 1 step) or from <code>i-2</code> (climbing 2 steps). Hence, the recurrence relation is: <br>
+          <code>dp[i] = dp[i-1] + dp[i-2]</code> with base cases <code>dp[1] = 1, dp[2] = 2</code>.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Aapko <code>n</code> steps tak chadhna hai. Har baar aap ya toh 1 step le sakte ho ya 2 steps. <br>
+          **Intuition**: Socho agar aap aakhri step <code>i</code> pe ho, toh wahan kaise pahunche? Ya toh 1 step pehle (<code>i-1</code>) se chhalang lagayi hogi, ya fir 2 steps pehle (<code>i-2</code>) se! <br>
+          Isliye, <code>i</code> tak pahunchne ke total tarike = (<code>i-1</code> ke tarike) + (<code>i-2</code> ke tarike). Yani <code>dp[i] = dp[i-1] + dp[i-2]</code>. Yeh bilkul standard Fibonacci progression hai!
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- DRY RUN -->
+        <div class="dry-run">
+          <div class="dry-run-title">n = 4 → Expected: 5 ways</div>
+          <div class="step">
+            <span class="step-num">Base cases</span>
+            <div class="arr-row">
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">1</div><div class="ptr-lbl" style="color:var(--teal)">dp[1]</div></div>
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box R">2</div><div class="ptr-lbl" style="color:var(--purple)">dp[2]</div></div>
+              <div class="a-box">0</div>
+              <div class="a-box">0</div>
+            </div>
+            <div class="step-info">dp[1]=1 (1 way), dp[2]=2 (1+1 or 2).</div>
+            <span class="step-result sr-low">Init</span>
+          </div>
+          <div class="step">
+            <span class="step-num">i=3</span>
+            <div class="arr-row">
+              <div class="a-box">1</div>
+              <div class="a-box">2</div>
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box match">3</div><div class="ptr-lbl" style="color:var(--pink)">dp[3]</div></div>
+              <div class="a-box">0</div>
+            </div>
+            <div class="step-info">dp[3] = dp[2] + dp[1] = 2 + 1 = 3 ways.</div>
+            <span class="step-result sr-high">Filled</span>
+          </div>
+          <div class="step">
+            <span class="step-num">i=4</span>
+            <div class="arr-row">
+              <div class="a-box">1</div>
+              <div class="a-box">2</div>
+              <div class="a-box">3</div>
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box found">5</div><div class="ptr-lbl" style="color:var(--green)">dp[4]</div></div>
+            </div>
+            <div class="step-info">dp[4] = dp[3] + dp[2] = 3 + 2 = 5 ways.</div>
+            <span class="step-result sr-eq">✅ return 5</span>
+          </div>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Space Optimized O(1) Space</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">int</span> <span class="fn">climbStairs</span>(<span class="tp">int</span> n) {
+    <span class="kw">if</span> (n &lt;= <span class="nm">2</span>) <span class="kw">return</span> n;
+    
+    <span class="tp">int</span> prev2 = <span class="nm">1</span>; <span class="cm">// represents dp[i-2]</span>
+    <span class="tp">int</span> prev1 = <span class="nm">2</span>; <span class="cm">// represents dp[i-1]</span>
+    <span class="tp">int</span> curr = <span class="nm">0</span>;
+    
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">3</span>; i &lt;= n; i++) {
+        curr = prev1 + prev2; <span class="cm">// recurrence relation</span>
+        prev2 = prev1;        <span class="cm">// shift values forward</span>
+        prev1 = curr;
+    }
+    <span class="kw">return</span> prev1;
+}</pre>
+        </div>
+        <div class="tip">💡 Space Optimization Trick: Jab hume transition ke liye sirf pichle do values (<code>dp[i-1]</code> aur <code>dp[i-2]</code>) chahiye ho, toh pure array ki jagah sirf do variables use karke space complexity ko <b>O(N)</b> se ghata kar <b>O(1)</b> kiya ja sakta hai!</div>
+      </div>
+    </div>
+
+    <!-- HOUSE ROBBER -->
+    <div id="dp-house">
+      <div class="sub-heading">Pattern 2 — House Robber (Include/Exclude Choice)</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--purple-bg)">💰</div>House Robber<span class="badge badge-purple">LeetCode 198</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+        <div class="en-block">
+          You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. The only constraint is that adjacent houses have security systems connected, and it will automatically contact the police if two adjacent houses are broken into on the same night. <br>
+          For each house <code>i</code>, you have two choices: <br>
+          1. **Rob it**: You get <code>nums[i] + max_loot_till[i-2]</code> (cannot rob house <code>i-1</code>). <br>
+          2. **Skip it**: You get <code>max_loot_till[i-1]</code>. <br>
+          Recurrence Relation: <code>dp[i] = max(nums[i] + dp[i-2], dp[i-1])</code>.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Aapko ek line me lage gharo me chori karni hai. Shart yeh hai ki aap lagaatar do gharo (adjacent) me chori nahi kar sakte warna alarm baj jaayega! <br>
+          **Decision Structure**: Har ghar <code>i</code> par aakar aapke paas do raaste hain: <br>
+          1. **Rob house <code>i</code>**: Agar isko chuna, toh <code>i-1</code> ko skip karna padega. Total paisa = <code>nums[i]</code> + <code>i-2</code> tak ka max loot. <br>
+          2. **Skip house <code>i</code>**: Agar is ghar ko choda, toh jo <code>i-1</code> tak ka max loot tha, wahi aage aayega. <br>
+          Maximum nikal lo: <code>dp[i] = max(nums[i] + dp[i-2], dp[i-1])</code>.
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- DRY RUN -->
+        <div class="dry-run">
+          <div class="dry-run-title">nums = [2, 7, 9, 3] → Expected: 11 (Rob index 0 and 2: 2 + 9)</div>
+          <div class="step">
+            <span class="step-num">Init</span>
+            <div class="arr-row">
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">2</div><div class="ptr-lbl" style="color:var(--teal)">dp[0]</div></div>
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box R">7</div><div class="ptr-lbl" style="color:var(--purple)">dp[1]</div></div>
+              <div class="a-box">0</div>
+              <div class="a-box">0</div>
+            </div>
+            <div class="step-info">dp[0] = nums[0] = 2. dp[1] = max(nums[0], nums[1]) = 7.</div>
+            <span class="step-result sr-low">Base Cases</span>
+          </div>
+          <div class="step">
+            <span class="step-num">i=2 (9)</span>
+            <div class="arr-row">
+              <div class="a-box">2</div>
+              <div class="a-box">7</div>
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box match">11</div><div class="ptr-lbl" style="color:var(--pink)">dp[2]</div></div>
+              <div class="a-box">0</div>
+            </div>
+            <div class="step-info">dp[2] = max(9 + dp[0], dp[1]) = max(9+2, 7) = 11.</div>
+            <span class="step-result sr-high">Rob House 2!</span>
+          </div>
+          <div class="step">
+            <span class="step-num">i=3 (3)</span>
+            <div class="arr-row">
+              <div class="a-box">2</div>
+              <div class="a-box">7</div>
+              <div class="a-box">11</div>
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box found">11</div><div class="ptr-lbl" style="color:var(--green)">dp[3]</div></div>
+            </div>
+            <div class="step-info">dp[3] = max(3 + dp[1], dp[2]) = max(3+7, 11) = 11. (Index 3 skipped).</div>
+            <span class="step-result sr-eq">✅ return 11</span>
+          </div>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · House Robber (Space Optimized)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">int</span> <span class="fn">rob</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> n = nums.size();
+    <span class="kw">if</span> (n == <span class="nm">0</span>) <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="kw">if</span> (n == <span class="nm">1</span>) <span class="kw">return</span> nums[0];
+    
+    <span class="tp">int</span> prev2 = nums[0];          <span class="cm">// represents dp[i-2]</span>
+    <span class="tp">int</span> prev1 = max(nums[0], nums[1]); <span class="cm">// represents dp[i-1]</span>
+    <span class="tp">int</span> curr = <span class="nm">0</span>;
+    
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">2</span>; i &lt; n; i++) {
+        curr = max(nums[i] + prev2, prev1); <span class="cm">// Rob or Skip decision</span>
+        prev2 = prev1;                      <span class="cm">// Shift window</span>
+        prev1 = curr;
+    }
+    <span class="kw">return</span> prev1;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ PAGE 2 — KNAPSACK & SUBSETS ═══════════════════════ -->
+  <div class="page" id="p2">
+    <div class="page-header">
+      <div class="breadcrumb">Dynamic Programming · Volume 3 · Page 2 of 3</div>
+      <h2>Knapsack &amp; Subset Decision DP</h2>
+      <p>Multi-dimensional decisions bounded by resources or constraints (weights, capacity). State transition table tracks multiple parameters to record optimal subsets.</p>
+      <div class="badge-row">
+        <span class="badge badge-purple">2D DP Grid</span>
+        <span class="badge badge-blue">Resource Constraints</span>
+        <span class="badge badge-teal">Subset Optimization</span>
+      </div>
+    </div>
+
+    <!-- 0/1 KNAPSACK -->
+    <div id="dp-knapsack">
+      <div class="sub-heading">Pattern 3 — 0/1 Knapsack Problem (Bounded Choice)</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🎒</div>0/1 Knapsack<span class="badge badge-purple">Mother of Bounded DP</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+        <div class="en-block">
+          Given weights <code>wt[]</code> and values <code>val[]</code> of <code>n</code> items, put these items in a knapsack of capacity <code>W</code> to get the maximum total value in the knapsack. You can either take an item as a whole (1) or skip it (0). <br>
+          For item at index <code>i</code> (1-based) and remaining capacity <code>j</code>: <br>
+          - **Take item** (if <code>wt[i-1] <= j</code>): <code>val[i-1] + dp[i-1][j - wt[i-1]]</code> <br>
+          - **Skip item**: <code>dp[i-1][j]</code> <br>
+          Recurrence: <code>dp[i][j] = max(val[i-1] + dp[i-1][j - wt[i-1]], dp[i-1][j])</code>.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Aapko ek bag diya gaya hai jiski capacity <code>W</code> hai. Kuch items hain jinka weight <code>wt[]</code> aur value <code>val[]</code> hai. Bag me items daal kar maximum profit banana hai. Har item ko lene ka ya toh pura option hai (1) ya chhodne ka (0) — half fraction allow nahi hai. <br>
+          **Decision Transition**: Agar current item ka weight bag ki capacity <code>j</code> se kam ya equal hai, toh aap maximum nikalte hain: <br>
+          - Item ko **Bag me daal lo**: Profit badhega, bag ki capacity khatt jayegi -> <code>val[i-1] + dp[i-1][j - wt[i-1]]</code>. <br>
+          - Item ko **Skip kar do**: Wahi capacity <code>j</code> rahegi par item aage nikal jayega -> <code>dp[i-1][j]</code>.
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 2D TABLE DRY RUN -->
+        <div class="dry-run">
+          <div class="dry-run-title">wt = [1, 2, 3], val = [10, 15, 40], Capacity W = 4 → DP Grid [i][j]</div>
+          <table class="tbl" style="text-align:center">
+            <tr>
+              <th>Items \ Cap</th>
+              <th>j=0</th>
+              <th>j=1</th>
+              <th>j=2</th>
+              <th>j=3</th>
+              <th>j=4</th>
+            </tr>
+            <tr>
+              <td><b>i=0 (None)</b></td>
+              <td><code style="color:var(--muted)">0</code></td>
+              <td><code style="color:var(--muted)">0</code></td>
+              <td><code style="color:var(--muted)">0</code></td>
+              <td><code style="color:var(--muted)">0</code></td>
+              <td><code style="color:var(--muted)">0</code></td>
+            </tr>
+            <tr>
+              <td><b>i=1 (wt=1, v=10)</b></td>
+              <td><code>0</code></td>
+              <td style="background:var(--teal-bg);color:var(--teal)"><code>10</code></td>
+              <td><code>10</code></td>
+              <td><code>10</code></td>
+              <td><code>10</code></td>
+            </tr>
+            <tr>
+              <td><b>i=2 (wt=2, v=15)</b></td>
+              <td><code>0</code></td>
+              <td><code>10</code></td>
+              <td style="background:var(--purple-bg);color:var(--purple)"><code>15</code></td>
+              <td style="background:var(--purple-bg);color:var(--purple)"><code>25</code></td>
+              <td><code>25</code></td>
+            </tr>
+            <tr>
+              <td><b>i=3 (wt=3, v=40)</b></td>
+              <td><code>0</code></td>
+              <td><code>10</code></td>
+              <td><code>15</code></td>
+              <td style="background:var(--green-bg);color:var(--green)"><code>40</code></td>
+              <td style="background:var(--green-bg);color:var(--green)"><b><code>50</code></b></td>
+            </tr>
+          </table>
+          <div class="step-info" style="margin-top:12px">
+            At <code>dp[3][4]</code>: We can choose item 3 (wt=3, val=40) -> 40 + dp[2][4-3=1] = 40 + 10 = 50. Or skip it -> dp[2][4] = 25. Max is 50!
+          </div>
+          <span class="step-result sr-eq">✅ Max profit = 50</span>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Space-Optimized 1D Row DP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">int</span> <span class="fn">knapsack</span>(<span class="tp">int</span> W, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; wt, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; val) {
+    <span class="tp">int</span> n = wt.size();
+    <span class="cm">// We only need the previous row to calculate the current row.
+    // Loop backwards to use a single 1D array in-place!</span>
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; dp(W + <span class="nm">1</span>, <span class="nm">0</span>);
+    
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="cm">// Loop capacity backwards from W down to wt[i]</span>
+        <span class="kw">for</span> (<span class="tp">int</span> j = W; j &gt;= wt[i]; j--) {
+            dp[j] = max(dp[j], val[i] + dp[j - wt[i]]);
+        }
+    }
+    <span class="kw">return</span> dp[W];
+}</pre>
+        </div>
+        <div class="warn">⚠️ Space-optimization me <b>backward loop</b> (<code>j = W down to wt[i]</code>) chalana crucial hai! Agar aap aage se loop chalayenge toh same index ko bar-bar select kar lenge, jo ki <i>Unbounded Knapsack</i> ban jayega. Backward loop se hum current row me purane row ke values ko bina overwrite kiye use kar pate hain.</div>
+      </div>
+    </div>
+
+    <!-- SUBSET SUM -->
+    <div id="dp-subset">
+      <div class="sub-heading">Pattern 4 — Subset Sum Problem</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--teal-bg)">➕</div>Subset Sum<span class="badge badge-teal">Boolean Target Verification</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+        <div class="en-block">
+          Given a set of non-negative integers <code>arr[]</code> and a value <code>sum</code>, determine if there is a subset of the given set with a sum equal to given <code>sum</code>. <br>
+          This is a variation of 0/1 Knapsack where target is <code>sum</code> and return type is <code>boolean</code>. <br>
+          Recurrence: <code>dp[i][j] = dp[i-1][j] || dp[i-1][j - arr[i-1]]</code> (if <code>arr[i-1] <= j</code>).
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Aapko ek numbers ka array <code>arr[]</code> diya hai aur ek target <code>sum</code>. Pucha hai ki kya koi aisa group (subset) ban sakta hai jiska sum target ke barabar ho? <br>
+          **Intuition**: Yeh 0/1 Knapsack jaisa hi hai, bas isme values aur weight alag nahi hain. Weight hi target sum hai! <br>
+          Har number ke paas do choices hain: <br>
+          - Number ko **Include karo** (agar chota hai sum se): Sum se subtract ho jayega target -> check if remaining target can be made: <code>dp[i-1][j - arr[i-1]]</code>. <br>
+          - Number ko **Exclude karo**: Target same rahega -> <code>dp[i-1][j]</code>. <br>
+          Dono me se koi ek bhi <code>true</code> de de, toh overall return <code>true</code> ho jayega (OR operation)!
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Subset Sum (Space Optimized)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">bool</span> <span class="fn">isSubsetSum</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr, <span class="tp">int</span> sum) {
+    <span class="tp">int</span> n = arr.size();
+    <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt; dp(sum + <span class="nm">1</span>, <span class="kw">false</span>);
+    
+    <span class="cm">// Base case: Sum 0 is always possible (empty subset)</span>
+    dp[0] = <span class="kw">true</span>;
+    
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="kw">for</span> (<span class="tp">int</span> j = sum; j &gt;= arr[i]; j--) {
+            <span class="kw">if</span> (dp[j - arr[i]]) {
+                dp[j] = <span class="kw">true</span>;
+            }
+        }
+    }
+    <span class="kw">return</span> dp[sum];
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ PAGE 3 — STRING & SUBSEQUENCE ═══════════════════════ -->
+  <div class="page" id="p3">
+    <div class="page-header">
+      <div class="breadcrumb">Dynamic Programming · Volume 3 · Page 3 of 3</div>
+      <h2>String &amp; Subsequence Alignment DP</h2>
+      <p>Strings aur Sequences me character matching, insertions, deletions, aur alignments track karne wale algorithms. Transition indices dono strings ke pointers ko change karte hain.</p>
+      <div class="badge-row">
+        <span class="badge badge-pink">Double String Indexes</span>
+        <span class="badge badge-amber">Alignment Matching</span>
+        <span class="badge badge-teal">Subsequence Analysis</span>
+      </div>
+    </div>
+
+    <!-- LCS -->
+    <div id="dp-lcs">
+      <div class="sub-heading">Pattern 5 — Longest Common Subsequence (LCS)</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--pink-bg)">✨</div>Longest Common Subsequence<span class="badge badge-pink">LeetCode 1143</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+        <div class="en-block">
+          Given two strings <code>text1</code> and <code>text2</code>, return the length of their longest common subsequence. A subsequence of a string is a new string generated from the original string with some characters (can be none) deleted without changing the relative order of the remaining characters. <br>
+          - **If characters match** (<code>text1[i-1] == text2[j-1]</code>): We increment LCS by 1 and move both indices -> <code>1 + dp[i-1][j-1]</code>. <br>
+          - **If mismatch**: We take the maximum of keeping one pointer fixed and changing the other -> <code>max(dp[i-1][j], dp[i][j-1])</code>.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Do strings <code>text1</code> aur <code>text2</code> ke beech ka sabse lamba common subsequence (jo bina sequence change kiye characters uthaye) nikalna hai. <br>
+          **Transition Strategy**: Hum piche se character check karte hain: <br>
+          - Agar **Characters match ho gaye**: Matlab hume 1 matching mil gayi! Hum dono string me aage wale part pe badh jayenge -> <code>1 + dp[i-1][j-1]</code>. <br>
+          - Agar **Mismatch hai**: Toh ho sakta hai common part text1 me aage mile ya text2 me. Dono scenarios explore karo aur max choose karo -> <code>max(dp[i-1][j], dp[i][j-1])</code>.
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- LCS GRID DEPENDENCY TRACE -->
+        <div class="dry-run">
+          <div class="dry-run-title">text1 = "abcde", text2 = "ace" → 2D Dependency Filling</div>
+          <div class="step-info" style="margin-bottom:8px">
+            Match transition: <code>(i,j) ↘ (i-1,j-1)</code> | Mismatch transition: <code>(i,j) → max( (i-1,j), (i,j-1) )</code>
+          </div>
+          <table class="tbl" style="text-align:center">
+            <tr>
+              <th>i \ j</th>
+              <th>Ø</th>
+              <th>a</th>
+              <th>c</th>
+              <th>e</th>
+            </tr>
+            <tr>
+              <td><b>Ø</b></td>
+              <td style="color:var(--muted)">0</td>
+              <td style="color:var(--muted)">0</td>
+              <td style="color:var(--muted)">0</td>
+              <td style="color:var(--muted)">0</td>
+            </tr>
+            <tr>
+              <td><b>a</b></td>
+              <td>0</td>
+              <td style="background:var(--teal-bg);color:var(--teal)">1 ↘ 0</td>
+              <td>1</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td><b>b</b></td>
+              <td>0</td>
+              <td>1</td>
+              <td>1</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td><b>c</b></td>
+              <td>0</td>
+              <td>1</td>
+              <td style="background:var(--teal-bg);color:var(--teal)">2 ↘ 1</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td><b>d</b></td>
+              <td>0</td>
+              <td>1</td>
+              <td>2</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td><b>e</b></td>
+              <td>0</td>
+              <td>1</td>
+              <td>2</td>
+              <td style="background:var(--green-bg);color:var(--green)"><b>3 ↘ 2</b></td>
+            </tr>
+          </table>
+          <span class="step-result sr-eq" style="margin-top:10px">✅ LCS length = 3 ("ace")</span>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Longest Common Subsequence (Space Optimized)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">int</span> <span class="fn">longestCommonSubsequence</span>(<span class="tp">string</span> text1, <span class="tp">string</span> text2) {
+    <span class="tp">int</span> m = text1.size(), n = text2.size();
+    <span class="cm">// We only need the previous row's state to calculate the current row!</span>
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; prev(n + <span class="nm">1</span>, <span class="nm">0</span>), curr(n + <span class="nm">1</span>, <span class="nm">0</span>);
+    
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt;= m; i++) {
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="nm">1</span>; j &lt;= n; j++) {
+            <span class="kw">if</span> (text1[i - <span class="nm">1</span>] == text2[j - <span class="nm">1</span>]) {
+                curr[j] = <span class="nm">1</span> + prev[j - <span class="nm">1</span>]; <span class="cm">// Match transition</span>
+            } <span class="kw">else</span> {
+                curr[j] = max(prev[j], curr[j - <span class="nm">1</span>]); <span class="cm">// Mismatch</span>
+            }
+        }
+        prev = curr; <span class="cm">// Shift current state row to previous</span>
+    }
+    <span class="kw">return</span> prev[n];
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- LPS -->
+    <div id="dp-lps">
+      <div class="sub-heading">Pattern 6 — Longest Palindromic Subsequence</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🔄</div>Longest Palindromic Subsequence<span class="badge badge-blue">LeetCode 516</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+        <div class="en-block">
+          Given a string <code>s</code>, find the longest palindromic subsequence's length in <code>s</code>. <br>
+          **Genius Reduction Trick**: A palindrome reads the same backwards as forwards. Therefore, the Longest Palindromic Subsequence of string <code>s</code> is exactly equal to the **Longest Common Subsequence (LCS)** of string <code>s</code> and its reversed version <code>s_reverse</code>! <br>
+          LPS = <code>LCS(s, reverse(s))</code>.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Aapko string <code>s</code> me se sabse bada Palindromic (jo aage se aur piche se same ho) subsequence nikalna hai. <br>
+          **Ek majedar logic trick**: Palindrome wahi hota hai jo piche se reverse karne par badle na! Toh agar hum original string <code>s</code> aur uski ultee (reverse) string <code>s_reverse</code> ke beech ka Longest Common Subsequence (LCS) nikal lein, toh hume wahi maximum palindromic subsequence mil jaayega! <br>
+          Hume alag se naya code likhne ki zarurat hi nahi hai! Bas input string ko reverse karke LCS call kar do.
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Longest Palindromic Subsequence</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">int</span> <span class="fn">longestPalindromeSubseq</span>(<span class="tp">string</span> s) {
+    <span class="tp">string</span> r = s;
+    reverse(r.begin(), r.end()); <span class="cm">// Reverse original string</span>
+    
+    <span class="cm">// reuse the optimized LCS subroutine!</span>
+    <span class="kw">return</span> longestCommonSubsequence(s, r);
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📊</div>DP Patterns — Comparison Summary</div>
+      <table class="tbl">
+        <tr>
+          <th>DP Pattern</th>
+          <th>State Parameters</th>
+          <th>Standard Recurrence Relation</th>
+          <th>Standard Complexity</th>
+          <th>Optimized Space</th>
+        </tr>
+        <tr>
+          <td><span style="color:var(--pink);font-weight:600">Fibonacci / 1D DP</span></td>
+          <td>1 (Index `i`)</td>
+          <td><code>dp[i] = dp[i-1] + dp[i-2]</code></td>
+          <td>O(N) Time</td>
+          <td>O(1) (prev1, prev2 variables)</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--amber);font-weight:600">Decision/Rob DP</span></td>
+          <td>1 (Index `i`)</td>
+          <td><code>dp[i] = max(val + dp[i-2], dp[i-1])</code></td>
+          <td>O(N) Time</td>
+          <td>O(1) Space</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--teal);font-weight:600">0/1 Knapsack Bounded</span></td>
+          <td>2 (Index `i`, Capacity `w`)</td>
+          <td><code>dp[i][w] = max(val + dp[i-1][w-wt], dp[i-1][w])</code></td>
+          <td>O(N×W) Time</td>
+          <td>O(W) Space (Single 1D row)</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--purple);font-weight:600">String LCS Alignment</span></td>
+          <td>2 (Len1 `i`, Len2 `j`)</td>
+          <td><code>1 + dp[i-1][j-1]</code> OR <code>max(dp[i-1][j], dp[i][j-1])</code></td>
+          <td>O(M×N) Time</td>
+          <td>O(N) Space (Two rows)</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const pages = ['p1','p2','p3'];
+  const subs = ['sub1','sub2','sub3'];
+
+  function showPage(id, btn) {
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => document.getElementById(s).style.display = i===idx?'block':'none');
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => document.getElementById(s).style.display = i===0?'block':'none');
+</script>
+</body>
+</html>

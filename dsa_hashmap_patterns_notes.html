@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA HashMap Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117; --bg2: #161b27; --bg3: #1e2535; --border: #2a3245;
+    --text: #e8eaf6; --muted: #8892a4;
+    --teal: #1dd6a0; --teal-bg: #0d2e24;
+    --purple: #a78bfa; --purple-bg: #1e1633;
+    --amber: #fbbf24; --amber-bg: #2a1f0a;
+    --blue: #60a5fa; --blue-bg: #0e1f35;
+    --coral: #fb7185; --coral-bg: #2a0e16;
+    --green: #86efac; --green-bg: #0b2018;
+    --pink: #f472b6; --pink-bg: #2a0e1e;
+    --orange: #fb923c; --orange-bg: #2a1400;
+    --code-bg: #0a0d14;
+    --kw: #f9a870; --fn: #79c0ff; --cm: #5a6478;
+    --tp: #f472b6; --str: #a5d6a7; --nm: #ce93d8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 14px; }
+
+  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 245px; background: var(--bg2); border-right: 1px solid var(--border); padding: 24px 0; overflow-y: auto; z-index: 100; }
+  .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .sidebar-logo h1 { font-size: 13px; font-weight: 600; color: var(--teal); letter-spacing: .08em; text-transform: uppercase; }
+  .sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .nav-section { padding: 0 12px; margin-bottom: 8px; }
+  .nav-section-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; padding: 0 8px; margin-bottom: 4px; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 13px; color: var(--muted); cursor: pointer; transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+  .nav-link:hover { background: var(--bg3); color: var(--text); }
+  .nav-link.active { background: var(--bg3); color: var(--teal); font-weight: 500; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .sub-links { padding-left: 24px; margin-top: 2px; }
+  .sub-link { display: block; padding: 4px 10px; font-size: 12px; color: var(--muted); cursor: pointer; border-radius: 6px; transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+  .sub-link:hover { color: var(--text); background: var(--bg3); }
+
+  .main { margin-left: 245px; padding: 40px 48px; max-width: 980px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .page-header .breadcrumb { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .page-header h2 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .page-header p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+  .badge-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid #1a5c44; }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid #3d2d6e; }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid #6b4c0f; }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid #1a3a5c; }
+  .badge-coral { background: var(--coral-bg); color: var(--coral); border: 1px solid #5c1a27; }
+  .badge-pink { background: var(--pink-bg); color: var(--pink); border: 1px solid #5c1a3a; }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #155a30; }
+  .badge-orange { background: var(--orange-bg); color: var(--orange); border: 1px solid #6b3200; }
+
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card-title .icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+  .lang-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin: 12px 0 5px; }
+  .en-block { background: var(--bg3); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; line-height: 1.8; color: var(--text); margin-bottom: 8px; }
+  .hi-block { background: var(--purple-bg); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; line-height: 1.8; color: #c4b5fd; margin-bottom: 8px; }
+
+  .code-wrap { position: relative; margin: 12px 0; }
+  .code-label { background: var(--bg3); border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0; padding: 7px 14px; font-size: 11px; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+  .copy-btn { font-size: 11px; padding: 3px 10px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg); color: var(--muted); cursor: pointer; transition: all .15s; }
+  .copy-btn:hover { color: var(--teal); border-color: var(--teal); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 0 0 8px 8px; padding: 16px 18px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; }
+  .kw { color: var(--kw); } .fn { color: var(--fn); } .cm { color: var(--cm); font-style: italic; }
+  .tp { color: var(--tp); } .st { color: var(--str); } .nm { color: var(--nm); }
+
+  .dry-run { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin: 12px 0; overflow-x: auto; }
+  .dry-run-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+  .step { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .step-num { font-size: 10px; font-weight: 600; color: var(--muted); min-width: 60px; }
+  .arr-row { display: flex; gap: 4px; align-items: flex-end; flex-wrap: wrap; }
+  .a-box { min-width: 36px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); color: var(--muted); padding: 0 6px; font-family: 'JetBrains Mono', monospace; }
+  .a-box.hi  { background: var(--amber-bg); color: var(--amber); border-color: #6b4c0f; }
+  .a-box.match { background: var(--pink-bg); color: var(--pink); border-color: #5c1a3a; }
+  .a-box.found { background: var(--green-bg); color: var(--green); border-color: #155a30; }
+  .a-box.fail { background: var(--coral-bg); color: var(--coral); border-color: #5c1a27; }
+  .a-box.teal { background: var(--teal-bg); color: var(--teal); border-color: #1a5c44; }
+  .a-box.blue { background: var(--blue-bg); color: var(--blue); border-color: #1a3a5c; }
+  .kv-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 4px 0; }
+  .kv-key { background: var(--amber-bg); color: var(--amber); border: 1px solid #6b4c0f; border-radius: 5px; padding: 3px 10px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  .kv-arrow { color: var(--muted); font-size: 12px; }
+  .kv-val { background: var(--teal-bg); color: var(--teal); border: 1px solid #1a5c44; border-radius: 5px; padding: 3px 10px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  .kv-val.upd { background: var(--pink-bg); color: var(--pink); border-color: #5c1a3a; }
+  .step-info { font-size: 12px; color: var(--muted); flex: 1; min-width: 160px; }
+  .step-result { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .sr-high { background: var(--coral-bg); color: var(--coral); }
+  .sr-low  { background: var(--amber-bg); color: var(--amber); }
+  .sr-eq   { background: var(--green-bg); color: var(--green); }
+  .sr-pink { background: var(--pink-bg); color: var(--pink); }
+
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  .tbl th { background: var(--bg3); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.6; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: var(--bg3); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+  .tip  { border-left: 3px solid var(--teal);   background: var(--teal-bg);   border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #6ee7c0; margin: 12px 0; line-height: 1.7; }
+  .warn { border-left: 3px solid var(--amber);  background: var(--amber-bg);  border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #fcd97a; margin: 12px 0; line-height: 1.7; }
+  .info { border-left: 3px solid var(--blue);   background: var(--blue-bg);   border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #93c5fd; margin: 12px 0; line-height: 1.7; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .mini-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.7; }
+  .mini-card b { font-weight: 600; display: block; margin-bottom: 4px; }
+  .sub-heading { font-size: 14px; font-weight: 600; margin: 22px 0 10px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .sub-heading::before { content: ''; width: 3px; height: 14px; border-radius: 2px; background: var(--teal); display: block; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg3); padding: 1px 5px; border-radius: 4px; color: var(--teal); }
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+  .pill { padding: 3px 12px; border-radius: 20px; font-size: 12px; border: 1px solid var(--border); color: var(--muted); background: var(--bg3); }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+  @media(max-width:768px){
+    .sidebar{display:none;}
+    .main{margin-left:0;padding:20px 16px;}
+    .grid2,.grid3{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>HashMap Patterns · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">HashMap Patterns</div>
+
+    <button class="nav-link active" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>Frequency Based
+    </button>
+    <div class="sub-links" id="sub1">
+      <button class="sub-link" onclick="scrollTo2('fb-twosum')">Two Sum</button>
+      <button class="sub-link" onclick="scrollTo2('fb-topk')">Top K Frequent</button>
+      <button class="sub-link" onclick="scrollTo2('fb-anagram')">Valid Anagram</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#60a5fa"></span>Lookup Based
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('lb-twosum2')">Two Sum (Index)</button>
+      <button class="sub-link" onclick="scrollTo2('lb-contain')">Contains Duplicate</button>
+      <button class="sub-link" onclick="scrollTo2('lb-roman')">Roman to Integer</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#1dd6a0"></span>Set Based
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('sb-consec')">Longest Consecutive</button>
+      <button class="sub-link" onclick="scrollTo2('sb-intersect')">Intersection of Arrays</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p4',this)">
+      <span class="nav-dot" style="background:#f472b6"></span>Index Mapping
+    </button>
+    <div class="sub-links" id="sub4" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('im-subarray')">Subarray Sum = K</button>
+      <button class="sub-link" onclick="scrollTo2('im-first')">First Non-Repeating</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p5',this)">
+      <span class="nav-dot" style="background:#fb923c"></span>Grouping Pattern
+    </button>
+    <div class="sub-links" id="sub5" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('gp-anagram')">Group Anagrams</button>
+      <button class="sub-link" onclick="scrollTo2('gp-isomorphic')">Isomorphic Strings</button>
+      <button class="sub-link" onclick="scrollTo2('gp-wordpattern')">Word Pattern</button>
+    </div>
+  </div>
+
+  <!-- Quick Reference -->
+  <div class="nav-section" style="margin-top:16px">
+    <div class="nav-section-label">Quick Reference</div>
+    <button class="nav-link" onclick="showPage('p6',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Comparison Table
+    </button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ═══════════════════ PAGE 1 — FREQUENCY BASED ═══════════════════ -->
+<div class="page active" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">HashMap Patterns · Pattern 1 of 5</div>
+    <h2>🔢 Frequency Based</h2>
+    <p>HashMap mein har element ki count/frequency store karo. Counting, majority, top-k type problems ke liye best.</p>
+    <div class="badge-row">
+      <span class="badge badge-amber">O(n) time</span>
+      <span class="badge badge-blue">O(n) space</span>
+      <span class="badge badge-teal">Count problems</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">📊</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Traverse the array/string once and store <code>element → count</code> in a HashMap. Then query the map in O(1) to answer frequency questions. Used when you need to count occurrences, find majority elements, or detect duplicates.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Array ya string ek baar traverse karo aur <code>element → count</code> map mein store karo. Phir O(1) mein koi bhi frequency query answer kar sakte ho. Jab bhi "count karo", "kitni baar aaya", "majority element" — seedha frequency map!</div>
+  </div>
+
+  <!-- TWO SUM (Frequency Context) -->
+  <div id="fb-twosum">
+    <div class="sub-heading">Problem 1 — Two Sum (Existence Check)</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🎯</div>Two Sum — Frequency Variant<span class="badge badge-amber">Concept</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">For each element <code>x</code>, check if <code>target - x</code> already exists in the map. If yes → pair found! If no → store <code>x</code> in map. Single pass O(n).</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">Har element <code>x</code> ke liye check karo: <code>target - x</code> map mein hai? Agar hai → pair mil gaya! Nahi hai toh <code>x</code> ko map mein daal do. Ek hi pass mein O(n) solution!</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">nums=[2,7,11,15], target=9 → Expected: [0,1]</div>
+        <div class="step">
+          <span class="step-num">i=0, x=2</span>
+          <div class="arr-row"><div class="a-box hi">2</div><div class="a-box">7</div><div class="a-box">11</div><div class="a-box">15</div></div>
+          <div class="step-info">need=9-2=7, map={} → not found. Store {2:0}</div>
+          <span class="step-result sr-low">store</span>
+        </div>
+        <div class="step">
+          <span class="step-num">i=1, x=7</span>
+          <div class="arr-row"><div class="a-box">2</div><div class="a-box hi">7</div><div class="a-box">11</div><div class="a-box">15</div></div>
+          <div class="step-info">need=9-7=2, map={2:0} → found at idx 0!</div>
+          <span class="step-result sr-eq">✅ [0,1]</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Map State</span>
+          <div class="kv-row"><div class="kv-key">2</div><div class="kv-arrow">→</div><div class="kv-val">idx 0</div></div>
+          <div class="step-info">Only stored 2 before finding pair</div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Two Sum</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">twoSum</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> target) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; mp; <span class="cm">// value → index</span>
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; nums.size(); i++) {
+        <span class="tp">int</span> need = target - nums[i];
+
+        <span class="kw">if</span> (mp.count(need))              <span class="cm">// complement map mein hai?</span>
+            <span class="kw">return</span> {mp[need], i};        <span class="cm">// pair mil gaya!</span>
+
+        mp[nums[i]] = i;                 <span class="cm">// nahi mila → store karo</span>
+    }
+    <span class="kw">return</span> {};
+}</pre>
+      </div>
+      <div class="tip">💡 Key insight: <code>mp.count(key)</code> O(1) lookup hai. Pehle check karo, phir insert — warna same index pair return ho sakta hai (e.g. target=4, num=2).</div>
+    </div>
+  </div>
+
+  <!-- TOP K FREQUENT -->
+  <div id="fb-topk">
+    <div class="sub-heading">Problem 2 — Top K Frequent Elements</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🏆</div>Top K Frequent<span class="badge badge-amber">LeetCode 347</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">
+        Step 1: Build frequency map <code>num → count</code>.<br>
+        Step 2: Use a <b>Bucket Sort</b> — create array of size n+1 where index = frequency. Elements with same frequency go in same bucket.<br>
+        Step 3: Traverse buckets from right (highest freq) and collect top K.
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Step 1: Frequency map banao.<br>
+        Step 2: Bucket sort trick — n+1 size ka array banao jahan index = frequency. Same frequency wale numbers ek bucket mein.<br>
+        Step 3: Right se left traverse karo (bade frequency se) aur top K elements uthao. O(n) solution!
+      </div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">nums=[1,1,1,2,2,3], k=2 → Expected: [1,2]</div>
+        <div class="step">
+          <span class="step-num">Freq Map</span>
+          <div class="kv-row">
+            <div class="kv-key">1</div><div class="kv-arrow">→</div><div class="kv-val">3</div>
+            <div class="kv-key">2</div><div class="kv-arrow">→</div><div class="kv-val">2</div>
+            <div class="kv-key">3</div><div class="kv-arrow">→</div><div class="kv-val">1</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">Buckets</span>
+          <div class="arr-row">
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box">[]</div><div style="font-size:9px;color:var(--muted);text-align:center">freq=0</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box teal">[3]</div><div style="font-size:9px;color:var(--muted);text-align:center">freq=1</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box blue">[2]</div><div style="font-size:9px;color:var(--muted);text-align:center">freq=2</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box match">[1]</div><div style="font-size:9px;color:var(--muted);text-align:center">freq=3</div></div>
+          </div>
+          <div class="step-info">bucket[freq].push(num)</div>
+        </div>
+        <div class="step">
+          <span class="step-num">Collect k=2</span>
+          <div class="step-info">Right se: freq=3 → [1], freq=2 → [2]. Got k=2 ✅</div>
+          <span class="step-result sr-eq">✅ [1,2]</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Top K Frequent (Bucket Sort)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">topKFrequent</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> k) {
+    <span class="tp">int</span> n = nums.size();
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; freq;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums) freq[x]++;       <span class="cm">// Step 1: frequency count</span>
+
+    <span class="cm">// Step 2: Bucket sort — index = frequency</span>
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; bucket(n + <span class="nm">1</span>);
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; [num, cnt] : freq)
+        bucket[cnt].push_back(num);
+
+    <span class="cm">// Step 3: Right se collect karo top k</span>
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; result;
+    <span class="kw">for</span> (<span class="tp">int</span> i = n; i &gt;= <span class="nm">1</span> &amp;&amp; result.size() &lt; k; i--)
+        <span class="kw">for</span> (<span class="tp">int</span> x : bucket[i])
+            result.push_back(x);
+
+    <span class="kw">return</span> result;
+}
+
+<span class="cm">// Alternative: Min-Heap approach O(n log k)</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">topKFreqHeap</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> k) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; freq;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums) freq[x]++;
+
+    <span class="cm">// min-heap of size k: {count, num}</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;, <span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;, greater&lt;&gt;&gt; pq;
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; [num, cnt] : freq) {
+        pq.push({cnt, num});
+        <span class="kw">if</span> (pq.size() &gt; k) pq.pop(); <span class="cm">// k se zyada nahi rakhna</span>
+    }
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; res;
+    <span class="kw">while</span> (!pq.empty()) { res.push_back(pq.top().second); pq.pop(); }
+    <span class="kw">return</span> res;
+}</pre>
+      </div>
+      <div class="tip">💡 Bucket Sort approach O(n) hai — heap se better! Max frequency n se zyada nahi ho sakti, isliye bucket array ka size n+1 enough hai.</div>
+    </div>
+  </div>
+
+  <!-- VALID ANAGRAM -->
+  <div id="fb-anagram">
+    <div class="sub-heading">Problem 3 — Valid Anagram</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🔤</div>Valid Anagram<span class="badge badge-teal">LeetCode 242</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Two strings are anagrams if they have exactly the same character frequencies. Build frequency map for string <code>s</code>, then decrement for each char in <code>t</code>. If all counts are 0 → anagram!</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">Do strings anagram hain agar dono mein same characters same frequency pe hain. <code>s</code> ke liye map mein count badhao (+1), <code>t</code> ke liye ghatao (-1). Agar sab counts 0 ho gaye → anagram hai!</div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Valid Anagram</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">bool</span> <span class="fn">isAnagram</span>(<span class="tp">string</span> s, <span class="tp">string</span> t) {
+    <span class="kw">if</span> (s.size() != t.size()) <span class="kw">return false</span>;
+
+    <span class="tp">int</span> freq[<span class="nm">26</span>] = {<span class="nm">0</span>};               <span class="cm">// 26 letters ka array</span>
+    <span class="kw">for</span> (<span class="tp">char</span> c : s) freq[c - <span class="st">'a'</span>]++;  <span class="cm">// s ke chars count badhao</span>
+    <span class="kw">for</span> (<span class="tp">char</span> c : t) freq[c - <span class="st">'a'</span>]--;  <span class="cm">// t ke chars count ghatao</span>
+
+    <span class="kw">for</span> (<span class="tp">int</span> x : freq)
+        <span class="kw">if</span> (x != <span class="nm">0</span>) <span class="kw">return false</span>;       <span class="cm">// koi bhi non-zero → anagram nahi</span>
+
+    <span class="kw">return true</span>;
+}
+
+<span class="cm">// Unicode chars ke liye (unicode strings): use unordered_map</span>
+<span class="tp">bool</span> <span class="fn">isAnagramUnicode</span>(<span class="tp">string</span> s, <span class="tp">string</span> t) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>,<span class="tp">int</span>&gt; mp;
+    <span class="kw">for</span> (<span class="tp">char</span> c : s) mp[c]++;
+    <span class="kw">for</span> (<span class="tp">char</span> c : t) mp[c]--;
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; [ch, cnt] : mp)
+        <span class="kw">if</span> (cnt != <span class="nm">0</span>) <span class="kw">return false</span>;
+    <span class="kw">return true</span>;
+}</pre>
+      </div>
+      <div class="tip">💡 Sirf lowercase letters ke liye int[26] array use karo — unordered_map se 3-4x faster hai aur O(1) space (26 fixed).</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ PAGE 2 — LOOKUP BASED ═══════════════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">HashMap Patterns · Pattern 2 of 5</div>
+    <h2>🔍 Lookup Based</h2>
+    <p>HashMap ko O(1) lookup table ki tarah use karo — pehle se dekhe elements fast retrieve karo.</p>
+    <div class="badge-row">
+      <span class="badge badge-blue">O(1) lookup</span>
+      <span class="badge badge-teal">Seen-before check</span>
+      <span class="badge badge-amber">Index storage</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🗂️</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Store elements you have <b>already seen</b> in a HashMap. When processing a new element, look it up in the map in O(1). The map acts as a memory — "have I seen this before? Where?" Pattern: store → lookup → act.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Jo elements pehle dekh chuke ho unhe HashMap mein store karo. Naya element aane par O(1) mein check karo — "yeh pehle aaya tha kya? Kahan?" Map ek memory ki tarah kaam karta hai. Pattern: store → lookup → decision lo.</div>
+  </div>
+
+  <!-- TWO SUM INDEX LOOKUP -->
+  <div id="lb-twosum2">
+    <div class="sub-heading">Problem 1 — Two Sum (Classic Lookup)</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">➕</div>Two Sum — Classic<span class="badge badge-blue">LeetCode 1</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">For each number, compute <code>complement = target - num</code>. Look it up in the map. If found → return both indices. Else → store <code>num → index</code> in map. This is the most famous HashMap problem.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">Har number ke liye <code>complement = target - num</code> calculate karo. Map mein check karo mila? Mila toh dono indices return karo. Nahi mila toh current number ko index ke saath store karo. Sabse famous HashMap problem!</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">nums=[3,4,5,6], target=7 → Expected: [0,1]</div>
+        <div class="step">
+          <span class="step-num">i=0, n=3</span>
+          <div class="arr-row"><div class="a-box hi">3</div><div class="a-box">4</div><div class="a-box">5</div><div class="a-box">6</div></div>
+          <div class="step-info">comp=4, map={} → miss. Store {3:0}</div>
+          <span class="step-result sr-low">miss → store</span>
+        </div>
+        <div class="step">
+          <span class="step-num">i=1, n=4</span>
+          <div class="arr-row"><div class="a-box">3</div><div class="a-box hi">4</div><div class="a-box">5</div><div class="a-box">6</div></div>
+          <div class="step-info">comp=3, map={3:0} → HIT! idx=0</div>
+          <span class="step-result sr-eq">✅ [0,1]</span>
+        </div>
+      </div>
+      <div class="info">ℹ️ Same code as Frequency Based Two Sum — but the intent here is using map as an index-lookup table, not a counter.</div>
+    </div>
+  </div>
+
+  <!-- CONTAINS DUPLICATE -->
+  <div id="lb-contain">
+    <div class="sub-heading">Problem 2 — Contains Duplicate</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">👯</div>Contains Duplicate<span class="badge badge-blue">LeetCode 217</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Use an <code>unordered_set</code> (a HashSet). For each element: if it's already in the set → duplicate found! Else add it. Clean O(n) single pass.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block"><code>unordered_set</code> use karo. Har element ke liye: pehle se set mein hai? → duplicate! Nahi hai toh add karo. Ek hi pass mein O(n) solution. Sabse simple HashSet problem!</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">nums=[1,2,3,1] → Expected: true</div>
+        <div class="step">
+          <span class="step-num">i=0,1,2</span>
+          <div class="arr-row"><div class="a-box teal">1</div><div class="a-box teal">2</div><div class="a-box teal">3</div><div class="a-box">1</div></div>
+          <div class="step-info">set={1,2,3}. All new → add</div>
+          <span class="step-result sr-low">no dup yet</span>
+        </div>
+        <div class="step">
+          <span class="step-num">i=3, n=1</span>
+          <div class="arr-row"><div class="a-box">1</div><div class="a-box">2</div><div class="a-box">3</div><div class="a-box fail">1</div></div>
+          <div class="step-info">1 already in set! → return true</div>
+          <span class="step-result sr-eq">✅ true</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Contains Duplicate</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">bool</span> <span class="fn">containsDuplicate</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">unordered_set</span>&lt;<span class="tp">int</span>&gt; seen;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums) {
+        <span class="kw">if</span> (seen.count(x)) <span class="kw">return true</span>;  <span class="cm">// pehle dekha tha → duplicate!</span>
+        seen.insert(x);
+    }
+    <span class="kw">return false</span>;
+}
+
+<span class="cm">// Variant: Contains Duplicate II — within k distance (LeetCode 219)</span>
+<span class="tp">bool</span> <span class="fn">containsNearbyDuplicate</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> k) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; mp; <span class="cm">// value → last index</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; nums.size(); i++) {
+        <span class="kw">if</span> (mp.count(nums[i]) &amp;&amp; i - mp[nums[i]] &lt;= k)
+            <span class="kw">return true</span>;
+        mp[nums[i]] = i; <span class="cm">// last seen index update karo</span>
+    }
+    <span class="kw">return false</span>;
+}</pre>
+      </div>
+      <div class="tip">💡 Simple duplicate check ke liye <code>unordered_set</code> use karo. Jab index bhi chahiye (k distance wala) tab <code>unordered_map&lt;val, index&gt;</code>.</div>
+    </div>
+  </div>
+
+  <!-- ROMAN TO INTEGER -->
+  <div id="lb-roman">
+    <div class="sub-heading">Problem 3 — Roman to Integer</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🏛️</div>Roman to Integer<span class="badge badge-amber">LeetCode 13</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Build a lookup map of <code>char → value</code>. Traverse right to left. If current value &lt; next value → subtract (subtractive case like IV=4). Else → add. HashMap makes the char lookup O(1).</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">HashMap mein <code>char → value</code> store karo (I=1, V=5, X=10...). Right se left traverse karo. Agar current value next se choti hai → subtract karo (IV = 5-1 = 4). Badi hai → add karo. HashMap se O(1) lookup!</div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Roman to Integer</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">romanToInt</span>(<span class="tp">string</span> s) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>,<span class="tp">int</span>&gt; val = {
+        {<span class="st">'I'</span>,<span class="nm">1</span>},{<span class="st">'V'</span>,<span class="nm">5</span>},{<span class="st">'X'</span>,<span class="nm">10</span>},{<span class="st">'L'</span>,<span class="nm">50</span>},
+        {<span class="st">'C'</span>,<span class="nm">100</span>},{<span class="st">'D'</span>,<span class="nm">500</span>},{<span class="st">'M'</span>,<span class="nm">1000</span>}
+    };
+    <span class="tp">int</span> result = <span class="nm">0</span>, n = s.size();
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="cm">// next char se chota hai → subtract (e.g. IV, IX, CM)</span>
+        <span class="kw">if</span> (i + <span class="nm">1</span> &lt; n &amp;&amp; val[s[i]] &lt; val[s[i+<span class="nm">1</span>]])
+            result -= val[s[i]];
+        <span class="kw">else</span>
+            result += val[s[i]];
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+      <div class="tip">💡 HashMap yahan lookup table ki tarah use ho raha hai. Char ko value mein convert karna O(1) ho gaya. Right-to-left ya subtractive check dono kaam karta hai.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ PAGE 3 — SET BASED ═══════════════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">HashMap Patterns · Pattern 3 of 5</div>
+    <h2>🧮 Set Based</h2>
+    <p>HashSet use karo jab sirf existence check chahiye — count nahi, index nahi. O(1) membership test.</p>
+    <div class="badge-row">
+      <span class="badge badge-teal">O(1) membership</span>
+      <span class="badge badge-blue">No duplicates</span>
+      <span class="badge badge-amber">Existence check</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🎯</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">When you only need to know <b>if an element exists</b> (not how many times or at what index), use an <code>unordered_set</code>. It gives O(1) average insert, delete, and lookup. Set-based patterns shine in sequence/connectivity problems.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Jab sirf yeh jaanna ho ki "element hai ya nahi" (count ya index nahi chahiye) — <code>unordered_set</code> use karo. Insert, delete, lookup teeno O(1) average. Sequence ya connectivity problems mein set-based pattern sabse clean solution deta hai.</div>
+  </div>
+
+  <!-- LONGEST CONSECUTIVE SEQUENCE -->
+  <div id="sb-consec">
+    <div class="sub-heading">Problem 1 — Longest Consecutive Sequence</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📏</div>Longest Consecutive Sequence<span class="badge badge-teal">LeetCode 128</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">
+        Insert all numbers into a HashSet. For each number <code>n</code>, only start counting if <code>n-1</code> is NOT in the set (it's a sequence start). Then count upward: n+1, n+2, ... while they exist in the set. Track max length. O(n) total!
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Saare numbers HashSet mein daalo. Har number ke liye: sirf tab counting shuru karo jab <code>n-1</code> set mein NA ho (matlab yeh sequence ki shuruat hai). Phir n+1, n+2... count karo jab tak set mein milte rahe. Max length track karo. Total O(n)!
+      </div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">nums=[100,4,200,1,3,2] → Expected: 4 (seq: 1,2,3,4)</div>
+        <div class="step">
+          <span class="step-num">Set</span>
+          <div class="arr-row"><div class="a-box teal">1</div><div class="a-box teal">2</div><div class="a-box teal">3</div><div class="a-box teal">4</div><div class="a-box">100</div><div class="a-box">200</div></div>
+          <div class="step-info">All inserted into unordered_set</div>
+        </div>
+        <div class="step">
+          <span class="step-num">n=100</span>
+          <div class="step-info">99 in set? No → start! count 100,101? No. len=1</div>
+          <span class="step-result sr-low">len=1</span>
+        </div>
+        <div class="step">
+          <span class="step-num">n=1</span>
+          <div class="step-info">0 in set? No → start! count 1,2,3,4,5? No. len=4</div>
+          <span class="step-result sr-eq">✅ len=4</span>
+        </div>
+        <div class="step">
+          <span class="step-num">n=2,3,4</span>
+          <div class="step-info">n-1 in set → skip (not sequence start)</div>
+          <span class="step-result sr-pink">skip</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Longest Consecutive Sequence</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">longestConsecutive</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">unordered_set</span>&lt;<span class="tp">int</span>&gt; numSet(nums.begin(), nums.end());
+    <span class="tp">int</span> maxLen = <span class="nm">0</span>;
+
+    <span class="kw">for</span> (<span class="tp">int</span> n : numSet) {
+        <span class="cm">// Sirf sequence start se count karo</span>
+        <span class="kw">if</span> (!numSet.count(n - <span class="nm">1</span>)) {
+            <span class="tp">int</span> cur = n, len = <span class="nm">1</span>;
+            <span class="kw">while</span> (numSet.count(cur + <span class="nm">1</span>)) {
+                cur++; len++;
+            }
+            maxLen = max(maxLen, len);
+        }
+    }
+    <span class="kw">return</span> maxLen;
+}</pre>
+      </div>
+      <div class="tip">💡 Key trick: <code>n-1</code> set mein nahi hai → yahi sequence ka start hai. Agar start se hi count karenge toh har number sirf ek baar process hoga → O(n)!</div>
+      <div class="warn">⚠️ Sorting se O(n log n) hoga. HashSet approach O(n) hai — interviews mein yahi expect karte hain!</div>
+    </div>
+  </div>
+
+  <!-- INTERSECTION OF ARRAYS -->
+  <div id="sb-intersect">
+    <div class="sub-heading">Problem 2 — Intersection of Two Arrays</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🔗</div>Intersection of Two Arrays<span class="badge badge-teal">LeetCode 349</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Insert all elements of <code>nums1</code> into a HashSet. Iterate through <code>nums2</code> — if element exists in set → add to result set (to avoid duplicates). Return result as vector.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block"><code>nums1</code> ke saare elements ek set mein daalo. <code>nums2</code> traverse karo — jo element set mein mila woh dono arrays mein common hai! Result set mein daalo (duplicates avoid karne ke liye). Ant mein vector mein convert karo.</div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Intersection of Two Arrays</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">intersection</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums1, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums2) {
+    <span class="tp">unordered_set</span>&lt;<span class="tp">int</span>&gt; s(nums1.begin(), nums1.end());
+    <span class="tp">unordered_set</span>&lt;<span class="tp">int</span>&gt; result;
+
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums2)
+        <span class="kw">if</span> (s.count(x)) result.insert(x); <span class="cm">// common element mila!</span>
+
+    <span class="kw">return</span> {result.begin(), result.end()};
+}
+
+<span class="cm">// Variant: Intersection II — with duplicates (LeetCode 350)</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">intersect</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums1, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums2) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; freq;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums1) freq[x]++;       <span class="cm">// nums1 ki frequency</span>
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; res;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums2) {
+        <span class="kw">if</span> (freq[x] &gt; <span class="nm">0</span>) {               <span class="cm">// nums1 mein bacha hai?</span>
+            res.push_back(x);
+            freq[x]--;                    <span class="cm">// ek use ho gaya</span>
+        }
+    }
+    <span class="kw">return</span> res;
+}</pre>
+      </div>
+      <div class="tip">💡 Unique intersection → set+set. Duplicate counts ke saath intersection → map with frequency decrement.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ PAGE 4 — INDEX MAPPING ═══════════════════ -->
+<div class="page" id="p4">
+  <div class="page-header">
+    <div class="breadcrumb">HashMap Patterns · Pattern 4 of 5</div>
+    <h2>📍 Index Mapping</h2>
+    <p>HashMap mein value ke saath uska index store karo — prefix sum + index problems ke liye essential.</p>
+    <div class="badge-row">
+      <span class="badge badge-pink">Prefix Sum combo</span>
+      <span class="badge badge-blue">O(n) time</span>
+      <span class="badge badge-amber">Subarray problems</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🗺️</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Store <code>value → index</code> in the map (not just existence). This is powerful when combined with <b>prefix sums</b>. If prefix sum at index <code>j</code> equals prefix sum at earlier index <code>i</code>, then subarray <code>(i, j]</code> has sum = 0 (or target). O(n) solution for O(n²) problems!</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Map mein <code>value → index</code> store karo. Yeh <b>prefix sum</b> ke saath combination mein bahut powerful hai. Agar prefix[j] == prefix[i] (i &lt; j) toh subarray (i, j] ka sum = 0. Agar prefix[j] - prefix[i] == k toh sum = k. O(n²) problems ko O(n) mein solve karo!</div>
+  </div>
+
+  <!-- SUBARRAY SUM EQUALS K -->
+  <div id="im-subarray">
+    <div class="sub-heading">Problem 1 — Subarray Sum Equals K</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--pink-bg)">∑</div>Subarray Sum = K<span class="badge badge-pink">LeetCode 560</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">
+        Maintain prefix sum. For each index <code>i</code>, we want to find how many previous indices <code>j</code> exist where <code>prefixSum[i] - prefixSum[j] == k</code>, i.e., <code>prefixSum[j] == prefixSum[i] - k</code>.<br>
+        Store <code>prefixSum → count</code> in map. Initialize map with <code>{0:1}</code> (empty subarray base case).
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Prefix sum maintain karo. Har index <code>i</code> par check karo: pehle kitni baar <code>prefixSum[i] - k</code> wala prefix sum aaya? Woh saare subarrays sum=k dete hain!<br>
+        Map mein <code>prefixSum → count</code> store karo. <code>{0:1}</code> se initialize karo (empty prefix base case).
+      </div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">nums=[1,2,3], k=3 → Expected: 2 (subarrays [1,2] and [3])</div>
+        <div class="step">
+          <span class="step-num">Init</span>
+          <div class="kv-row"><div class="kv-key">prefix=0</div><div class="kv-arrow">→</div><div class="kv-val">count=1</div></div>
+          <div class="step-info">map={0:1} base case</div>
+        </div>
+        <div class="step">
+          <span class="step-num">i=0, n=1</span>
+          <div class="arr-row"><div class="a-box hi">1</div><div class="a-box">2</div><div class="a-box">3</div></div>
+          <div class="step-info">prefix=1, need=1-3=-2, map[-2]=0 → count+=0. Store {1:1}</div>
+          <span class="step-result sr-low">count=0</span>
+        </div>
+        <div class="step">
+          <span class="step-num">i=1, n=2</span>
+          <div class="arr-row"><div class="a-box">1</div><div class="a-box hi">2</div><div class="a-box">3</div></div>
+          <div class="step-info">prefix=3, need=3-3=0, map[0]=1 → count+=1 ✅ [1,2]</div>
+          <span class="step-result sr-eq">count=1</span>
+        </div>
+        <div class="step">
+          <span class="step-num">i=2, n=3</span>
+          <div class="arr-row"><div class="a-box">1</div><div class="a-box">2</div><div class="a-box hi">3</div></div>
+          <div class="step-info">prefix=6, need=6-3=3, map[3]=1 → count+=1 ✅ [3]</div>
+          <span class="step-result sr-eq">total=2 ✅</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Subarray Sum = K</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">subarraySum</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> k) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; prefixCount;
+    prefixCount[<span class="nm">0</span>] = <span class="nm">1</span>;  <span class="cm">// empty prefix base case</span>
+
+    <span class="tp">int</span> prefix = <span class="nm">0</span>, count = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums) {
+        prefix += x;
+        count += prefixCount[prefix - k]; <span class="cm">// pehle kitne aise prefix the?</span>
+        prefixCount[prefix]++;            <span class="cm">// current prefix store karo</span>
+    }
+    <span class="kw">return</span> count;
+}</pre>
+      </div>
+      <div class="tip">💡 <code>{0:1}</code> initialization critical hai — agar poora subarray [0..i] ka sum == k ho tab bhi count mile. Yahi base case hai!</div>
+      <div class="warn">⚠️ Yeh approach negative numbers ke liye bhi kaam karta hai — sliding window nahi karta negatives ke saath!</div>
+    </div>
+  </div>
+
+  <!-- FIRST NON-REPEATING -->
+  <div id="im-first">
+    <div class="sub-heading">Problem 2 — First Non-Repeating Character</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">1️⃣</div>First Non-Repeating Char<span class="badge badge-amber">LeetCode 387</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Two-pass approach: Pass 1 → build frequency map. Pass 2 → scan string left to right, return index of first character with frequency = 1.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">Do pass: Pass 1 → frequency map banao. Pass 2 → left se right scan karo, pehla character jiska frequency = 1 ho uska index return karo. Map ne index dhundna O(1) kar diya!</div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · First Non-Repeating Character</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">firstUniqChar</span>(<span class="tp">string</span> s) {
+    <span class="tp">int</span> freq[<span class="nm">26</span>] = {<span class="nm">0</span>};
+    <span class="kw">for</span> (<span class="tp">char</span> c : s) freq[c - <span class="st">'a'</span>]++;  <span class="cm">// Pass 1: count karo</span>
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; s.size(); i++)    <span class="cm">// Pass 2: pehla unique dhundo</span>
+        <span class="kw">if</span> (freq[s[i] - <span class="st">'a'</span>] == <span class="nm">1</span>)
+            <span class="kw">return</span> i;
+
+    <span class="kw">return</span> -<span class="nm">1</span>;
+}
+
+<span class="cm">// Stream version: First Unique Character in a Data Stream</span>
+<span class="cm">// LinkedHashMap (ordered map in C++) use karo</span>
+<span class="kw">class</span> <span class="tp">FirstUnique</span> {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; freq;
+    <span class="tp">queue</span>&lt;<span class="tp">int</span>&gt; q;   <span class="cm">// insertion order maintain</span>
+<span class="kw">public</span>:
+    <span class="fn">FirstUnique</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+        <span class="kw">for</span> (<span class="tp">int</span> x : nums) add(x);
+    }
+    <span class="tp">int</span> <span class="fn">showFirstUnique</span>() {
+        <span class="kw">while</span> (!q.empty() &amp;&amp; freq[q.front()] &gt; <span class="nm">1</span>) q.pop();
+        <span class="kw">return</span> q.empty() ? -<span class="nm">1</span> : q.front();
+    }
+    <span class="kw">void</span> <span class="fn">add</span>(<span class="tp">int</span> val) { freq[val]++; q.push(val); }
+};</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ PAGE 5 — GROUPING PATTERN ═══════════════════ -->
+<div class="page" id="p5">
+  <div class="page-header">
+    <div class="breadcrumb">HashMap Patterns · Pattern 5 of 5</div>
+    <h2>🗂️ Grouping Pattern</h2>
+    <p>Similar elements ko ek saath group karo — map key ek "canonical form" hota hai jo similar elements share karte hain.</p>
+    <div class="badge-row">
+      <span class="badge badge-orange">Canonical Key</span>
+      <span class="badge badge-teal">O(n·k) time</span>
+      <span class="badge badge-blue">Cluster problems</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--orange-bg)">🧩</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Create a <b>canonical key</b> that represents a "class" of equivalent elements. All elements that should be grouped together will produce the same key. Store <code>key → list of elements</code>. Examples: sorted string as key for anagrams, frequency pattern as key for isomorphic strings.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Ek <b>canonical key</b> banao jo similar elements ki "class" represent kare. Jo bhi elements ek group mein jaane chahiye woh same key produce karenge. <code>key → list of elements</code> store karo. Example: anagrams ke liye sorted string key, isomorphic ke liye character mapping pattern.</div>
+  </div>
+
+  <!-- GROUP ANAGRAMS -->
+  <div id="gp-anagram">
+    <div class="sub-heading">Problem 1 — Group Anagrams</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--orange-bg)">📦</div>Group Anagrams<span class="badge badge-orange">LeetCode 49</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">
+        Canonical key = <b>sorted version of the string</b>. All anagrams produce the same sorted string. Map each sorted key to a list of original strings. Final answer = all map values.
+        <br><br>
+        <b>Optimization</b>: Instead of sorting, use a character frequency array of size 26 as the key — O(k) instead of O(k log k).
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Canonical key = <b>string ko sort karo</b>. Sare anagrams ek hi sorted string produce karte hain. Sorted key → original strings ki list map karo. Final answer = sab map values.<br><br>
+        <b>Optimization</b>: Sort karne ki jagah char frequency array (size 26) ko key banao — O(k) time, O(k log k) se better!
+      </div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">words=["eat","tea","tan","ate","nat","bat"]</div>
+        <div class="step">
+          <span class="step-num">"eat"</span>
+          <div class="step-info">sorted → "aet" → group["aet"] = ["eat"]</div>
+          <span class="step-result sr-low">key="aet"</span>
+        </div>
+        <div class="step">
+          <span class="step-num">"tea"</span>
+          <div class="step-info">sorted → "aet" → group["aet"] = ["eat","tea"]</div>
+          <span class="step-result sr-pink">same key!</span>
+        </div>
+        <div class="step">
+          <span class="step-num">"tan"</span>
+          <div class="step-info">sorted → "ant" → group["ant"] = ["tan"]</div>
+          <span class="step-result sr-low">key="ant"</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Final</span>
+          <div class="kv-row">
+            <div class="kv-key">"aet"</div><div class="kv-arrow">→</div><div class="kv-val">[eat,tea,ate]</div>
+          </div>
+          <div class="kv-row">
+            <div class="kv-key">"ant"</div><div class="kv-arrow">→</div><div class="kv-val">[tan,nat]</div>
+          </div>
+          <div class="kv-row">
+            <div class="kv-key">"abt"</div><div class="kv-arrow">→</div><div class="kv-val">[bat]</div>
+          </div>
+          <span class="step-result sr-eq">✅ 3 groups</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Group Anagrams</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&gt; <span class="fn">groupAnagrams</span>(<span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&amp; strs) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">string</span>, <span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&gt; groups;
+
+    <span class="kw">for</span> (<span class="tp">string</span>&amp; s : strs) {
+        <span class="tp">string</span> key = s;
+        sort(key.begin(), key.end());  <span class="cm">// canonical key = sorted string</span>
+        groups[key].push_back(s);
+    }
+
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&gt; result;
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; [key, group] : groups)
+        result.push_back(group);
+    <span class="kw">return</span> result;
+}
+
+<span class="cm">// O(n*k) version — freq array as key (faster!)</span>
+<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&gt; <span class="fn">groupAnagramsFast</span>(<span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&amp; strs) {
+    <span class="tp">map</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;, <span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&gt; groups;
+
+    <span class="kw">for</span> (<span class="tp">string</span>&amp; s : strs) {
+        <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; freq(<span class="nm">26</span>, <span class="nm">0</span>);
+        <span class="kw">for</span> (<span class="tp">char</span> c : s) freq[c - <span class="st">'a'</span>]++; <span class="cm">// freq array = canonical key</span>
+        groups[freq].push_back(s);
+    }
+
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&gt; result;
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; [key, group] : groups)
+        result.push_back(group);
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+      <div class="tip">💡 Grouping pattern ki beauty: do strings anagram hain ya nahi — directly compare karne ki zaroorat nahi! Bas same canonical key produce karein → automatically grouped!</div>
+    </div>
+  </div>
+
+  <!-- ISOMORPHIC STRINGS -->
+  <div id="gp-isomorphic">
+    <div class="sub-heading">Problem 2 — Isomorphic Strings</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">↔️</div>Isomorphic Strings<span class="badge badge-blue">LeetCode 205</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Two strings are isomorphic if each character in <code>s</code> can be consistently replaced to get <code>t</code>. Use two maps: <code>s→t</code> and <code>t→s</code> (both directions must be consistent). A char in <code>s</code> must always map to the same char in <code>t</code>, and vice versa.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">Do strings isomorphic hain agar <code>s</code> ka har character consistently replace karke <code>t</code> ban sake. Do maps banao: <code>s→t</code> aur <code>t→s</code> (dono direction consistent hone chahiye). Ek char ka mapping change nahi hona chahiye.</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">s="egg", t="add" → true | s="foo", t="bar" → false</div>
+        <div class="step">
+          <span class="step-num">e→a, a→e</span>
+          <div class="arr-row"><div class="a-box hi">e</div><div class="a-box">g</div><div class="a-box">g</div></div>
+          <div class="kv-row"><div class="kv-key">e</div><div class="kv-arrow">→</div><div class="kv-val">a</div><div class="kv-key">a</div><div class="kv-arrow">→</div><div class="kv-val">e</div></div>
+        </div>
+        <div class="step">
+          <span class="step-num">g→d, d→g</span>
+          <div class="arr-row"><div class="a-box">e</div><div class="a-box hi">g</div><div class="a-box hi">g</div></div>
+          <div class="step-info">g→d both times, consistent ✅</div>
+          <span class="step-result sr-eq">✅ true</span>
+        </div>
+        <div class="step">
+          <span class="step-num">foo/bar</span>
+          <div class="step-info">o→o (idx 1), o→a (idx 2) — conflict!</div>
+          <span class="step-result sr-high">❌ false</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Isomorphic Strings</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">bool</span> <span class="fn">isIsomorphic</span>(<span class="tp">string</span> s, <span class="tp">string</span> t) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>,<span class="tp">char</span>&gt; sToT, tToS;
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; s.size(); i++) {
+        <span class="tp">char</span> sc = s[i], tc = t[i];
+
+        <span class="cm">// s→t mapping check</span>
+        <span class="kw">if</span> (sToT.count(sc) &amp;&amp; sToT[sc] != tc) <span class="kw">return false</span>;
+        <span class="cm">// t→s mapping check (reverse)</span>
+        <span class="kw">if</span> (tToS.count(tc) &amp;&amp; tToS[tc] != sc) <span class="kw">return false</span>;
+
+        sToT[sc] = tc;
+        tToS[tc] = sc;
+    }
+    <span class="kw">return true</span>;
+}
+
+<span class="cm">// Cleaner: normalize both strings to index-pattern, compare</span>
+<span class="tp">string</span> <span class="fn">normalize</span>(<span class="tp">string</span> s) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>,<span class="tp">int</span>&gt; mp;
+    <span class="tp">string</span> pattern;
+    <span class="tp">int</span> idx = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">char</span> c : s) {
+        <span class="kw">if</span> (!mp.count(c)) mp[c] = idx++;
+        pattern += <span class="tp">to_string</span>(mp[c]) + <span class="st">","</span>;
+    }
+    <span class="kw">return</span> pattern;
+}
+<span class="cm">// normalize("egg") == normalize("add") → "0,1,1," == "0,1,1,"</span></pre>
+      </div>
+      <div class="tip">💡 Do maps mandatory hain! Sirf s→t map rakhne se "ab" aur "aa" ka t="cc" pass ho jaata — lekin "a→c" aur "b→c" allowed nahi (two chars same char pe map nahi kar sakte).</div>
+    </div>
+  </div>
+
+  <!-- WORD PATTERN -->
+  <div id="gp-wordpattern">
+    <div class="sub-heading">Problem 3 — Word Pattern</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--orange-bg)">🔡</div>Word Pattern<span class="badge badge-orange">LeetCode 290</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Same concept as Isomorphic Strings but between a character pattern and words. Map <code>char → word</code> and <code>word → char</code> bidirectionally. If any mapping conflicts → false.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">Isomorphic Strings jaisa hi — but char aur word ke beech mapping hai. <code>char → word</code> aur <code>word → char</code> dono direction maintain karo. Koi bhi conflict aaya toh false!</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">pattern="abba", s="dog cat cat dog" → true</div>
+        <div class="step">
+          <span class="step-num">a→dog</span>
+          <div class="kv-row"><div class="kv-key">a</div><div class="kv-arrow">→</div><div class="kv-val">dog</div><div class="kv-key">dog</div><div class="kv-arrow">→</div><div class="kv-val">a</div></div>
+        </div>
+        <div class="step">
+          <span class="step-num">b→cat</span>
+          <div class="kv-row"><div class="kv-key">b</div><div class="kv-arrow">→</div><div class="kv-val">cat</div><div class="kv-key">cat</div><div class="kv-arrow">→</div><div class="kv-val">b</div></div>
+        </div>
+        <div class="step">
+          <span class="step-num">b→cat ✓</span><div class="step-info">Already mapped, consistent ✅</div>
+        </div>
+        <div class="step">
+          <span class="step-num">a→dog ✓</span><div class="step-info">Already mapped, consistent ✅</div>
+          <span class="step-result sr-eq">✅ true</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Word Pattern</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">bool</span> <span class="fn">wordPattern</span>(<span class="tp">string</span> pattern, <span class="tp">string</span> s) {
+    <span class="tp">istringstream</span> iss(s);
+    <span class="tp">vector</span>&lt;<span class="tp">string</span>&gt; words;
+    <span class="tp">string</span> w;
+    <span class="kw">while</span> (iss &gt;&gt; w) words.push_back(w);  <span class="cm">// string split karo</span>
+
+    <span class="kw">if</span> (pattern.size() != words.size()) <span class="kw">return false</span>;
+
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>,<span class="tp">string</span>&gt; cToW;
+    <span class="tp">unordered_map</span>&lt;<span class="tp">string</span>,<span class="tp">char</span>&gt; wToC;
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; pattern.size(); i++) {
+        <span class="tp">char</span> c = pattern[i];
+        <span class="tp">string</span>&amp; word = words[i];
+
+        <span class="kw">if</span> (cToW.count(c) &amp;&amp; cToW[c] != word)   <span class="kw">return false</span>;
+        <span class="kw">if</span> (wToC.count(word) &amp;&amp; wToC[word] != c) <span class="kw">return false</span>;
+
+        cToW[c] = word;
+        wToC[word] = c;
+    }
+    <span class="kw">return true</span>;
+}</pre>
+      </div>
+      <div class="tip">💡 Isomorphic Strings = char↔char mapping. Word Pattern = char↔word mapping. Same algorithm, different data types!</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ PAGE 6 — COMPARISON TABLE ═══════════════════ -->
+<div class="page" id="p6">
+  <div class="page-header">
+    <div class="breadcrumb">HashMap Patterns · Quick Reference</div>
+    <h2>📊 HashMap Patterns — Comparison</h2>
+    <p>Kaunsa pattern kab use karna hai — ek jagah sab kuch.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🗺️</div>Pattern Decision Guide</div>
+    <table class="tbl">
+      <tr>
+        <th>Pattern</th><th>Data Structure</th><th>Key stores</th><th>Value stores</th><th>Use when</th>
+      </tr>
+      <tr>
+        <td><span style="color:var(--amber);font-weight:600">Frequency Based</span></td>
+        <td>unordered_map</td>
+        <td>element</td>
+        <td>count</td>
+        <td>Count occurrences, top-K, majority element, anagram check</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--blue);font-weight:600">Lookup Based</span></td>
+        <td>unordered_map / set</td>
+        <td>element</td>
+        <td>index / bool</td>
+        <td>Two Sum, seen-before check, O(1) value lookup</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--teal);font-weight:600">Set Based</span></td>
+        <td>unordered_set</td>
+        <td>element</td>
+        <td>— (existence)</td>
+        <td>Duplicate check, intersection, longest consecutive</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--pink);font-weight:600">Index Mapping</span></td>
+        <td>unordered_map</td>
+        <td>prefix sum / value</td>
+        <td>index / count</td>
+        <td>Subarray sum = K, first occurrence, prefix-sum problems</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--orange);font-weight:600">Grouping Pattern</span></td>
+        <td>unordered_map</td>
+        <td>canonical key</td>
+        <td>list of elements</td>
+        <td>Group anagrams, isomorphic check, word pattern</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">⚡</div>Complexity Summary</div>
+    <table class="tbl">
+      <tr>
+        <th>Problem</th><th>Pattern</th><th>Time</th><th>Space</th><th>LeetCode</th>
+      </tr>
+      <tr><td>Two Sum</td><td>Lookup / Frequency</td><td>O(n)</td><td>O(n)</td><td>#1</td></tr>
+      <tr><td>Top K Frequent</td><td>Frequency + Bucket</td><td>O(n)</td><td>O(n)</td><td>#347</td></tr>
+      <tr><td>Valid Anagram</td><td>Frequency</td><td>O(n)</td><td>O(1)*</td><td>#242</td></tr>
+      <tr><td>Contains Duplicate</td><td>Set Based</td><td>O(n)</td><td>O(n)</td><td>#217</td></tr>
+      <tr><td>Longest Consecutive</td><td>Set Based</td><td>O(n)</td><td>O(n)</td><td>#128</td></tr>
+      <tr><td>Subarray Sum = K</td><td>Index Mapping</td><td>O(n)</td><td>O(n)</td><td>#560</td></tr>
+      <tr><td>Group Anagrams</td><td>Grouping</td><td>O(n·k log k)</td><td>O(n·k)</td><td>#49</td></tr>
+      <tr><td>Isomorphic Strings</td><td>Grouping</td><td>O(n)</td><td>O(1)*</td><td>#205</td></tr>
+      <tr><td>Word Pattern</td><td>Grouping</td><td>O(n)</td><td>O(n)</td><td>#290</td></tr>
+      <tr><td>Roman to Integer</td><td>Lookup</td><td>O(n)</td><td>O(1)*</td><td>#13</td></tr>
+    </table>
+    <div class="info" style="margin-top:12px">* O(1) space — fixed charset (26 letters / 7 Roman symbols) use hota hai, input size se independent.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🧠</div>Pattern Pehchano — Decision Tree</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish — Kab kya use karo</div>
+    <div class="hi-block">
+      <b>Count / kitni baar aaya?</b> → Frequency Based (map: element → count)<br>
+      <b>Pehle dekha tha? / complement dhundhna?</b> → Lookup Based (map: element → index)<br>
+      <b>Sirf hai ya nahi?</b> → Set Based (unordered_set)<br>
+      <b>Subarray sum / prefix sum?</b> → Index Mapping (map: prefixSum → index/count)<br>
+      <b>Similar cheezein group karo?</b> → Grouping (map: canonical_key → list)
+    </div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English — Quick Decision</div>
+    <div class="en-block">
+      <b>"How many times?"</b> → Frequency (map: element → count)<br>
+      <b>"Have I seen this? / Find complement?"</b> → Lookup (map: element → index)<br>
+      <b>"Does it exist?"</b> → Set Based (unordered_set)<br>
+      <b>"Subarray with sum K?"</b> → Index Mapping (map: prefixSum → count)<br>
+      <b>"Group similar things?"</b> → Grouping (map: canonical_key → list)
+    </div>
+    <div class="grid3" style="margin-top:16px">
+      <div class="mini-card"><b style="color:var(--amber)">unordered_map</b>Average O(1) insert/lookup. Worst O(n) (hash collision). Use jab count ya value chahiye.</div>
+      <div class="mini-card"><b style="color:var(--teal)">unordered_set</b>Sirf existence check. unordered_map se thoda lighter. Duplicate removal aur membership test ke liye best.</div>
+      <div class="mini-card"><b style="color:var(--blue)">ordered map/set</b>O(log n) operations lekin sorted order maintain karta hai. Jab sorted traversal chahiye tab use karo.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">⚠️</div>Common Mistakes &amp; Gotchas</div>
+    <div class="warn">⚠️ <b>Two Sum:</b> Pehle check karo, phir insert. Warna same index pair return ho sakta hai (e.g. target=6, arr=[3,3]).</div>
+    <div class="warn">⚠️ <b>Subarray Sum:</b> Map ko <code>{0:1}</code> se initialize karna mat bhoolo. Warna poore prefix ke subarrays miss ho jaayenge.</div>
+    <div class="warn">⚠️ <b>Isomorphic / Word Pattern:</b> Sirf ek direction ka map rakhoge toh "ab" → "aa" jaise cases fail ho jaayenge. Dono direction mandatory!</div>
+    <div class="warn">⚠️ <b>Longest Consecutive:</b> Sorting mat karo — O(n log n) ho jaayega. HashSet approach O(n) hai aur expected answer hai interviews mein.</div>
+    <div class="tip">💡 <b>Pro tip:</b> <code>unordered_map</code> mein non-existent key access karne par (e.g. <code>mp[x]</code>) automatically 0 insert ho jaata hai. Kabhi kabhi yeh bug ban sakta hai. Safe check ke liye <code>mp.count(x)</code> ya <code>mp.find(x) != mp.end()</code> use karo.</div>
+  </div>
+</div>
+
+</main>
+
+<script>
+  const pages = ['p1','p2','p3','p4','p5','p6'];
+  const subs  = ['sub1','sub2','sub3','sub4','sub5'];
+
+  function showPage(id, btn) {
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => document.getElementById(s).style.display = i===idx?'block':'none');
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => document.getElementById(s).style.display = i===0?'block':'none');
+</script>
+</body>
+</html>

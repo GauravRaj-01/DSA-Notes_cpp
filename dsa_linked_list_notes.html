@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Linked List Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117; --bg2: #161b27; --bg3: #1e2535; --border: #2a3245;
+    --text: #e8eaf6; --muted: #8892a4;
+    --teal: #1dd6a0; --teal-bg: #0d2e24;
+    --purple: #a78bfa; --purple-bg: #1e1633;
+    --amber: #fbbf24; --amber-bg: #2a1f0a;
+    --blue: #60a5fa; --blue-bg: #0e1f35;
+    --coral: #fb7185; --coral-bg: #2a0e16;
+    --green: #86efac; --green-bg: #0b2018;
+    --pink: #f472b6; --pink-bg: #2a0e1e;
+    --code-bg: #0a0d14;
+    --kw: #f9a870; --fn: #79c0ff; --cm: #5a6478;
+    --tp: #f472b6; --str: #a5d6a7; --nm: #ce93d8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 14px; }
+
+  /* SIDEBAR */
+  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 245px; background: var(--bg2); border-right: 1px solid var(--border); padding: 24px 0; overflow-y: auto; z-index: 100; }
+  .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .sidebar-logo h1 { font-size: 13px; font-weight: 600; color: var(--pink); letter-spacing: .08em; text-transform: uppercase; }
+  .sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .nav-section { padding: 0 12px; margin-bottom: 8px; }
+  .nav-section-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; padding: 0 8px; margin-bottom: 4px; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 13px; color: var(--muted); cursor: pointer; transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+  .nav-link:hover { background: var(--bg3); color: var(--text); }
+  .nav-link.active { background: var(--bg3); color: var(--pink); font-weight: 500; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .sub-links { padding-left: 24px; margin-top: 2px; }
+  .sub-link { display: block; padding: 4px 10px; font-size: 12px; color: var(--muted); cursor: pointer; border-radius: 6px; transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+  .sub-link:hover { color: var(--text); background: var(--bg3); }
+
+  /* MAIN */
+  .main { margin-left: 245px; padding: 40px 48px; max-width: 980px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .page-header .breadcrumb { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .page-header h2 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .page-header p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+  .badge-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid #1a5c44; }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid #3d2d6e; }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid #6b4c0f; }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid #1a3a5c; }
+  .badge-coral { background: var(--coral-bg); color: var(--coral); border: 1px solid #5c1a27; }
+  .badge-pink { background: var(--pink-bg); color: var(--pink); border: 1px solid #5c1a3a; }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #155a30; }
+
+  /* CARDS */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card-title .icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+  /* LANG BLOCKS */
+  .lang-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin: 12px 0 5px; }
+  .en-block { background: var(--bg3); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; line-height: 1.8; color: var(--text); margin-bottom: 8px; }
+  .hi-block { background: var(--purple-bg); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; line-height: 1.8; color: #c4b5fd; margin-bottom: 8px; }
+
+  /* CODE */
+  .code-wrap { position: relative; margin: 12px 0; }
+  .code-label { background: var(--bg3); border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0; padding: 7px 14px; font-size: 11px; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+  .copy-btn { font-size: 11px; padding: 3px 10px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg); color: var(--muted); cursor: pointer; transition: all .15s; }
+  .copy-btn:hover { color: var(--teal); border-color: var(--teal); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 0 0 8px 8px; padding: 16px 18px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; }
+  .kw { color: var(--kw); } .fn { color: var(--fn); } .cm { color: var(--cm); font-style: italic; }
+  .tp { color: var(--tp); } .st { color: var(--str); } .nm { color: var(--nm); }
+
+  /* DRY RUN */
+  .dry-run { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin: 12px 0; overflow-x: auto; }
+  .dry-run-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+  .step { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .step-num { font-size: 10px; font-weight: 600; color: var(--muted); min-width: 52px; }
+  .arr-row { display: flex; gap: 4px; align-items: flex-end; flex-wrap: wrap; }
+  .a-box { min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); color: var(--muted); padding: 0 4px; }
+  .a-box.L { background: var(--teal-bg); color: var(--teal); border-color: #1a5c44; }
+  .a-box.R { background: var(--purple-bg); color: var(--purple); border-color: #3d2d6e; }
+  .a-box.found { background: var(--green-bg); color: var(--green); border-color: #155a30; }
+  .a-box.hi { background: var(--amber-bg); color: var(--amber); border-color: #6b4c0f; }
+  .a-box.match { background: var(--pink-bg); color: var(--pink); border-color: #5c1a3a; }
+  .a-box.fail { background: var(--coral-bg); color: var(--coral); border-color: #5c1a27; }
+  .ptr-lbl { font-size: 9px; color: var(--muted); margin-top: 1px; text-align: center; }
+  .step-info { font-size: 12px; color: var(--muted); flex: 1; min-width: 160px; }
+  .step-result { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .sr-high { background: var(--coral-bg); color: var(--coral); }
+  .sr-low { background: var(--amber-bg); color: var(--amber); }
+  .sr-eq { background: var(--green-bg); color: var(--green); }
+  .sr-pink { background: var(--pink-bg); color: var(--pink); }
+
+  /* NODE ARROW */
+  .node-arrow { font-size: 14px; color: var(--border); align-self: center; font-weight: 600; padding: 0 2px; }
+
+  /* TABLE */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  .tbl th { background: var(--bg3); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.6; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: var(--bg3); }
+
+  /* MISC */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+  .tip { border-left: 3px solid var(--teal); background: var(--teal-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #6ee7c0; margin: 12px 0; line-height: 1.7; }
+  .warn { border-left: 3px solid var(--amber); background: var(--amber-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #fcd97a; margin: 12px 0; line-height: 1.7; }
+  .info { border-left: 3px solid var(--blue); background: var(--blue-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #93c5fd; margin: 12px 0; line-height: 1.7; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .mini-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.7; }
+  .mini-card b { font-weight: 600; display: block; margin-bottom: 4px; }
+  .sub-heading { font-size: 14px; font-weight: 600; margin: 22px 0 10px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .sub-heading::before { content: ''; width: 3px; height: 14px; border-radius: 2px; background: var(--pink); display: block; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg3); padding: 1px 5px; border-radius: 4px; color: var(--teal); }
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+  .pill { padding: 3px 12px; border-radius: 20px; font-size: 12px; border: 1px solid var(--border); color: var(--muted); background: var(--bg3); }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  @media(max-width:768px){
+    .sidebar{display:none;}
+    .main{margin-left:0;padding:20px 16px;}
+    .grid2,.grid3{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Linked List · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Linked List Patterns</div>
+
+    <!-- PAGE 1: POINTER TECHNIQUES -->
+    <button class="nav-link active" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>Pointer Techniques
+    </button>
+    <div class="sub-links" id="sub1">
+      <button class="sub-link" onclick="scrollTo2('ll-middle')">Finding Middle</button>
+      <button class="sub-link" onclick="scrollTo2('ll-cycle')">Cycle Detection</button>
+    </div>
+
+    <!-- PAGE 2: REVERSAL -->
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Reversals
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('ll-rev-full')">Full Reverse</button>
+      <button class="sub-link" onclick="scrollTo2('ll-rev-partial')">Partial (k-group)</button>
+    </div>
+
+    <!-- PAGE 3: MERGING -->
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#f472b6"></span>Merge Lists
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('ll-merge-two')">Merge Two Lists</button>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ═══════════════════════ PAGE 1 — POINTER TECHNIQUES ═══════════════════════ -->
+  <div class="page active" id="p1">
+    <div class="page-header">
+      <div class="breadcrumb">Linked List · Volume 4 · Page 1 of 3</div>
+      <h2>Linked List Pointer Techniques</h2>
+      <p>Pointers ko relative speeds ya bounds me manipulate karke elements check karne wali algorithms. Isme Fast &amp; Slow (Hare &amp; Tortoise) pointer pattern sabse dominant hai.</p>
+      <div class="badge-row">
+        <span class="badge badge-amber">Fast &amp; Slow Pointers</span>
+        <span class="badge badge-blue">O(N) Time complexity</span>
+        <span class="badge badge-teal">O(1) Auxiliary Space</span>
+      </div>
+    </div>
+
+    <!-- FINDING MIDDLE -->
+    <div id="ll-middle">
+      <div class="sub-heading">Pattern 1 — Finding Middle of a Linked List</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--amber-bg)">📍</div>Middle of List<span class="badge badge-amber">LeetCode 876</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Concept</div>
+        <div class="en-block">
+          Use two pointers, <code>slow</code> and <code>fast</code>, starting at the head of the linked list. The <code>slow</code> pointer moves one step at a time, while the <code>fast</code> pointer moves two steps. By the time the <code>fast</code> pointer reaches the end, the <code>slow</code> pointer will be exactly at the middle node of the list.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Linked list ke start pe do pointers rakho: <code>slow</code> aur <code>fast</code>. <br>
+          **Logic**: <code>slow</code> ek time me 1 step chalta hai aur <code>fast</code> ek time me 2 steps. Jab <code>fast</code> pointer list ke end (aakhri node ya NULL) par pahunchega, tab tak <code>slow</code> pointer bilkul center (middle) node pe hoga! Kyunki fast ki speed slow se double hai.
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- DRY RUN -->
+        <div class="dry-run">
+          <div class="dry-run-title">List = [1] ➔ [2] ➔ [3] ➔ [4] ➔ [5] → Trace</div>
+          <div class="step">
+            <span class="step-num">Init</span>
+            <div class="arr-row">
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">1</div><div class="ptr-lbl" style="color:var(--teal)">S, F</div></div>
+              <div class="node-arrow">➔</div><div class="a-box">2</div>
+              <div class="node-arrow">➔</div><div class="a-box">3</div>
+              <div class="node-arrow">➔</div><div class="a-box">4</div>
+              <div class="node-arrow">➔</div><div class="a-box">5</div>
+            </div>
+            <div class="step-info">Both pointers start at Head.</div>
+            <span class="step-result sr-low">Step 0</span>
+          </div>
+          <div class="step">
+            <span class="step-num">Step 1</span>
+            <div class="arr-row">
+              <div class="a-box">1</div>
+              <div class="node-arrow">➔</div><div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">2</div><div class="ptr-lbl" style="color:var(--teal)">S</div></div>
+              <div class="node-arrow">➔</div><div style="display:flex;flex-direction:column;align-items:center"><div class="a-box R">3</div><div class="ptr-lbl" style="color:var(--purple)">F</div></div>
+              <div class="node-arrow">➔</div><div class="a-box">4</div>
+              <div class="node-arrow">➔</div><div class="a-box">5</div>
+            </div>
+            <div class="step-info">Slow moves 1 step to [2], Fast moves 2 steps to [3].</div>
+          </div>
+          <div class="step">
+            <span class="step-num">Step 2</span>
+            <div class="arr-row">
+              <div class="a-box">1</div>
+              <div class="node-arrow">➔</div><div class="a-box">2</div>
+              <div class="node-arrow">➔</div><div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">3</div><div class="ptr-lbl" style="color:var(--teal)">S</div></div>
+              <div class="node-arrow">➔</div><div class="a-box">4</div>
+              <div class="node-arrow">➔</div><div style="display:flex;flex-direction:column;align-items:center"><div class="a-box R">5</div><div class="ptr-lbl" style="color:var(--purple)">F</div></div>
+            </div>
+            <div class="step-info">Slow moves 1 step to [3], Fast moves 2 steps to [5] (End).</div>
+            <span class="step-result sr-eq">✅ Middle is [3]</span>
+          </div>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Finding Middle Node</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">ListNode</span>* <span class="fn">middleNode</span>(<span class="tp">ListNode</span>* head) {
+    <span class="tp">ListNode</span>* slow = head;
+    <span class="tp">ListNode</span>* fast = head;
+    
+    <span class="cm">// Fast checks fast->next and fast->next->next safety</span>
+    <span class="kw">while</span> (fast != <span class="kw">nullptr</span> &amp;&amp; fast-&gt;next != <span class="kw">nullptr</span>) {
+        slow = slow-&gt;next;       <span class="cm">// moves 1 step</span>
+        fast = fast-&gt;next-&gt;next; <span class="cm">// moves 2 steps</span>
+    }
+    <span class="kw">return</span> slow; <span class="cm">// slow points to middle node</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- CYCLE DETECTION -->
+    <div id="ll-cycle">
+      <div class="sub-heading">Pattern 2 — Cycle Detection (Floyd's Cycle Finding)</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🔄</div>Cycle Detection<span class="badge badge-purple">LeetCode 141 &amp; 142</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+        <div class="en-block">
+          Use the Floyd's Tortoise and Hare algorithm. Move the <code>slow</code> pointer by 1 step and the <code>fast</code> pointer by 2 steps. If a cycle exists, the <code>fast</code> pointer will eventually loop around and meet the <code>slow</code> pointer from behind. If <code>fast</code> reaches the end (NULL), no cycle exists. <br>
+          **Finding Cycle Start (LeetCode 142)**: Once they meet, reset <code>slow</code> to head. Move both pointers 1 step at a time. The node where they meet again is the start of the cycle.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Agar linked list me aakhri node kisi pichle node se connect ho jaye, toh hume cycle milti hai. Hum <code>slow</code> ko 1 step aur <code>fast</code> ko 2 steps chalate hain. <br>
+          **Analogy**: Socho ek circular racetrack hai. Uspe ek race car (fast) aur ek bicycle (slow) chal rahi hain. Racetrack circular hone ke karan, thodi der baad sports car piche se aakar bicycle ke barabar pahunch hi jayegi! Agar meeting ho gayi -> Cycle hai. Agar fast end (NULL) pe pahunch gaya -> Cycle nahi hai.
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Linked List Cycle Detection</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">bool</span> <span class="fn">hasCycle</span>(<span class="tp">ListNode</span>* head) {
+    <span class="tp">ListNode</span>* slow = head;
+    <span class="tp">ListNode</span>* fast = head;
+    
+    <span class="kw">while</span> (fast != <span class="kw">nullptr</span> &amp;&amp; fast-&gt;next != <span class="kw">nullptr</span>) {
+        slow = slow-&gt;next;
+        fast = fast-&gt;next-&gt;next;
+        
+        <span class="kw">if</span> (slow == fast) {
+            <span class="kw">return true</span>; <span class="cm">// Meeting point found! Cycle exists.</span>
+        }
+    }
+    <span class="kw">return false</span>;
+}</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Find Cycle Start Node</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">ListNode</span>* <span class="fn">detectCycleStart</span>(<span class="tp">ListNode</span>* head) {
+    <span class="tp">ListNode</span>* slow = head;
+    <span class="tp">ListNode</span>* fast = head;
+    <span class="tp">bool</span> hasCycle = <span class="kw">false</span>;
+    
+    <span class="kw">while</span> (fast != <span class="kw">nullptr</span> &amp;&amp; fast-&gt;next != <span class="kw">nullptr</span>) {
+        slow = slow-&gt;next;
+        fast = fast-&gt;next-&gt;next;
+        <span class="kw">if</span> (slow == fast) {
+            hasCycle = <span class="kw">true</span>;
+            <span class="kw">break</span>;
+        }
+    }
+    
+    <span class="kw">if</span> (!hasCycle) <span class="kw">return nullptr</span>;
+    
+    <span class="cm">// Reset slow to head, move both 1 step at a time</span>
+    slow = head;
+    <span class="kw">while</span> (slow != fast) {
+        slow = slow-&gt;next;
+        fast = fast-&gt;next;
+    }
+    <span class="kw">return</span> slow; <span class="cm">// Meeting point is the cycle start node</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ PAGE 2 — REVERSAL ═══════════════════════ -->
+  <div class="page" id="p2">
+    <div class="page-header">
+      <div class="breadcrumb">Linked List · Volume 4 · Page 2 of 3</div>
+      <h2>Linked List Reversal Patterns</h2>
+      <p>Node connections aur links direction ko in-place change karne wale patterns. Isme constant O(1) extra space complexity maintain karna mandatory hota hai.</p>
+      <div class="badge-row">
+        <span class="badge badge-purple">In-Place Pointer Manipulation</span>
+        <span class="badge badge-blue">Swap Directions</span>
+        <span class="badge badge-teal">O(1) Space</span>
+      </div>
+    </div>
+
+    <!-- FULL REVERSE -->
+    <div id="ll-rev-full">
+      <div class="sub-heading">Pattern 3 — Full Reverse of a Linked List</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--purple-bg)">↩️</div>Full Reverse<span class="badge badge-purple">LeetCode 206</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Concept</div>
+        <div class="en-block">
+          Iterate through the linked list. Maintain three pointers: <code>prev</code> (initially NULL), <code>curr</code> (initially head), and <code>nextTemp</code>. In each step, save <code>curr->next</code>, change the link direction by setting <code>curr->next = prev</code>, and shift both pointers forward.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Poore list ke connections ko ulta (reverse) karna. Hum 3 pointers maintain karte hain: <br>
+          - <code>curr</code>: Jis node par hum abhi hain. <br>
+          - <code>prev</code>: Iske pichla node (jo reversed path banayega). <br>
+          - <code>nextTemp</code>: Current ke agle node ko bachane ke liye (kyunki direction badalne par aage ka path gum ho jayega!). <br>
+          **Transition**: Har step me <code>curr->next = prev</code> (link ko piche modein) aur teeno ko aage shift karein.
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- DRY RUN -->
+        <div class="dry-run">
+          <div class="dry-run-title">List = [1] ➔ [2] ➔ [3] ➔ NULL → Trace</div>
+          <div class="step">
+            <span class="step-num">Step 1</span>
+            <div class="arr-row">
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box fail">NULL</div><div class="ptr-lbl" style="color:var(--coral)">prev</div></div>
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">1</div><div class="ptr-lbl" style="color:var(--teal)">curr</div></div>
+              <div class="node-arrow">➔</div><div style="display:flex;flex-direction:column;align-items:center"><div class="a-box R">2</div><div class="ptr-lbl" style="color:var(--purple)">next</div></div>
+              <div class="node-arrow">➔</div><div class="a-box">3</div>
+            </div>
+            <div class="step-info">Save nextTemp=[2]. Reverse link: [1]->next = prev (NULL).</div>
+          </div>
+          <div class="step">
+            <span class="step-num">Step 2</span>
+            <div class="arr-row">
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box match">1</div><div class="ptr-lbl" style="color:var(--pink)">prev</div></div>
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">2</div><div class="ptr-lbl" style="color:var(--teal)">curr</div></div>
+              <div class="node-arrow">➔</div><div style="display:flex;flex-direction:column;align-items:center"><div class="a-box R">3</div><div class="ptr-lbl" style="color:var(--purple)">next</div></div>
+            </div>
+            <div class="step-info">Shift! prev becomes [1], curr becomes [2]. [2]->next = [1].</div>
+          </div>
+          <div class="step">
+            <span class="step-num">End</span>
+            <div class="arr-row">
+              <div class="a-box found">3</div>
+              <div class="node-arrow">➔</div><div class="a-box found">2</div>
+              <div class="node-arrow">➔</div><div class="a-box found">1</div>
+              <div class="node-arrow">➔</div><div class="a-box fail">NULL</div>
+            </div>
+            <div class="step-info">Finally, prev reaches [3] (new Head). List is fully reversed!</div>
+            <span class="step-result sr-eq">✅ Reversed</span>
+          </div>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Iterative Full Reverse</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">ListNode</span>* <span class="fn">reverseList</span>(<span class="tp">ListNode</span>* head) {
+    <span class="tp">ListNode</span>* prev = <span class="kw">nullptr</span>;
+    <span class="tp">ListNode</span>* curr = head;
+    <span class="tp">ListNode</span>* nextTemp = <span class="kw">nullptr</span>;
+    
+    <span class="kw">while</span> (curr != <span class="kw">nullptr</span>) {
+        nextTemp = curr-&gt;next; <span class="cm">// Step 1: Save next node</span>
+        curr-&gt;next = prev;     <span class="cm">// Step 2: Reverse the link direction</span>
+        prev = curr;           <span class="cm">// Step 3: Shift pointers forward</span>
+        curr = nextTemp;
+    }
+    <span class="kw">return</span> prev; <span class="cm">// prev is the new head</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTIAL K-GROUP -->
+    <div id="ll-rev-partial">
+      <div class="sub-heading">Pattern 4 — Partial Reversal (k-Group Reversal)</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🧱</div>Reverse Nodes in k-Group<span class="badge badge-pink">LeetCode 25 · Hard</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+        <div class="en-block">
+          Partition the linked list into segments of size <code>k</code>. For each segment, first check if there are at least <code>k</code> nodes left. If yes, reverse that segment in-place. If there are fewer than <code>k</code> nodes remaining, leave them as they are. Connect the reversed segments back together dynamically using boundary pointers.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Isme hum list ko <code>k</code> length ke groups me todte hain. Har group ke liye pehle check karte hain ki aage minimum <code>k</code> nodes hain ya nahi. Agar hain, toh us group ko reverse kar do. Agar bache hue nodes <code>k</code> se chote hain (end part), toh unhe bina chede chhod do. Is segment reversal ko maintain karne ke liye pre-reversed connections ko aapas me adjust karna padta hai.
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Reverse Nodes in k-Group</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">ListNode</span>* <span class="fn">reverseKGroup</span>(<span class="tp">ListNode</span>* head, <span class="tp">int</span> k) {
+    <span class="tp">ListNode</span>* curr = head;
+    <span class="tp">int</span> count = <span class="nm">0</span>;
+    
+    <span class="cm">// Check if there are at least k nodes remaining</span>
+    <span class="kw">while</span> (curr != <span class="kw">nullptr</span> &amp;&amp; count &lt; k) {
+        curr = curr-&gt;next;
+        count++;
+    }
+    
+    <span class="cm">// If we have k nodes, reverse them</span>
+    <span class="kw">if</span> (count == k) {
+        <span class="tp">ListNode</span>* prev = <span class="kw">nullptr</span>;
+        <span class="tp">ListNode</span>* nextNode = <span class="kw">nullptr</span>;
+        curr = head;
+        
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; k; i++) {
+            nextNode = curr-&gt;next;
+            curr-&gt;next = prev;
+            prev = curr;
+            curr = nextNode;
+        }
+        
+        <span class="cm">// Recurse for the remaining part and link!</span>
+        <span class="kw">if</span> (nextNode != <span class="kw">nullptr</span>) {
+            head-&gt;next = <span class="fn">reverseKGroup</span>(nextNode, k);
+        }
+        <span class="kw">return</span> prev; <span class="cm">// prev becomes the head of this reversed k-group</span>
+    }
+    <span class="kw">return</span> head; <span class="cm">// fewer than k nodes left, keep them as is</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ PAGE 3 — MERGING ═══════════════════════ -->
+  <div class="page" id="p3">
+    <div class="page-header">
+      <div class="breadcrumb">Linked List · Volume 4 · Page 3 of 3</div>
+      <h2>Linked List Merging Patterns</h2>
+      <p>Do ya do se zyada Sorted lists ko single unified sorted list me join karne ke concepts.</p>
+      <div class="badge-row">
+        <span class="badge badge-teal">Dummy Node Trick</span>
+        <span class="badge badge-blue">O(N) Time</span>
+        <span class="badge badge-coral">Iterative / Recursive</span>
+      </div>
+    </div>
+
+    <!-- MERGE TWO LISTS -->
+    <div id="ll-merge-two">
+      <div class="sub-heading">Pattern 5 — Merge Two Sorted Lists</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🤝</div>Merge Two Sorted Lists<span class="badge badge-teal">LeetCode 21</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+        <div class="en-block">
+          Use a **Dummy Node** to serve as the start of the merged list. Maintain a tail pointer (initially at dummy). Compare values at the current heads of the two lists. Append the smaller node to the tail, and advance the head of that list. Repeat until one list is exhausted, then append the remainder of the other list directly.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Do already sorted lists ko aapas me comparison karke ek single sorted list me jodna. <br>
+          **Dummy Node Trick**: Hum ek temporary (dummy) node banate hain jo final list ke head ko store karne me help karega. Ek pointer <code>tail</code> is dummy par rakhte hain. Hum dono lists ke head nodes ki values ko compare karte hain — jo chota hoga use tail ke aage attach karenge aur aage badhenge. Jab ek list khatam ho jaye, toh bachi hui list ko direct link kar dete hain!
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- DRY RUN -->
+        <div class="dry-run">
+          <div class="dry-run-title">L1 = [1]➔[4], L2 = [2]➔[3] → Dummy Node Merge Trace</div>
+          <div class="step">
+            <span class="step-num">Init</span>
+            <div class="arr-row">
+              <div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">Dummy</div><div class="ptr-lbl" style="color:var(--teal)">tail</div></div>
+              <div style="margin-left:20px;font-size:12px;color:var(--muted)">L1 Head at [1] | L2 Head at [2]</div>
+            </div>
+            <div class="step-info">Dummy node created to store new list.</div>
+          </div>
+          <div class="step">
+            <span class="step-num">Step 1</span>
+            <div class="arr-row">
+              <div class="a-box">Dummy</div>
+              <div class="node-arrow">➔</div><div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">1</div><div class="ptr-lbl" style="color:var(--teal)">tail</div></div>
+              <div style="margin-left:20px;font-size:12px;color:var(--muted)">L1 shifts to [4] | L2 remains at [2]</div>
+            </div>
+            <div class="step-info">Compare L1([1]) &amp; L2([2]). 1 is smaller. Link dummy->next = [1]. Shift L1.</div>
+          </div>
+          <div class="step">
+            <span class="step-num">Step 2</span>
+            <div class="arr-row">
+              <div class="a-box">Dummy</div>
+              <div class="node-arrow">➔</div><div class="a-box">1</div>
+              <div class="node-arrow">➔</div><div style="display:flex;flex-direction:column;align-items:center"><div class="a-box L">2</div><div class="ptr-lbl" style="color:var(--teal)">tail</div></div>
+              <div style="margin-left:20px;font-size:12px;color:var(--muted)">L1 stays at [4] | L2 shifts to [3]</div>
+            </div>
+            <div class="step-info">Compare L1([4]) &amp; L2([2]). 2 is smaller. Link tail->next = [2]. Shift L2.</div>
+            <span class="step-result sr-eq">✅ Tail Linked</span>
+          </div>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Merge Two Sorted Lists (Iterative)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">ListNode</span>* <span class="fn">mergeTwoLists</span>(<span class="tp">ListNode</span>* list1, <span class="tp">ListNode</span>* list2) {
+    <span class="tp">ListNode</span> dummy(<span class="nm">0</span>); <span class="cm">// Temporary root</span>
+    <span class="tp">ListNode</span>* tail = &amp;dummy;
+    
+    <span class="kw">while</span> (list1 != <span class="kw">nullptr</span> &amp;&amp; list2 != <span class="kw">nullptr</span>) {
+        <span class="kw">if</span> (list1-&gt;val &lt;= list2-&gt;val) {
+            tail-&gt;next = list1;
+            list1 = list1-&gt;next;
+        } <span class="kw">else</span> {
+            tail-&gt;next = list2;
+            list2 = list2-&gt;next;
+        }
+        tail = tail-&gt;next; <span class="cm">// tail pointer step forward</span>
+    }
+    
+    <span class="cm">// If any list is remaining, link it directly</span>
+    tail-&gt;next = (list1 != <span class="kw">nullptr</span>) ? list1 : list2;
+    
+    <span class="kw">return</span> dummy.next; <span class="cm">// return start of merged list</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📊</div>Linked List Patterns Summary</div>
+      <table class="tbl">
+        <tr>
+          <th>Pattern</th>
+          <th>Time Complexity</th>
+          <th>Space Complexity</th>
+          <th>Primary Pointers Used</th>
+          <th>Tricky Corner Case</th>
+        </tr>
+        <tr>
+          <td><span style="color:var(--amber);font-weight:600">Middle Node</span></td>
+          <td>O(N)</td>
+          <td>O(1)</td>
+          <td><code>slow</code>, <code>fast</code></td>
+          <td>Even list size (choose second middle)</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--purple);font-weight:600">Cycle Detection</span></td>
+          <td>O(N)</td>
+          <td>O(1)</td>
+          <td><code>slow</code>, <code>fast</code></td>
+          <td>Single node pointing to itself</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--teal);font-weight:600">Full Reverse</span></td>
+          <td>O(N)</td>
+          <td>O(1)</td>
+          <td><code>prev</code>, <code>curr</code>, <code>nextTemp</code></td>
+          <td>Empty list or single node</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--pink);font-weight:600">k-Group Reversal</span></td>
+          <td>O(N)</td>
+          <td>O(N/k) recursion</td>
+          <td>Segment heads and tails</td>
+          <td>Fewer than k nodes at the end</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--blue);font-weight:600">Merge Lists</span></td>
+          <td>O(N + M)</td>
+          <td>O(1)</td>
+          <td><code>dummy</code>, <code>tail</code></td>
+          <td>One list completely empty</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const pages = ['p1','p2','p3'];
+  const subs = ['sub1','sub2','sub3'];
+
+  function showPage(id, btn) {
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => document.getElementById(s).style.display = i===idx?'block':'none');
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => document.getElementById(s).style.display = i===0?'block':'none');
+</script>
+</body>
+</html>

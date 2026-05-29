@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Stack Patterns — In-Depth Masterclass</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117; --bg2: #161b27; --bg3: #1e2535; --border: #2a3245;
+    --text: #e8eaf6; --muted: #8892a4;
+    --teal: #1dd6a0; --teal-bg: #0d2e24;
+    --purple: #a78bfa; --purple-bg: #1e1633;
+    --amber: #fbbf24; --amber-bg: #2a1f0a;
+    --blue: #60a5fa; --blue-bg: #0e1f35;
+    --coral: #fb7185; --coral-bg: #2a0e16;
+    --green: #86efac; --green-bg: #0b2018;
+    --pink: #f472b6; --pink-bg: #2a0e1e;
+    --code-bg: #0a0d14;
+    --kw: #f9a870; --fn: #79c0ff; --cm: #5a6478;
+    --tp: #f472b6; --str: #a5d6a7; --nm: #ce93d8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 14px; }
+
+  /* SIDEBAR */
+  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 245px; background: var(--bg2); border-right: 1px solid var(--border); padding: 24px 0; overflow-y: auto; z-index: 100; }
+  .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .sidebar-logo h1 { font-size: 13px; font-weight: 600; color: var(--pink); letter-spacing: .08em; text-transform: uppercase; }
+  .sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .nav-section { padding: 0 12px; margin-bottom: 8px; }
+  .nav-section-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; padding: 0 8px; margin-bottom: 4px; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 13px; color: var(--muted); cursor: pointer; transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+  .nav-link:hover { background: var(--bg3); color: var(--text); }
+  .nav-link.active { background: var(--bg3); color: var(--pink); font-weight: 500; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .sub-links { padding-left: 24px; margin-top: 2px; }
+  .sub-link { display: block; padding: 4px 10px; font-size: 12px; color: var(--muted); cursor: pointer; border-radius: 6px; transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+  .sub-link:hover { color: var(--text); background: var(--bg3); }
+
+  /* MAIN */
+  .main { margin-left: 245px; padding: 40px 48px; max-width: 980px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .page-header .breadcrumb { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .page-header h2 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .page-header p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+  .badge-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid #1a5c44; }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid #3d2d6e; }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid #6b4c0f; }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid #1a3a5c; }
+  .badge-coral { background: var(--coral-bg); color: var(--coral); border: 1px solid #5c1a27; }
+  .badge-pink { background: var(--pink-bg); color: var(--pink); border: 1px solid #5c1a3a; }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #155a30; }
+
+  /* CARDS */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card-title .icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+  /* LANG BLOCKS */
+  .lang-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin: 12px 0 5px; }
+  .en-block { background: var(--bg3); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; line-height: 1.8; color: var(--text); margin-bottom: 8px; }
+  .hi-block { background: var(--purple-bg); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13.5px; line-height: 1.8; color: #c4b5fd; margin-bottom: 8px; }
+
+  /* CODE */
+  .code-wrap { position: relative; margin: 12px 0; }
+  .code-label { background: var(--bg3); border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0; padding: 7px 14px; font-size: 11px; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+  .copy-btn { font-size: 11px; padding: 3px 10px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg); color: var(--muted); cursor: pointer; transition: all .15s; }
+  .copy-btn:hover { color: var(--teal); border-color: var(--teal); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 0 0 8px 8px; padding: 16px 18px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; white-space: pre; }
+  .kw { color: var(--kw); } .fn { color: var(--fn); } .cm { color: var(--cm); font-style: italic; }
+  .tp { color: var(--tp); } .st { color: var(--str); } .nm { color: var(--nm); }
+
+  /* DRY RUN */
+  .dry-run { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin: 12px 0; overflow-x: auto; }
+  .dry-run-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+  .step { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .step-num { font-size: 10px; font-weight: 600; color: var(--muted); min-width: 52px; }
+  .arr-row { display: flex; gap: 4px; align-items: flex-end; flex-wrap: wrap; }
+  .a-box { min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); color: var(--muted); padding: 0 4px; }
+  .a-box.L { background: var(--teal-bg); color: var(--teal); border-color: #1a5c44; }
+  .a-box.R { background: var(--purple-bg); color: var(--purple); border-color: #3d2d6e; }
+  .a-box.found { background: var(--green-bg); color: var(--green); border-color: #155a30; }
+  .a-box.hi { background: var(--amber-bg); color: var(--amber); border-color: #6b4c0f; }
+  .a-box.match { background: var(--pink-bg); color: var(--pink); border-color: #5c1a3a; }
+  .a-box.fail { background: var(--coral-bg); color: var(--coral); border-color: #5c1a27; }
+  .ptr-lbl { font-size: 9px; color: var(--muted); margin-top: 1px; text-align: center; }
+  .step-info { font-size: 12px; color: var(--muted); flex: 1; min-width: 160px; }
+  .step-result { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .sr-high { background: var(--coral-bg); color: var(--coral); }
+  .sr-low { background: var(--amber-bg); color: var(--amber); }
+  .sr-eq { background: var(--green-bg); color: var(--green); }
+  .sr-pink { background: var(--pink-bg); color: var(--pink); }
+
+  /* TABLE */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  .tbl th { background: var(--bg3); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.6; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: var(--bg3); }
+
+  /* MISC */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+  .tip { border-left: 3px solid var(--teal); background: var(--teal-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #6ee7c0; margin: 12px 0; line-height: 1.7; }
+  .warn { border-left: 3px solid var(--amber); background: var(--amber-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #fcd97a; margin: 12px 0; line-height: 1.7; }
+  .info { border-left: 3px solid var(--blue); background: var(--blue-bg); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #93c5fd; margin: 12px 0; line-height: 1.7; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .mini-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.7; }
+  .mini-card b { font-weight: 600; display: block; margin-bottom: 4px; }
+  .sub-heading { font-size: 14px; font-weight: 600; margin: 22px 0 10px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .sub-heading::before { content: ''; width: 3px; height: 14px; border-radius: 2px; background: var(--pink); display: block; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg3); padding: 1px 5px; border-radius: 4px; color: var(--teal); }
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+  .pill { padding: 3px 12px; border-radius: 20px; font-size: 12px; border: 1px solid var(--border); color: var(--muted); background: var(--bg3); }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  @media(max-width:768px){
+    .sidebar{display:none;}
+    .main{margin-left:0;padding:20px 16px;}
+    .grid2,.grid3{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Stack Patterns · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Stack Patterns</div>
+
+    <!-- PAGE 1: MONOTONIC STACK -->
+    <button class="nav-link active" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>Monotonic Stacks
+    </button>
+    <div class="sub-links" id="sub1">
+      <button class="sub-link" onclick="scrollTo2('st-concept')">Monotonic Concept</button>
+      <button class="sub-link" onclick="scrollTo2('st-nearest')">All Nearest Variants</button>
+      <button class="sub-link" onclick="scrollTo2('st-span')">Range / Span Pattern</button>
+    </div>
+
+    <!-- PAGE 2: SPECIAL SACKS & EXPR -->
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Special &amp; Expression
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('st-minmax')">Min &amp; Max Stacks</button>
+      <button class="sub-link" onclick="scrollTo2('st-brackets')">Valid Parentheses</button>
+      <button class="sub-link" onclick="scrollTo2('st-rpn')">Expression Evaluation</button>
+    </div>
+
+    <!-- PAGE 3: HISTOGRAM -->
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#f472b6"></span>Histogram &amp; Range
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('st-histogram')">Largest Rectangle</button>
+      <button class="sub-link" onclick="scrollTo2('st-maximal')">2D Maximal Rectangle</button>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ═══════════════════════ PAGE 1 — MONOTONIC STACKS ═══════════════════════ -->
+  <div class="page active" id="p1">
+    <div class="page-header">
+      <div class="breadcrumb">Stack · Volume 5 · Page 1 of 3</div>
+      <h2>Monotonic Stack &amp; Nearest Elements (Deep Dive)</h2>
+      <p>Mathematical structures and optimal LIFO models to find relative boundary ranges and nearest element limits in linear O(N) complexity.</p>
+      <div class="badge-row">
+        <span class="badge badge-amber">Exhaustive Variants</span>
+        <span class="badge badge-blue">Monotonic Bounds</span>
+        <span class="badge badge-teal">Index Offset Mapping</span>
+      </div>
+    </div>
+
+    <!-- MONOTONIC CONCEPT -->
+    <div id="st-concept">
+      <div class="sub-heading">Section 1 — The Monotonic Stack Mechanics</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--amber-bg)">📈</div>Strict Sorting on LIFO<span class="badge badge-amber">Core Theory</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Concept</div>
+        <div class="en-block">
+          A <b>Monotonic Stack</b> restricts operations so its internal values are always sorted in a strict range:<br>
+          • <b>Increasing Monotonic Stack</b>: <code>st.top()</code> is always the largest element. Before pushing <code>x</code>, we pop all elements <code>&gt;= x</code>. Used to discover <b>Previous Smaller</b> or <b>Next Smaller</b> bounds.<br>
+          • <b>Decreasing Monotonic Stack</b>: <code>st.top()</code> is always the smallest element. Before pushing <code>x</code>, we pop all elements <code>&lt;= x</code>. Used to discover <b>Previous Greater</b> or <b>Next Greater</b> bounds.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          <b>Monotonic Stack</b> me hum push karne ke dauran check lagate hain taaki stack ke andar elements strictly sorted order me hi rahein:<br>
+          • <b>Increasing Stack</b>: Naya number tabhi push hoga jab woh top se bada ho. Agar chota number aaya, toh jab tak stack ke badhe elements ko pop nahi kar dete, tab tak push nahi hoga. Yeh hume **Next Smaller** ya **Previous Smaller** index nikalne me kaam aata hai.<br>
+          • <b>Decreasing Stack</b>: Naya number tabhi push hoga jab woh top se chota ho. Agar bada number aaya, toh smaller items ko pop karke rasta saaf karte hain. Yeh hume **Next Greater** ya **Previous Greater** index batata hai.
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL NEAREST NEIGHBOR VARIANTS -->
+    <div id="st-nearest">
+      <div class="sub-heading">Section 2 — All 4 Nearest Element Variants</div>
+      <p style="color:var(--muted);margin-bottom:12px">Here is the complete math cheat sheet for nearest neighbors with ready-to-use in-depth implementations.</p>
+      
+      <!-- VARIANT 1: NEXT GREATER -->
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--purple-bg)">1</div>Next Greater Element (NGE)<span class="badge badge-purple">Right Side · Decreasing Stack</span></div>
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish Explanation</div>
+        <div class="hi-block">
+          Right side me sabse pehla strict bada element. Kyunki hume <b>Right</b> side dekhna hai, toh array ko <b>piche se (right to left)</b> scan karenge. Decreasing monotonic structure use karke chote elements ko pop kar denge.
+        </div>
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · NGE (Right to Left)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">nextGreater</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr) {
+    <span class="tp">int</span> n = arr.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; ans(n, -<span class="nm">1</span>);
+    <span class="tp">stack</span>&lt;<span class="tp">int</span>&gt; st; <span class="cm">// decreasing</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = n - <span class="nm">1</span>; i &gt;= <span class="nm">0</span>; i--) {
+        <span class="kw">while</span> (!st.empty() &amp;&amp; st.top() &lt;= arr[i]) st.pop();
+        <span class="kw">if</span> (!st.empty()) ans[i] = st.top();
+        st.push(arr[i]);
+    }
+    <span class="kw">return</span> ans;
+}</pre>
+        </div>
+      </div>
+
+      <!-- VARIANT 2: NEXT SMALLER -->
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--blue-bg)">2</div>Next Smaller Element (NSE)<span class="badge badge-blue">Right Side · Increasing Stack</span></div>
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish Explanation</div>
+        <div class="hi-block">
+          Right side me sabse pehla strict chota element. Scan <b>piche se (right to left)</b> hi hoga, par increasing stack rakhne ke liye badhe numbers ko pop kar denge.
+        </div>
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · NSE (Right to Left)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">nextSmaller</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr) {
+    <span class="tp">int</span> n = arr.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; ans(n, -<span class="nm">1</span>);
+    <span class="tp">stack</span>&lt;<span class="tp">int</span>&gt; st; <span class="cm">// increasing</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = n - <span class="nm">1</span>; i &gt;= <span class="nm">0</span>; i--) {
+        <span class="kw">while</span> (!st.empty() &amp;&amp; st.top() &gt;= arr[i]) st.pop();
+        <span class="kw">if</span> (!st.empty()) ans[i] = st.top();
+        st.push(arr[i]);
+    }
+    <span class="kw">return</span> ans;
+}</pre>
+        </div>
+      </div>
+
+      <!-- VARIANT 3: PREVIOUS GREATER -->
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--amber-bg)">3</div>Previous Greater Element (PGE)<span class="badge badge-amber">Left Side · Decreasing Stack</span></div>
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish Explanation</div>
+        <div class="hi-block">
+          Left side me sabse pehla strict bada element. Kyunki boundary <b>Left</b> dekhni hai, hum array ko **aage se (left to right)** scan karenge, aur stack me elements maintain karenge.
+        </div>
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · PGE (Left to Right)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">prevGreater</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr) {
+    <span class="tp">int</span> n = arr.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; ans(n, -<span class="nm">1</span>);
+    <span class="tp">stack</span>&lt;<span class="tp">int</span>&gt; st; <span class="cm">// decreasing</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="kw">while</span> (!st.empty() &amp;&amp; st.top() &lt;= arr[i]) st.pop();
+        <span class="kw">if</span> (!st.empty()) ans[i] = st.top();
+        st.push(arr[i]);
+    }
+    <span class="kw">return</span> ans;
+}</pre>
+        </div>
+      </div>
+
+      <!-- VARIANT 4: PREVIOUS SMALLER -->
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--coral-bg)">4</div>Previous Smaller Element (PSE)<span class="badge badge-coral">Left Side · Increasing Stack</span></div>
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish Explanation</div>
+        <div class="hi-block">
+          Left side me sabse pehla strict chota element. Aage se loop chalayenge aur increasing values maintain karenge (popping larger items).
+        </div>
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · PSE (Left to Right)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">prevSmaller</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr) {
+    <span class="tp">int</span> n = arr.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; ans(n, -<span class="nm">1</span>);
+    <span class="tp">stack</span>&lt;<span class="tp">int</span>&gt; st; <span class="cm">// increasing</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="kw">while</span> (!st.empty() &amp;&amp; st.top() &gt;= arr[i]) st.pop();
+        <span class="kw">if</span> (!st.empty()) ans[i] = st.top();
+        st.push(arr[i]);
+    }
+    <span class="kw">return</span> ans;
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- RANGE AND SPAN -->
+    <div id="st-span">
+      <div class="sub-heading">Section 3 — The Range / Span Pattern</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📊</div>Online Stock Span Mechanics<span class="badge badge-teal">Range Formula Mapping</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Concept</div>
+        <div class="en-block">
+          Finding consecutive days before index <code>i</code> where price is smaller or equal mathematically means finding the index of the <b>Previous Greater Element (PGE)</b>, say index <code>p</code>. <br>
+          Formula: <code>span = i - p</code>. <br>
+          If no previous greater element exists, the price is higher than all previous prices, so <code>span = i + 1</code>.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Stock ka span nikalna, matlab index <code>i</code> se piche kitne continuous elements chote ya barabar hain, aur kuch nahi balki **Previous Greater Element (PGE)** ka index distance nikalna hai! <br>
+          Manlo index <code>i</code> se pehle ka strict bada element index <code>p</code> par hai. <br>
+          Toh <code>span = i - p</code>. <br>
+          Agar left me koi bada element na ho, matlab aaj ka rate sabse badha hai, toh <code>span = i + 1</code>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ PAGE 2 — SPECIAL & EXPRESSION ═══════════════════════ -->
+  <div class="page" id="p2">
+    <div class="page-header">
+      <div class="breadcrumb">Stack · Volume 5 · Page 2 of 3</div>
+      <h2>Special Stack Designs &amp; Expression Parsing (In-Depth)</h2>
+      <p>Constant time design structures and mathematical data scaling formulas along with syntax parsing machines.</p>
+      <div class="badge-row">
+        <span class="badge badge-purple">Min Stack Math Proof</span>
+        <span class="badge badge-blue">Max Stack Design</span>
+        <span class="badge badge-teal">Reverse Polish Notation</span>
+      </div>
+    </div>
+
+    <!-- MIN & MAX STACKS -->
+    <div id="st-minmax">
+      <div class="sub-heading">Section 4 — Min &amp; Max Stacks Design</div>
+      
+      <!-- MATH PROOF AND EXPLANATION -->
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--coral-bg)">📐</div>The O(1) Space Encoding Formula<span class="badge badge-coral">Mathematical Proof</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Theoretical Proof</div>
+        <div class="en-block">
+          To achieve <b>O(1) extra space</b> in a Min Stack, we encode values dynamically when a new minimum is set. Let <code>minVal</code> be the current minimum, and we push a new value <code>x</code> where <code>x &lt; minVal</code>:<br>
+          • <b>Push value (encoded)</b>: <code>top = 2 * x - minVal</code>. We then set <code>minVal = x</code>.<br>
+          • <b>Why this holds</b>: Since <code>x &lt; minVal</code>, we know <code>x - minVal &lt; 0</code>. Adding <code>x</code> to both sides gives <code>2 * x - minVal &lt; x</code>. Thus, the encoded top value pushed to stack is strictly less than the new <code>minVal</code>. This acts as a flag!<br>
+          • <b>Pop value (decoding)</b>: If <code>st.top() &lt; minVal</code>, it means we are popping the current minimum. We recover the old minimum via: <code>oldMin = 2 * minVal - st.top()</code>.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish Proof</div>
+        <div class="hi-block">
+          Bina extra stack ke pure Min Stack ko **O(1) auxiliary space** me chalane ka secret mathematical scaling hai. Jab hume naya absolute minimum <code>x</code> milega, hum stack me <code>x</code> ki jagah ek **fake encoded value** push karenge:<br>
+          • **Push Code**: <code>top = 2 * x - minVal</code>. Phir naya <code>minVal = x</code> update kar do.<br>
+          • **Kyun chalta hai**: Kyunki <code>x &lt; minVal</code> hai, toh <code>x - minVal</code> negative hoga. Matlab <code>2 * x - minVal</code> value strictly <code>x</code> se choti banegi. Stack me aisi negative flag values real numbers ke bounds ke niche chali jati hain, jo hume alert karti hain!<br>
+          • **Pop Code (Decoding)**: Jab hum stack ke top ko pop karenge aur top value <code>minVal</code> se choti milegi, toh hume pata chal jayega ki min change hone wala hai. Purana min formula se niklega: <code>oldMin = 2 * minVal - top</code>.
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Min Stack (O(1) Space Mathematical Encoding)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">class</span> <span class="tp">MinStackSpaceOpt</span> {
+    <span class="tp">stack</span>&lt;<span class="tp">long long</span>&gt; st;
+    <span class="tp">long long</span> minVal;
+<span class="kw">public</span>:
+    <span class="kw">void</span> <span class="fn">push</span>(<span class="tp">int</span> val) {
+        <span class="kw">if</span> (st.empty()) {
+            st.push(val);
+            minVal = val;
+        } <span class="kw">else</span> <span class="kw">if</span> (val &lt; minVal) {
+            <span class="cm">// Encode and update minVal</span>
+            st.push(<span class="nm">2LL</span> * val - minVal);
+            minVal = val;
+        } <span class="kw">else</span> {
+            st.push(val);
+        }
+    }
+    
+    <span class="kw">void</span> <span class="fn">pop</span>() {
+        <span class="kw">if</span> (st.top() &lt; minVal) {
+            <span class="cm">// Decode previous minimum before popping flag</span>
+            minVal = <span class="nm">2LL</span> * minVal - st.top();
+        }
+        st.pop();
+    }
+    
+    <span class="tp">int</span> <span class="fn">top</span>() {
+        <span class="kw">if</span> (st.top() &lt; minVal) <span class="kw">return</span> minVal;
+        <span class="kw">return</span> st.top();
+    }
+    
+    <span class="tp">int</span> <span class="fn">getMin</span>() {
+        <span class="kw">return</span> minVal;
+    }
+};</pre>
+        </div>
+      </div>
+
+      <!-- MAX STACK DESIGN -->
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--pink-bg)">📦</div>Max Stack Design (O(1) Space)<span class="badge badge-pink">Dual Concept</span></div>
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish Explanation</div>
+        <div class="hi-block">
+          Symmetrical concept! Max Stack ke liye push trigger tab hoga jab <code>x &gt; maxVal</code>. <br>
+          • Push encoded: <code>top = 2 * x - maxVal</code>, set <code>maxVal = x</code>. <br>
+          • Symmetrical flags: values top strictly maximum node bounds se badhi chali jati hain. <br>
+          • Pop recovery: <code>oldMax = 2 * maxVal - top</code>.
+        </div>
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Max Stack (O(1) Space Encoding)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">class</span> <span class="tp">MaxStackSpaceOpt</span> {
+    <span class="tp">stack</span>&lt;<span class="tp">long long</span>&gt; st;
+    <span class="tp">long long</span> maxVal;
+<span class="kw">public</span>:
+    <span class="kw">void</span> <span class="fn">push</span>(<span class="tp">int</span> val) {
+        <span class="kw">if</span> (st.empty()) {
+            st.push(val);
+            maxVal = val;
+        } <span class="kw">else</span> <span class="kw">if</span> (val &gt; maxVal) {
+            st.push(<span class="nm">2LL</span> * val - maxVal);
+            maxVal = val;
+        } <span class="kw">else</span> {
+            st.push(val);
+        }
+    }
+    
+    <span class="kw">void</span> <span class="fn">pop</span>() {
+        <span class="kw">if</span> (st.top() &gt; maxVal) {
+            maxVal = <span class="nm">2LL</span> * maxVal - st.top(); <span class="cm">// Decode previous max</span>
+        }
+        st.pop();
+    }
+    
+    <span class="tp">int</span> <span class="fn">top</span>() {
+        <span class="kw">if</span> (st.top() &gt; maxVal) <span class="kw">return</span> maxVal;
+        <span class="kw">return</span> st.top();
+    }
+    
+    <span class="tp">int</span> <span class="fn">getMax</span>() {
+        <span class="kw">return</span> maxVal;
+    }
+};</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- VALID PARENTHESES -->
+    <div id="st-brackets">
+      <div class="sub-heading">Section 5 — Bracket Expression Handling</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🧱</div>Bracket Parsing Machine<span class="badge badge-teal">LeetCode 20</span></div>
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish Explanation</div>
+        <div class="hi-block">
+          Brackets sequence tracking ke liye stack hi kyu use hota hai? Kyunki nested structures me jo inner-most loop (bracket) pehle open hua, use pehle match hona padega (LIFO order!).
+        </div>
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Standard Valid Parentheses</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">bool</span> <span class="fn">isValid</span>(<span class="tp">string</span> s) {
+    <span class="tp">stack</span>&lt;<span class="tp">char</span>&gt; st;
+    <span class="kw">for</span> (<span class="tp">char</span> c : s) {
+        <span class="kw">if</span> (c == <span class="st">'('</span> || c == <span class="st">'['</span> || c == <span class="st">'{'</span>) st.push(c);
+        <span class="kw">else</span> {
+            <span class="kw">if</span> (st.empty()) <span class="kw">return false</span>;
+            <span class="tp">char</span> top = st.top();
+            <span class="kw">if</span> ((c == <span class="st">')'</span> &amp;&amp; top == <span class="st">'('</span>) ||
+                (c == <span class="st">']'</span> &amp;&amp; top == <span class="st">'['</span>) ||
+                (c == <span class="st">'}'</span> &amp;&amp; top == <span class="st">'{'</span>)) st.pop();
+            <span class="kw">else</span> <span class="kw">return false</span>;
+        }
+    }
+    <span class="kw">return</span> st.empty();
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- RPN / CALCULATOR -->
+    <div id="st-rpn">
+      <div class="sub-heading">Section 6 — Expression Evaluation (RPN Calculator)</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🧮</div>Evaluate Reverse Polish Notation<span class="badge badge-blue">LeetCode 150</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Idea</div>
+        <div class="en-block">
+          Postfix expressions (like <code>"2", "1", "+", "3", "*"</code> representing <code>(2+1)*3</code>) avoid parenthesis ordering completely. <br>
+          Iterate through tokens. When a number is found, push to stack. When an operator is found, pop two elements: <code>operand2 = pop()</code> and <code>operand1 = pop()</code>. Perform calculation and push the result back.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+        <div class="hi-block">
+          Postfix expressions ko parse karna. Jab tak numbers mil rahe hain, unhe stack me push karte jao. Jaise hi koi mathematical operator (<code>+, -, *, /</code>) mile, stack se immediate do elements pop karo: pahla pop kiya hua element right operand (<code>val2</code>) banega aur dusra left operand (<code>val1</code>). Operation karke result ko stack me wapas push kar do!
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Evaluate RPN</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">int</span> <span class="fn">evalRPN</span>(<span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&amp; tokens) {
+    <span class="tp">stack</span>&lt;<span class="tp">int</span>&gt; st;
+    <span class="kw">for</span> (<span class="kw">const</span> <span class="tp">string</span>&amp; s : tokens) {
+        <span class="kw">if</span> (s == <span class="st">"+"</span> || s == <span class="st">"-"</span> || s == <span class="st">"*"</span> || s == <span class="st">"/"</span>) {
+            <span class="tp">int</span> val2 = st.top(); st.pop(); <span class="cm">// Second operand popped first</span>
+            <span class="tp">int</span> val1 = st.top(); st.pop(); <span class="cm">// First operand popped second</span>
+            
+            <span class="kw">if</span> (s == <span class="st">"+"</span>) st.push(val1 + val2);
+            <span class="kw">else</span> <span class="kw">if</span> (s == <span class="st">"-"</span>) st.push(val1 - val2);
+            <span class="kw">else</span> <span class="kw">if</span> (s == <span class="st">"*"</span>) st.push(val1 * val2);
+            <span class="kw">else</span> <span class="kw">if</span> (s == <span class="st">"/"</span>) st.push(val1 / val2);
+        } <span class="kw">else</span> {
+            st.push(stoi(s)); <span class="cm">// Convert string to integer</span>
+        }
+    }
+    <span class="kw">return</span> st.top();
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ PAGE 3 — HISTOGRAM ═══════════════════════ -->
+  <div class="page" id="p3">
+    <div class="page-header">
+      <div class="breadcrumb">Stack · Volume 5 · Page 3 of 3</div>
+      <h2>Advanced Stack Patterns &amp; Area Calculations</h2>
+      <p>Hard level range queries mapped geometrically using index boundaries, spans, and multi-dimensional reductions.</p>
+      <div class="badge-row">
+        <span class="badge badge-pink">2D Area Reductions</span>
+        <span class="badge badge-amber">Single-Pass Traces</span>
+        <span class="badge badge-teal">Monotonic Bounds</span>
+      </div>
+    </div>
+
+    <!-- LARGEST RECTANGLE IN HISTOGRAM -->
+    <div id="st-histogram">
+      <div class="sub-heading">Section 7 — Largest Rectangle in Histogram (LeetCode 84)</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--pink-bg)">📊</div>Area Bounds Tracing<span class="badge badge-pink">Single Pass O(N)</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Technical Explanation</div>
+        <div class="en-block">
+          To find the maximum rectangular bounds for height <code>heights[i]</code>, we require the indices of the **Next Smaller Element (NSE)** and the **Previous Smaller Element (PSE)**. <br>
+          • <b>Width</b>: <code>NSE_index - PSE_index - 1</code>. <br>
+          • <b>Optimization to Single Pass</b>: We push indices onto a Monotonic Increasing Stack. When we encounter a bar <code>currHeight</code> at index <code>i</code> smaller than the top of the stack, we know <code>i</code> is the **NSE** for the popped element. The **PSE** for the popped element is the *new* top of the stack. This resolves boundaries instantly!
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish Explanation</div>
+        <div class="hi-block">
+          Kisi bar ki height par maximum kitna area ban sakta hai? Jab tak hum right side me pehle chote bar (NSE) aur left side me pehle chote bar (PSE) ke beech boundaries na bana lein. <br>
+          **Single Pass Optimization Trick**: Hum elements ke indices ko **Increasing Monotonic Stack** me rakhte hain. Jaise hi koi chota element <code>heights[i]</code> milega, hum top ko pop karenge: <br>
+          1. **NSE index** = <code>i</code> (jo element pop karwa raha hai). <br>
+          2. **PSE index** = Pop hone ke baad stack ka **naya top** (agar stack khali ho toh matlab pure left me sab bade the, toh boundary is -1). <br>
+          Formula width: <code>i - st.top() - 1</code>. Area: <code>popped_height * width</code>.
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · Largest Rectangle (Fully Optimized Single Pass)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">int</span> <span class="fn">largestRectangleArea</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; heights) {
+    <span class="tp">int</span> n = heights.size();
+    <span class="tp">stack</span>&lt;<span class="tp">int</span>&gt; st; <span class="cm">// Increasing Monotonic Stack for indices</span>
+    <span class="tp">int</span> maxArea = <span class="nm">0</span>;
+    
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt;= n; i++) {
+        <span class="cm">// We push a dummy height of 0 at index 'n' to clear out remaining stack elements</span>
+        <span class="tp">int</span> currHeight = (i == n) ? <span class="nm">0</span> : heights[i];
+        
+        <span class="kw">while</span> (!st.empty() &amp;&amp; heights[st.top()] &gt; currHeight) {
+            <span class="tp">int</span> height = heights[st.top()];
+            st.pop();
+            
+            <span class="cm">// Calculate boundary width dynamically</span>
+            <span class="tp">int</span> width = st.empty() ? i : i - st.top() - <span class="nm">1</span>;
+            maxArea = max(maxArea, height * width);
+        }
+        st.push(i);
+    }
+    <span class="kw">return</span> maxArea;
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAXIMAL RECTANGLE (2D) -->
+    <div id="st-maximal">
+      <div class="sub-heading">Section 8 — Maximal Rectangle in 2D Binary Matrix (LeetCode 85)</div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:var(--purple-bg)">📐</div>2D Area Grid Reduction<span class="badge badge-purple">LeetCode 85 · Hard</span></div>
+        
+        <div class="lang-label" style="color:var(--blue)">🇬🇧 Core Reduction Concept</div>
+        <div class="en-block">
+          We can reduce this 2D binary grid problem to the 1D **Largest Rectangle in Histogram** problem! <br>
+          We construct a 1D height array (representing histogram bars at each column). We iterate row by row: <br>
+          - If <code>matrix[r][c] == '1'</code>: <code>heights[c] += 1</code>. <br>
+          - If <code>matrix[r][c] == '0'</code>: <code>heights[c] = 0</code> (since the bar is broken). <br>
+          At each row, we calculate the maximum histogram area on this <code>heights</code> array using our LeetCode 84 subroutine.
+        </div>
+        
+        <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish Reduction</div>
+        <div class="hi-block">
+          2D binary grid me '1's se bana sabse bada area rectangle nikalna. <br>
+          **Ek dimagi reduction trick**: Hum pure 2D grid ko row-by-row parse karke 1D Histogram area problem (LeetCode 84) me badal dete hain! <br>
+          Hum ek 1D <code>heights</code> array banate hain. Har row par chalte hue: <br>
+          - Agar cell '1' hai -> column heights badhao -> <code>heights[c] += 1</code>. <br>
+          - Agar cell '0' hai -> column path break ho gaya -> <code>heights[c] = 0</code>. <br>
+          Har single row step par, is <code>heights</code> array ko as a histogram pass karke max area compute kar lete hain. Simple!
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="code-wrap">
+          <div class="code-label"><span>🔵 C++ · 2D Maximal Rectangle Area</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tp">int</span> <span class="fn">maximalRectangle</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">char</span>&gt;&gt;&amp; matrix) {
+    <span class="kw">if</span> (matrix.empty() || matrix[0].empty()) <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="tp">int</span> cols = matrix[0].size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; heights(cols, <span class="nm">0</span>);
+    <span class="tp">int</span> maxArea = <span class="nm">0</span>;
+    
+    <span class="kw">for</span> (<span class="kw">const</span> <span class="kw">auto</span>&amp; row : matrix) {
+        <span class="kw">for</span> (<span class="tp">int</span> c = <span class="nm">0</span>; c &lt; cols; c++) {
+            <span class="kw">if</span> (row[c] == <span class="st">'1'</span>) {
+                heights[c] += <span class="nm">1</span>; <span class="cm">// Stack upward height</span>
+            } <span class="kw">else</span> {
+                heights[c] = <span class="nm">0</span>;  <span class="cm">// Broken ground base</span>
+            }
+        }
+        <span class="cm">// Run the LeetCode 84 optimized single-pass algorithm on current heights row</span>
+        maxArea = max(maxArea, largestRectangleArea(heights));
+    }
+    <span class="kw">return</span> maxArea;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const pages = ['p1','p2','p3'];
+  const subs = ['sub1','sub2','sub3'];
+
+  function showPage(id, btn) {
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => document.getElementById(s).style.display = i===idx?'block':'none');
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => document.getElementById(s).style.display = i===0?'block':'none');
+</script>
+</body>
+</html>
