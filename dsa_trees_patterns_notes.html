@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Trees Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:#2a3245;
+    --text:#e8eaf6;--muted:#8892a4;
+    --teal:#1dd6a0;--teal-bg:#0d2e24;
+    --purple:#a78bfa;--purple-bg:#1e1633;
+    --amber:#fbbf24;--amber-bg:#2a1f0a;
+    --blue:#60a5fa;--blue-bg:#0e1f35;
+    --coral:#fb7185;--coral-bg:#2a0e16;
+    --green:#86efac;--green-bg:#0b2018;
+    --pink:#f472b6;--pink-bg:#2a0e1e;
+    --orange:#fb923c;--orange-bg:#2a1508;
+    --code-bg:#0a0d14;
+    --kw:#f9a870;--fn:#79c0ff;--cm:#5a6478;--tp:#f472b6;--st:#a5d6a7;--nm:#ce93d8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px;}
+
+  /* SIDEBAR */
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:248px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:100;}
+  .sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+  .sidebar-logo h1{font-size:13px;font-weight:600;color:var(--orange);letter-spacing:.08em;text-transform:uppercase;}
+  .sidebar-logo p{font-size:11px;color:var(--muted);margin-top:2px;}
+  .nav-section{padding:0 12px;margin-bottom:8px;}
+  .nav-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;}
+  .nav-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .nav-link:hover{background:var(--bg3);color:var(--text);}
+  .nav-link.active{background:var(--bg3);color:var(--orange);font-weight:500;}
+  .nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .sub-links{padding-left:24px;margin-top:2px;}
+  .sub-link{display:block;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;border-radius:6px;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .sub-link:hover{color:var(--text);background:var(--bg3);}
+
+  /* MAIN */
+  .main{margin-left:248px;padding:40px 48px;max-width:980px;}
+  .page{display:none;}.page.active{display:block;}
+
+  /* PAGE HEADER */
+  .page-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .breadcrumb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .page-header h2{font-size:26px;font-weight:600;margin-bottom:6px;}
+  .page-header p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+  .badge-teal{background:var(--teal-bg);color:var(--teal);border:1px solid #1a5c44;}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid #3d2d6e;}
+  .badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid #6b4c0f;}
+  .badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid #1a3a5c;}
+  .badge-coral{background:var(--coral-bg);color:var(--coral);border:1px solid #5c1a27;}
+  .badge-orange{background:var(--orange-bg);color:var(--orange);border:1px solid #7a3010;}
+  .badge-green{background:var(--green-bg);color:var(--green);border:1px solid #155a30;}
+  .badge-pink{background:var(--pink-bg);color:var(--pink);border:1px solid #5c1a3a;}
+
+  /* CARDS */
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;}
+  .card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+  /* LANG BLOCKS */
+  .lang-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 5px;}
+  .en-block{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:var(--text);margin-bottom:8px;}
+  .hi-block{background:var(--purple-bg);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:#c4b5fd;margin-bottom:8px;}
+
+  /* CODE */
+  .code-wrap{position:relative;margin:12px 0;}
+  .code-label{background:var(--bg3);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:7px 14px;font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+  .copy-btn{font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all .15s;}
+  .copy-btn:hover{color:var(--teal);border-color:var(--teal);}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;white-space:pre;}
+  .kw{color:var(--kw);}.fn{color:var(--fn);}.cm{color:var(--cm);font-style:italic;}
+  .tp{color:var(--tp);}.st{color:var(--st);}.nm{color:var(--nm);}
+
+  /* TREE VISUAL */
+  .tree-visual{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:20px;margin:12px 0;overflow-x:auto;}
+  .tree-visual-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;}
+  .tree-svg-wrap{display:flex;justify-content:center;}
+
+  /* DRY RUN */
+  .dry-run{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0;overflow-x:auto;}
+  .dry-run-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+  .step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .step-num{font-size:11px;font-weight:600;color:var(--muted);min-width:80px;padding-top:2px;}
+  .step-info{font-size:12.5px;color:var(--text);flex:1;line-height:1.7;}
+  .step-result{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap;align-self:flex-start;}
+  .sr-green{background:var(--green-bg);color:var(--green);}
+  .sr-amber{background:var(--amber-bg);color:var(--amber);}
+  .sr-coral{background:var(--coral-bg);color:var(--coral);}
+  .sr-blue{background:var(--blue-bg);color:var(--blue);}
+  .sr-purple{background:var(--purple-bg);color:var(--purple);}
+
+  /* TRAVERSAL TRACE */
+  .trace-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:6px 0;}
+  .t-node{min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border-radius:50%;border:2px solid var(--border);background:var(--bg2);color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .t-node.vis{background:var(--orange-bg);color:var(--orange);border-color:var(--orange);}
+  .t-node.cur{background:var(--teal-bg);color:var(--teal);border-color:var(--teal);}
+  .t-arrow{color:var(--muted);font-size:14px;}
+  .trace-label{font-size:11px;color:var(--muted);min-width:80px;}
+
+  /* GRID */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0;}
+  .mini-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.7;}
+  .mini-card b{font-weight:600;display:block;margin-bottom:4px;}
+  .cx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0;}
+  .cx-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+  .cx-val{font-size:20px;font-weight:600;font-family:'JetBrains Mono',monospace;margin:4px 0;}
+  .cx-label{font-size:11px;color:var(--muted);}
+
+  /* MISC */
+  .divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+  .tip{border-left:3px solid var(--teal);background:var(--teal-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#6ee7c0;margin:12px 0;line-height:1.7;}
+  .warn{border-left:3px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#fcd97a;margin:12px 0;line-height:1.7;}
+  .info{border-left:3px solid var(--blue);background:var(--blue-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#93c5fd;margin:12px 0;line-height:1.7;}
+  .sub-heading{font-size:14px;font-weight:600;margin:22px 0 10px;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .sub-heading::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--orange);display:block;}
+  code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:4px;color:var(--teal);}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;}
+  th{background:var(--bg3);color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+  td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.6;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--bg3);}
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+  @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:28px 16px 40px;}.grid2,.grid3,.cx-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Trees Patterns · Bilingual</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Trees Patterns</div>
+
+    <button class="nav-link active" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#fb923c"></span>Traversal
+    </button>
+    <div class="sub-links" id="sub1">
+      <button class="sub-link" onclick="go('tr-dfs')">DFS (Pre/In/Post)</button>
+      <button class="sub-link" onclick="go('tr-bfs')">BFS (Level Order)</button>
+      <button class="sub-link" onclick="go('tr-zigzag')">Zigzag / Right View</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Recursion Patterns
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="go('rec-td')">Top Down</button>
+      <button class="sub-link" onclick="go('rec-bu')">Bottom Up</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#fb7185"></span>Path Based
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="go('path-sum')">Max Path Sum</button>
+      <button class="sub-link" onclick="go('path-dia')">Diameter / Height</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p4',this)">
+      <span class="nav-dot" style="background:#1dd6a0"></span>BST
+    </button>
+    <div class="sub-links" id="sub4" style="display:none">
+      <button class="sub-link" onclick="go('bst-search')">Search / Insert / Delete</button>
+      <button class="sub-link" onclick="go('bst-valid')">Validate BST</button>
+      <button class="sub-link" onclick="go('bst-kth')">Kth Smallest</button>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════════════════════════════
+     PAGE 1 — TRAVERSAL
+══════════════════════════════════════════ -->
+<div class="page active" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">Trees Patterns · Pattern 1 of 4</div>
+    <h2>Tree Traversal</h2>
+    <p>Tree ke nodes ko ek specific order mein visit karo — DFS (depth first) ya BFS (level by level).</p>
+    <div class="badge-row">
+      <span class="badge badge-orange">DFS · Pre/In/Post</span>
+      <span class="badge badge-blue">BFS · Level Order</span>
+      <span class="badge badge-purple">O(n) time · O(h) space</span>
+    </div>
+  </div>
+
+  <!-- NODE STRUCT -->
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--orange-bg)">🌳</div>TreeNode Structure (sabse pehle yeh samjho)</div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · TreeNode Definition</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">struct</span> <span class="fn">TreeNode</span> {
+    <span class="tp">int</span> val;
+    TreeNode* left;
+    TreeNode* right;
+    <span class="fn">TreeNode</span>(<span class="tp">int</span> x) : val(x), left(<span class="nm">nullptr</span>), right(<span class="nm">nullptr</span>) {}
+};</pre>
+    </div>
+
+    <!-- SVG TREE -->
+    <div class="tree-visual">
+      <div class="tree-visual-title">Example Tree used throughout these notes</div>
+      <div class="tree-svg-wrap">
+        <svg width="340" height="180" viewBox="0 0 340 180" xmlns="http://www.w3.org/2000/svg">
+          <!-- edges -->
+          <line x1="170" y1="35" x2="90" y2="95" stroke="#2a3245" stroke-width="2"/>
+          <line x1="170" y1="35" x2="250" y2="95" stroke="#2a3245" stroke-width="2"/>
+          <line x1="90"  y1="95" x2="50"  y2="155" stroke="#2a3245" stroke-width="2"/>
+          <line x1="90"  y1="95" x2="130" y2="155" stroke="#2a3245" stroke-width="2"/>
+          <line x1="250" y1="95" x2="210" y2="155" stroke="#2a3245" stroke-width="2"/>
+          <line x1="250" y1="95" x2="290" y2="155" stroke="#2a3245" stroke-width="2"/>
+          <!-- nodes -->
+          <circle cx="170" cy="35"  r="22" fill="#2a1508" stroke="#fb923c" stroke-width="2"/>
+          <circle cx="90"  cy="95"  r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <circle cx="250" cy="95"  r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <circle cx="50"  cy="155" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <circle cx="130" cy="155" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <circle cx="210" cy="155" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <circle cx="290" cy="155" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <!-- labels -->
+          <text x="170" y="40"  text-anchor="middle" fill="#fb923c" font-size="14" font-family="JetBrains Mono" font-weight="600">1</text>
+          <text x="90"  y="100" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">2</text>
+          <text x="250" y="100" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">3</text>
+          <text x="50"  y="160" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">4</text>
+          <text x="130" y="160" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">5</text>
+          <text x="210" y="160" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">6</text>
+          <text x="290" y="160" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">7</text>
+          <!-- level labels -->
+          <text x="8" y="40"  fill="#5a6478" font-size="10" font-family="Sora">L0</text>
+          <text x="8" y="100" fill="#5a6478" font-size="10" font-family="Sora">L1</text>
+          <text x="8" y="160" fill="#5a6478" font-size="10" font-family="Sora">L2</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DFS ── -->
+  <div id="tr-dfs">
+    <div class="sub-heading">DFS — Pre / In / Post Order</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--orange-bg)">🔽</div>DFS Traversals<span class="badge badge-orange">Recursive + Iterative</span></div>
+
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+      <div class="en-block">
+        DFS dives deep before going wide. Three orders based on <b>when you visit the root</b>:<br>
+        • <b>Preorder</b>: Root → Left → Right (copy tree, prefix expression)<br>
+        • <b>Inorder</b>: Left → Root → Right (BST mein sorted order deta hai)<br>
+        • <b>Postorder</b>: Left → Right → Root (delete tree, height calculate)
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        DFS pehle depth mein jaata hai. Teen orders hain — <b>root kab visit karo</b> iske basis pe:<br>
+        • <b>Preorder</b>: Pehle root, phir left, phir right → "Root pehle!"<br>
+        • <b>Inorder</b>: Left, phir root, phir right → BST mein sorted result deta hai<br>
+        • <b>Postorder</b>: Left, right, phir root → "Root baad mein!" — height/delete ke liye
+      </div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">Tree: 1→(2→(4,5), 3→(6,7)) ke liye teeno orders</div>
+        <div class="step">
+          <span class="step-num">Preorder</span>
+          <div class="step-info">
+            <div class="trace-row">
+              <span class="trace-label">Root 1st:</span>
+              <div class="t-node vis">1</div><span class="t-arrow">→</span>
+              <div class="t-node vis">2</div><span class="t-arrow">→</span>
+              <div class="t-node vis">4</div><span class="t-arrow">→</span>
+              <div class="t-node vis">5</div><span class="t-arrow">→</span>
+              <div class="t-node vis">3</div><span class="t-arrow">→</span>
+              <div class="t-node vis">6</div><span class="t-arrow">→</span>
+              <div class="t-node vis">7</div>
+            </div>
+          </div>
+          <span class="step-result sr-amber">[1,2,4,5,3,6,7]</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Inorder</span>
+          <div class="step-info">
+            <div class="trace-row">
+              <span class="trace-label">Root mid:</span>
+              <div class="t-node vis">4</div><span class="t-arrow">→</span>
+              <div class="t-node vis">2</div><span class="t-arrow">→</span>
+              <div class="t-node vis">5</div><span class="t-arrow">→</span>
+              <div class="t-node vis">1</div><span class="t-arrow">→</span>
+              <div class="t-node vis">6</div><span class="t-arrow">→</span>
+              <div class="t-node vis">3</div><span class="t-arrow">→</span>
+              <div class="t-node vis">7</div>
+            </div>
+          </div>
+          <span class="step-result sr-blue">[4,2,5,1,6,3,7]</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Postorder</span>
+          <div class="step-info">
+            <div class="trace-row">
+              <span class="trace-label">Root last:</span>
+              <div class="t-node vis">4</div><span class="t-arrow">→</span>
+              <div class="t-node vis">5</div><span class="t-arrow">→</span>
+              <div class="t-node vis">2</div><span class="t-arrow">→</span>
+              <div class="t-node vis">6</div><span class="t-arrow">→</span>
+              <div class="t-node vis">7</div><span class="t-arrow">→</span>
+              <div class="t-node vis">3</div><span class="t-arrow">→</span>
+              <div class="t-node vis">1</div>
+            </div>
+          </div>
+          <span class="step-result sr-purple">[4,5,2,6,7,3,1]</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · DFS — Recursive (Teeno ek saath)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// PREORDER: Root → Left → Right</span>
+<span class="kw">void</span> <span class="fn">preorder</span>(TreeNode* root, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; res) {
+    <span class="kw">if</span> (!root) <span class="kw">return</span>;
+    res.push_back(root-&gt;val);   <span class="cm">// pehle root visit karo</span>
+    <span class="fn">preorder</span>(root-&gt;left, res);
+    <span class="fn">preorder</span>(root-&gt;right, res);
+}
+
+<span class="cm">// INORDER: Left → Root → Right (BST mein sorted order!)</span>
+<span class="kw">void</span> <span class="fn">inorder</span>(TreeNode* root, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; res) {
+    <span class="kw">if</span> (!root) <span class="kw">return</span>;
+    <span class="fn">inorder</span>(root-&gt;left, res);
+    res.push_back(root-&gt;val);   <span class="cm">// beech mein root</span>
+    <span class="fn">inorder</span>(root-&gt;right, res);
+}
+
+<span class="cm">// POSTORDER: Left → Right → Root</span>
+<span class="kw">void</span> <span class="fn">postorder</span>(TreeNode* root, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; res) {
+    <span class="kw">if</span> (!root) <span class="kw">return</span>;
+    <span class="fn">postorder</span>(root-&gt;left, res);
+    <span class="fn">postorder</span>(root-&gt;right, res);
+    res.push_back(root-&gt;val);   <span class="cm">// last mein root</span>
+}</pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · DFS — Iterative using Stack</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// Iterative Inorder (stack use karke)</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">inorderIterative</span>(TreeNode* root) {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; res;
+    <span class="tp">stack</span>&lt;TreeNode*&gt; st;
+    TreeNode* curr = root;
+
+    <span class="kw">while</span> (curr || !st.empty()) {
+        <span class="kw">while</span> (curr) {
+            st.push(curr);          <span class="cm">// left mein jaate waqt stack mein daalo</span>
+            curr = curr-&gt;left;
+        }
+        curr = st.top(); st.pop();  <span class="cm">// leftmost node process karo</span>
+        res.push_back(curr-&gt;val);
+        curr = curr-&gt;right;         <span class="cm">// ab right subtree</span>
+    }
+    <span class="kw">return</span> res;
+}
+
+<span class="cm">// Iterative Preorder (much simpler)</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">preorderIterative</span>(TreeNode* root) {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; res;
+    <span class="kw">if</span> (!root) <span class="kw">return</span> res;
+    <span class="tp">stack</span>&lt;TreeNode*&gt; st;
+    st.push(root);
+    <span class="kw">while</span> (!st.empty()) {
+        TreeNode* node = st.top(); st.pop();
+        res.push_back(node-&gt;val);   <span class="cm">// pehle process karo</span>
+        <span class="kw">if</span> (node-&gt;right) st.push(node-&gt;right); <span class="cm">// right pehle push (LIFO)</span>
+        <span class="kw">if</span> (node-&gt;left)  st.push(node-&gt;left);
+    }
+    <span class="kw">return</span> res;
+}</pre>
+      </div>
+      <div class="tip">💡 Yaad rakhne ka trick: <b>Pre</b>order = Root <b>Pre</b>fix (pehle). <b>In</b>order = Root <b>In</b> middle (beech mein). <b>Post</b>order = Root <b>Post</b> (baad mein).</div>
+    </div>
+  </div>
+
+  <!-- ── BFS ── -->
+  <div id="tr-bfs">
+    <div class="sub-heading">BFS — Level Order Traversal</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">📶</div>Level Order BFS<span class="badge badge-blue">LeetCode 102</span></div>
+
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+      <div class="en-block">BFS uses a <b>queue</b>. Process all nodes at the current level before moving to the next. At each level, record queue size first — that's how many nodes are at this level. Process exactly that many nodes, then move on.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">Queue use karo. Ek level ke saare nodes process karo pehle, phir next level pe jao. Trick: level shuru hone pe queue ka size note karo — utne hi nodes is level mein hain. Utne process karo, phir baaki next level ke hain.</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">BFS on Tree: root=1, left=2, right=3, ...</div>
+        <div class="step">
+          <span class="step-num">Level 0</span>
+          <div class="step-info">Queue: [1] → size=1 → process 1 → add children 2,3</div>
+          <span class="step-result sr-amber">[[1]]</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Level 1</span>
+          <div class="step-info">Queue: [2,3] → size=2 → process 2(add 4,5), 3(add 6,7)</div>
+          <span class="step-result sr-blue">[[1],[2,3]]</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Level 2</span>
+          <div class="step-info">Queue: [4,5,6,7] → size=4 → process all → no children</div>
+          <span class="step-result sr-green">[[1],[2,3],[4,5,6,7]]</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · BFS Level Order</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; <span class="fn">levelOrder</span>(TreeNode* root) {
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; result;
+    <span class="kw">if</span> (!root) <span class="kw">return</span> result;
+
+    <span class="tp">queue</span>&lt;TreeNode*&gt; q;
+    q.push(root);
+
+    <span class="kw">while</span> (!q.empty()) {
+        <span class="tp">int</span> levelSize = q.size(); <span class="cm">// is level mein kitne nodes hain!</span>
+        <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; level;
+
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; levelSize; i++) {
+            TreeNode* node = q.front(); q.pop();
+            level.push_back(node-&gt;val);
+            <span class="kw">if</span> (node-&gt;left)  q.push(node-&gt;left);  <span class="cm">// next level ke liye</span>
+            <span class="kw">if</span> (node-&gt;right) q.push(node-&gt;right);
+        }
+        result.push_back(level);
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+      <div class="tip">💡 BFS ka core: Queue + levelSize trick. <code>int levelSize = q.size()</code> — yeh line level boundary mark karti hai. Iske bina sab ek hi vector mein mix ho jaayenge!</div>
+    </div>
+  </div>
+
+  <!-- ── ZIGZAG + RIGHT VIEW ── -->
+  <div id="tr-zigzag">
+    <div class="sub-heading">BFS Variations — Zigzag & Right Side View</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--purple-bg)">↔️</div>Zigzag Level Order + Right Side View<span class="badge badge-purple">LC 103 · LC 199</span></div>
+
+      <div class="hi-block">Dono BFS ke variations hain. Zigzag mein alternate levels ko reverse karo. Right Side View mein har level ka last node lo — woh right se dikhega.</div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Zigzag Level Order</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; <span class="fn">zigzagLevelOrder</span>(TreeNode* root) {
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; result;
+    <span class="kw">if</span> (!root) <span class="kw">return</span> result;
+    <span class="tp">queue</span>&lt;TreeNode*&gt; q;
+    q.push(root);
+    <span class="tp">bool</span> leftToRight = <span class="nm">true</span>;
+
+    <span class="kw">while</span> (!q.empty()) {
+        <span class="tp">int</span> sz = q.size();
+        <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; level(sz);
+
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; sz; i++) {
+            TreeNode* node = q.front(); q.pop();
+            <span class="cm">// direction ke hisaab se index set karo</span>
+            <span class="tp">int</span> idx = leftToRight ? i : (sz - <span class="nm">1</span> - i);
+            level[idx] = node-&gt;val;
+            <span class="kw">if</span> (node-&gt;left)  q.push(node-&gt;left);
+            <span class="kw">if</span> (node-&gt;right) q.push(node-&gt;right);
+        }
+        result.push_back(level);
+        leftToRight = !leftToRight; <span class="cm">// har level pe direction flip karo!</span>
+    }
+    <span class="kw">return</span> result;
+}
+
+<span class="cm">// Right Side View — har level ka last node</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">rightSideView</span>(TreeNode* root) {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; result;
+    <span class="kw">if</span> (!root) <span class="kw">return</span> result;
+    <span class="tp">queue</span>&lt;TreeNode*&gt; q;
+    q.push(root);
+
+    <span class="kw">while</span> (!q.empty()) {
+        <span class="tp">int</span> sz = q.size();
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; sz; i++) {
+            TreeNode* node = q.front(); q.pop();
+            <span class="kw">if</span> (i == sz - <span class="nm">1</span>) result.push_back(node-&gt;val); <span class="cm">// last = rightmost</span>
+            <span class="kw">if</span> (node-&gt;left)  q.push(node-&gt;left);
+            <span class="kw">if</span> (node-&gt;right) q.push(node-&gt;right);
+        }
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+      <div class="tip">💡 Zigzag trick: Reverse karne ki zaroorat nahi — sirf index <code>leftToRight ? i : sz-1-i</code> se directly sahi jagah dalo. Bohot efficient!</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PAGE 2 — RECURSION PATTERNS
+══════════════════════════════════════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">Trees Patterns · Pattern 2 of 4</div>
+    <h2>Recursion Patterns</h2>
+    <p>Tree problems mein do main recursion approaches — Top Down (pass info neeche) aur Bottom Up (collect info upar).</p>
+    <div class="badge-row">
+      <span class="badge badge-purple">Top Down · Pass params</span>
+      <span class="badge badge-teal">Bottom Up · Return values</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🧠</div>Core Concept — Do approaches</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>Top Down</b>: Pass information from parent to children via function parameters. Like preorder — process parent first, then recurse.<br><br>
+      <b>Bottom Up</b>: Get information from children, combine at current node, return to parent. Like postorder — process children first, then current node.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Top Down</b>: Parent se information parameters mein neeche bhejo. Root se shuru, leaf tak jaao. "Main root hoon, meri depth 0 hai — tumhari 1 hogi" — yeh top down hai.<br><br>
+      <b>Bottom Up</b>: Pehle children se information lo, upar return karo. "Mujhe apna height nahi pata, pehle apne bachon se poochhta hoon" — yeh bottom up hai.
+    </div>
+    <div class="grid2">
+      <div class="mini-card"><b style="color:var(--purple)">Top Down kab use karein?</b>Path sum check, max depth with path tracking, root-to-leaf problems. Parent ka state child ko chahiye.</div>
+      <div class="mini-card"><b style="color:var(--teal)">Bottom Up kab use karein?</b>Height, diameter, max path sum. Child ka result combine karke parent ko dena ho.</div>
+    </div>
+  </div>
+
+  <!-- TOP DOWN -->
+  <div id="rec-td">
+    <div class="sub-heading">Top Down Approach</div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">⬇️</div>Path Sum — Root to Leaf<span class="badge badge-amber">LeetCode 112</span></div>
+      <div class="hi-block">Root se leaf tak jaate hain, remaining target ko parameter mein le jaate hain. Leaf node pe check karo kya remaining == node.val. Parent ki information neeche pass ho rahi hai — Top Down!</div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">Tree: 5→(4→(11→(7,2)),8→(13,4→(null,1))), target=22</div>
+        <div class="step">
+          <span class="step-num">root=5</span>
+          <div class="step-info">hasPathSum(5, 22) → recurse with remaining = 22-5 = 17</div>
+          <span class="step-result sr-amber">pass 17 down</span>
+        </div>
+        <div class="step">
+          <span class="step-num">node=4</span>
+          <div class="step-info">hasPathSum(4, 17) → remaining = 17-4 = 13</div>
+          <span class="step-result sr-amber">pass 13 down</span>
+        </div>
+        <div class="step">
+          <span class="step-num">node=11</span>
+          <div class="step-info">hasPathSum(11, 13) → remaining = 13-11 = 2</div>
+          <span class="step-result sr-amber">pass 2 down</span>
+        </div>
+        <div class="step">
+          <span class="step-num">node=2</span>
+          <div class="step-info">Leaf! remaining = 2-2 = 0 → ✅</div>
+          <span class="step-result sr-green">✅ return true</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Path Sum (Top Down)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">bool</span> <span class="fn">hasPathSum</span>(TreeNode* root, <span class="tp">int</span> target) {
+    <span class="kw">if</span> (!root) <span class="kw">return false</span>;
+
+    <span class="cm">// Leaf node pe check karo</span>
+    <span class="kw">if</span> (!root-&gt;left &amp;&amp; !root-&gt;right)
+        <span class="kw">return</span> root-&gt;val == target;
+
+    <span class="cm">// Remaining target neeche pass karo (Top Down!)</span>
+    <span class="kw">return</span> <span class="fn">hasPathSum</span>(root-&gt;left, target - root-&gt;val) ||
+           <span class="fn">hasPathSum</span>(root-&gt;right, target - root-&gt;val);
+}
+
+<span class="cm">// Path Sum II — saare valid paths collect karo</span>
+<span class="kw">void</span> <span class="fn">dfs</span>(TreeNode* node, <span class="tp">int</span> rem, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; path,
+         <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; res) {
+    <span class="kw">if</span> (!node) <span class="kw">return</span>;
+    path.push_back(node-&gt;val);
+
+    <span class="kw">if</span> (!node-&gt;left &amp;&amp; !node-&gt;right &amp;&amp; rem == node-&gt;val)
+        res.push_back(path);                 <span class="cm">// valid path mila!</span>
+
+    <span class="fn">dfs</span>(node-&gt;left,  rem - node-&gt;val, path, res);
+    <span class="fn">dfs</span>(node-&gt;right, rem - node-&gt;val, path, res);
+    path.pop_back();                         <span class="cm">// backtrack — path se hatao</span>
+}</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--orange-bg)">📏</div>Max Depth of Binary Tree<span class="badge badge-orange">LeetCode 104</span></div>
+      <div class="hi-block">Top down: depth parameter pass karo. Bottom up: children se height lo, max+1 return karo. Dono work karte hain — bottom up zyada clean hai.</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Max Depth — Top Down & Bottom Up</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// Bottom Up (zyada common aur clean)</span>
+<span class="tp">int</span> <span class="fn">maxDepth</span>(TreeNode* root) {
+    <span class="kw">if</span> (!root) <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="tp">int</span> leftH  = <span class="fn">maxDepth</span>(root-&gt;left);   <span class="cm">// left child se pucho</span>
+    <span class="tp">int</span> rightH = <span class="fn">maxDepth</span>(root-&gt;right);  <span class="cm">// right child se pucho</span>
+    <span class="kw">return</span> max(leftH, rightH) + <span class="nm">1</span>;       <span class="cm">// max lo + apne aap ko add karo</span>
+}
+
+<span class="cm">// Top Down version (depth parameter pass karo)</span>
+<span class="tp">int</span> maxD = <span class="nm">0</span>;
+<span class="kw">void</span> <span class="fn">dfsDepth</span>(TreeNode* root, <span class="tp">int</span> depth) {
+    <span class="kw">if</span> (!root) <span class="kw">return</span>;
+    maxD = max(maxD, depth);              <span class="cm">// abhi tak ki max depth track karo</span>
+    <span class="fn">dfsDepth</span>(root-&gt;left,  depth + <span class="nm">1</span>);  <span class="cm">// depth+1 neeche pass karo</span>
+    <span class="fn">dfsDepth</span>(root-&gt;right, depth + <span class="nm">1</span>);
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM UP -->
+  <div id="rec-bu">
+    <div class="sub-heading">Bottom Up Approach</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">⬆️</div>Symmetric Tree + Same Tree<span class="badge badge-teal">LeetCode 101 · 100</span></div>
+      <div class="hi-block">Dono subtrees ko compare karo — bottom up mein har node apna result return karta hai. Symmetric mein left aur right mirror image hone chahiye. Same tree mein structure + values dono same.</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Symmetric Tree + Same Tree</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// Same Tree</span>
+<span class="tp">bool</span> <span class="fn">isSameTree</span>(TreeNode* p, TreeNode* q) {
+    <span class="kw">if</span> (!p &amp;&amp; !q) <span class="kw">return true</span>;           <span class="cm">// dono null → same</span>
+    <span class="kw">if</span> (!p || !q) <span class="kw">return false</span>;          <span class="cm">// ek null ek nahi → different</span>
+    <span class="kw">if</span> (p-&gt;val != q-&gt;val) <span class="kw">return false</span>;  <span class="cm">// values different</span>
+    <span class="kw">return</span> <span class="fn">isSameTree</span>(p-&gt;left, q-&gt;left) &amp;&amp;
+           <span class="fn">isSameTree</span>(p-&gt;right, q-&gt;right);
+}
+
+<span class="cm">// Symmetric Tree — left subtree = mirror of right</span>
+<span class="tp">bool</span> <span class="fn">isMirror</span>(TreeNode* l, TreeNode* r) {
+    <span class="kw">if</span> (!l &amp;&amp; !r) <span class="kw">return true</span>;
+    <span class="kw">if</span> (!l || !r) <span class="kw">return false</span>;
+    <span class="cm">// Values match karni chahiye aur subtrees mirror honni chahiye</span>
+    <span class="kw">return</span> (l-&gt;val == r-&gt;val) &amp;&amp;
+           <span class="fn">isMirror</span>(l-&gt;left,  r-&gt;right) &amp;&amp;
+           <span class="fn">isMirror</span>(l-&gt;right, r-&gt;left);
+}
+
+<span class="tp">bool</span> <span class="fn">isSymmetric</span>(TreeNode* root) {
+    <span class="kw">return</span> !root || <span class="fn">isMirror</span>(root-&gt;left, root-&gt;right);
+}
+
+<span class="cm">// Invert Binary Tree (Bottom Up classic)</span>
+TreeNode* <span class="fn">invertTree</span>(TreeNode* root) {
+    <span class="kw">if</span> (!root) <span class="kw">return</span> <span class="nm">nullptr</span>;
+    TreeNode* left  = <span class="fn">invertTree</span>(root-&gt;left);   <span class="cm">// pehle children invert karo</span>
+    TreeNode* right = <span class="fn">invertTree</span>(root-&gt;right);
+    root-&gt;left  = right;  <span class="cm">// phir swap karo</span>
+    root-&gt;right = left;
+    <span class="kw">return</span> root;
+}</pre>
+      </div>
+      <div class="tip">💡 Bottom Up pattern: Base case → children se result lo → combine → return. Preorder nahi, postorder style mein socho!</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PAGE 3 — PATH BASED
+══════════════════════════════════════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">Trees Patterns · Pattern 3 of 4</div>
+    <h2>Path Based Problems</h2>
+    <p>Tree mein paths ke saath kaam karna — max sum, diameter, height. Aksar global variable + bottom up recursion use hoti hai.</p>
+    <div class="badge-row">
+      <span class="badge badge-coral">Max Path Sum · LC 124</span>
+      <span class="badge badge-amber">Diameter · LC 543</span>
+      <span class="badge badge-blue">Height / Depth</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">💡</div>Core Insight — Global Variable Pattern</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Path problems often need a <b>global variable</b> to track the answer, while the recursive function returns something <b>different</b> (like single-arm contribution). The function and the answer are two different things — this is the key insight!</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Path problems mein ek <b>global variable</b> answer track karta hai. Recursive function kuch alag return karta hai (single path). Yeh do cheezein alag hain — yahi sabse bada confusion point hai! Function jo return karta hai aur final answer alag hote hain.</div>
+  </div>
+
+  <!-- MAX PATH SUM -->
+  <div id="path-sum">
+    <div class="sub-heading">Max Path Sum</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--coral-bg)">📈</div>Binary Tree Maximum Path Sum<span class="badge badge-coral">LeetCode 124 · Hard</span></div>
+
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">
+        A path can go: left subtree → current node → right subtree (cannot pass through parent).<br><br>
+        The recursive function returns <b>max gain from one arm</b> (left or right, not both — can't branch). But we compute <b>left + node + right</b> locally and update the global max. If a subtree gives negative gain, ignore it (take 0).
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Path teen tarah se ho sakta hai: sirf left, sirf right, ya left+node+right. Par function sirf ek arm return karta hai (parent ke liye).<br><br>
+        Har node pe: <code>localMax = left + node.val + right</code> se global max update karo. Function sirf <code>node.val + max(left, right)</code> return kare — parent use karegi. Negative gain? 0 le lo (us branch ko ignore karo).
+      </div>
+
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">Tree: -10→(9, 20→(15, 7)) → Expected: 42</div>
+        <div class="step">
+          <span class="step-num">node=15</span>
+          <div class="step-info">Leaf. left=0, right=0. localMax=15. return 15</div>
+          <span class="step-result sr-amber">gain=15</span>
+        </div>
+        <div class="step">
+          <span class="step-num">node=7</span>
+          <div class="step-info">Leaf. return 7</div>
+          <span class="step-result sr-amber">gain=7</span>
+        </div>
+        <div class="step">
+          <span class="step-num">node=20</span>
+          <div class="step-info">left=15, right=7. localMax=15+20+7=42 → globalMax=42. return 20+max(15,7)=35</div>
+          <span class="step-result sr-green">globalMax=42!</span>
+        </div>
+        <div class="step">
+          <span class="step-num">node=9</span>
+          <div class="step-info">Leaf. return 9</div>
+          <span class="step-result sr-amber">gain=9</span>
+        </div>
+        <div class="step">
+          <span class="step-num">root=-10</span>
+          <div class="step-info">left=9, right=35. localMax=9+(-10)+35=34 < 42. globalMax stays 42</div>
+          <span class="step-result sr-green">✅ return 42</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Binary Tree Maximum Path Sum</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> globalMax;
+
+<span class="tp">int</span> <span class="fn">gain</span>(TreeNode* node) {
+    <span class="kw">if</span> (!node) <span class="kw">return</span> <span class="nm">0</span>;
+
+    <span class="cm">// Negative gain? 0 lo — us branch ko ignore karo</span>
+    <span class="tp">int</span> leftGain  = max(<span class="nm">0</span>, <span class="fn">gain</span>(node-&gt;left));
+    <span class="tp">int</span> rightGain = max(<span class="nm">0</span>, <span class="fn">gain</span>(node-&gt;right));
+
+    <span class="cm">// Is node se guzarne wale path ka max sum (dono arms + node)</span>
+    <span class="tp">int</span> localMax = node-&gt;val + leftGain + rightGain;
+    globalMax = max(globalMax, localMax); <span class="cm">// global answer update karo</span>
+
+    <span class="cm">// Parent ke liye sirf ek arm return karo (branch nahi kar sakte)</span>
+    <span class="kw">return</span> node-&gt;val + max(leftGain, rightGain);
+}
+
+<span class="tp">int</span> <span class="fn">maxPathSum</span>(TreeNode* root) {
+    globalMax = INT_MIN;
+    <span class="fn">gain</span>(root);
+    <span class="kw">return</span> globalMax;
+}</pre>
+      </div>
+      <div class="warn">⚠️ Function jo return karta hai (single arm) aur globalMax alag hain — yahi confusion hota hai. Function parent ke liye single path return karta hai, answer alag track hota hai!</div>
+    </div>
+  </div>
+
+  <!-- DIAMETER + HEIGHT -->
+  <div id="path-dia">
+    <div class="sub-heading">Diameter & Height</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">📐</div>Diameter of Binary Tree<span class="badge badge-amber">LeetCode 543</span></div>
+
+      <div class="hi-block">Diameter = tree ka sabse lamba path (node count mein). Kisi bhi node se guzar sakta hai. Har node ke liye: diameter = leftHeight + rightHeight. Globally maximum value answer hai.</div>
+
+      <div class="dry-run">
+        <div class="dry-run-title">Tree: 1→(2→(4,5), 3) → Diameter = 3 (path: 4→2→1→3 ya 5→2→1→3)</div>
+        <div class="step">
+          <span class="step-num">node=4,5</span>
+          <div class="step-info">Leaves. height=1 each. diameter at each = 0+0=0</div>
+        </div>
+        <div class="step">
+          <span class="step-num">node=2</span>
+          <div class="step-info">leftH=1(4), rightH=1(5). diameter=1+1=2. return height=2</div>
+          <span class="step-result sr-amber">local dia=2</span>
+        </div>
+        <div class="step">
+          <span class="step-num">node=3</span>
+          <div class="step-info">Leaf. height=1</div>
+        </div>
+        <div class="step">
+          <span class="step-num">root=1</span>
+          <div class="step-info">leftH=2(from node 2), rightH=1(from node 3). diameter=2+1=3</div>
+          <span class="step-result sr-green">✅ globalDia=3</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Diameter + Height</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// Diameter of Binary Tree</span>
+<span class="tp">int</span> dia = <span class="nm">0</span>;
+
+<span class="tp">int</span> <span class="fn">height</span>(TreeNode* node) {
+    <span class="kw">if</span> (!node) <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="tp">int</span> l = <span class="fn">height</span>(node-&gt;left);
+    <span class="tp">int</span> r = <span class="fn">height</span>(node-&gt;right);
+    dia = max(dia, l + r);    <span class="cm">// is node se guzarne wali diameter</span>
+    <span class="kw">return</span> max(l, r) + <span class="nm">1</span>;    <span class="cm">// parent ke liye height return karo</span>
+}
+
+<span class="tp">int</span> <span class="fn">diameterOfBinaryTree</span>(TreeNode* root) {
+    dia = <span class="nm">0</span>;
+    <span class="fn">height</span>(root);
+    <span class="kw">return</span> dia;
+}
+
+<span class="cm">// Balanced Binary Tree check (LeetCode 110)</span>
+<span class="tp">int</span> <span class="fn">checkHeight</span>(TreeNode* node) {
+    <span class="kw">if</span> (!node) <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="tp">int</span> l = <span class="fn">checkHeight</span>(node-&gt;left);
+    <span class="kw">if</span> (l == -<span class="nm">1</span>) <span class="kw">return</span> -<span class="nm">1</span>;   <span class="cm">// already unbalanced signal</span>
+    <span class="tp">int</span> r = <span class="fn">checkHeight</span>(node-&gt;right);
+    <span class="kw">if</span> (r == -<span class="nm">1</span>) <span class="kw">return</span> -<span class="nm">1</span>;
+    <span class="kw">if</span> (abs(l - r) &gt; <span class="nm">1</span>) <span class="kw">return</span> -<span class="nm">1</span>; <span class="cm">// unbalanced! -1 signal upar bhejo</span>
+    <span class="kw">return</span> max(l, r) + <span class="nm">1</span>;
+}
+
+<span class="tp">bool</span> <span class="fn">isBalanced</span>(TreeNode* root) {
+    <span class="kw">return</span> <span class="fn">checkHeight</span>(root) != -<span class="nm">1</span>;
+}</pre>
+      </div>
+      <div class="tip">💡 Diameter aur Max Path Sum same pattern follow karte hain: function height/gain return kare, global variable answer track kare. Ek hi traversal mein dono!</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🔗</div>Lowest Common Ancestor (LCA)<span class="badge badge-blue">LeetCode 236</span></div>
+      <div class="hi-block">Tree mein do nodes ka sabse lower common ancestor dhundho. Agar current node p ya q hai → return current. Agar left aur right dono ne kuch return kiya → current node hi LCA hai!</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Lowest Common Ancestor</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>TreeNode* <span class="fn">lowestCommonAncestor</span>(TreeNode* root, TreeNode* p, TreeNode* q) {
+    <span class="kw">if</span> (!root || root == p || root == q) <span class="kw">return</span> root; <span class="cm">// mil gaya</span>
+
+    TreeNode* left  = <span class="fn">lowestCommonAncestor</span>(root-&gt;left,  p, q);
+    TreeNode* right = <span class="fn">lowestCommonAncestor</span>(root-&gt;right, p, q);
+
+    <span class="cm">// Dono sides se kuch mila → current node LCA hai!</span>
+    <span class="kw">if</span> (left &amp;&amp; right) <span class="kw">return</span> root;
+
+    <span class="cm">// Sirf ek side se mila → wahi return karo</span>
+    <span class="kw">return</span> left ? left : right;
+}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PAGE 4 — BST
+══════════════════════════════════════════ -->
+<div class="page" id="p4">
+  <div class="page-header">
+    <div class="breadcrumb">Trees Patterns · Pattern 4 of 4</div>
+    <h2>Binary Search Tree (BST)</h2>
+    <p>BST mein left < root < right. Yeh property har operation ko O(log n) average mein deti hai. Inorder traversal sorted order deta hai!</p>
+    <div class="badge-row">
+      <span class="badge badge-teal">Search O(log n)</span>
+      <span class="badge badge-amber">Insert O(log n)</span>
+      <span class="badge badge-coral">Delete O(log n)</span>
+      <span class="badge badge-blue">Inorder = Sorted</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🌲</div>BST Property — Core Rule</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">BST ka golden rule: <b>har node ke liye — left subtree mein sab chhote, right subtree mein sab bade</b>. Sirf direct children nahi — poora subtree! Isliye search O(log n) hota hai — har step pe half eliminate ho jaata hai.</div>
+
+    <!-- BST SVG -->
+    <div class="tree-visual">
+      <div class="tree-visual-title">BST Example — Inorder: [1, 3, 4, 6, 7, 8, 10]</div>
+      <div class="tree-svg-wrap">
+        <svg width="360" height="180" viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
+          <line x1="180" y1="35" x2="100" y2="95"  stroke="#2a3245" stroke-width="2"/>
+          <line x1="180" y1="35" x2="260" y2="95"  stroke="#2a3245" stroke-width="2"/>
+          <line x1="100" y1="95" x2="55"  y2="155" stroke="#2a3245" stroke-width="2"/>
+          <line x1="100" y1="95" x2="145" y2="155" stroke="#2a3245" stroke-width="2"/>
+          <line x1="260" y1="95" x2="215" y2="155" stroke="#2a3245" stroke-width="2"/>
+          <line x1="260" y1="95" x2="305" y2="155" stroke="#2a3245" stroke-width="2"/>
+          <circle cx="180" cy="35"  r="22" fill="#0d2e24" stroke="#1dd6a0" stroke-width="2"/>
+          <circle cx="100" cy="95"  r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <circle cx="260" cy="95"  r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <circle cx="55"  cy="155" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <circle cx="145" cy="155" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <circle cx="215" cy="155" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <circle cx="305" cy="155" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+          <text x="180" y="40"  text-anchor="middle" fill="#1dd6a0" font-size="13" font-family="JetBrains Mono" font-weight="600">6</text>
+          <text x="100" y="100" text-anchor="middle" fill="#e8eaf6" font-size="13" font-family="JetBrains Mono" font-weight="600">3</text>
+          <text x="260" y="100" text-anchor="middle" fill="#e8eaf6" font-size="13" font-family="JetBrains Mono" font-weight="600">8</text>
+          <text x="55"  y="160" text-anchor="middle" fill="#e8eaf6" font-size="13" font-family="JetBrains Mono" font-weight="600">1</text>
+          <text x="145" y="160" text-anchor="middle" fill="#e8eaf6" font-size="13" font-family="JetBrains Mono" font-weight="600">4</text>
+          <text x="215" y="160" text-anchor="middle" fill="#e8eaf6" font-size="13" font-family="JetBrains Mono" font-weight="600">7</text>
+          <text x="305" y="160" text-anchor="middle" fill="#e8eaf6" font-size="13" font-family="JetBrains Mono" font-weight="600">10</text>
+          <text x="40"  y="30"  fill="#5a6478" font-size="10" font-family="Sora">Left&lt;Root&lt;Right</text>
+          <text x="40"  y="44"  fill="#5a6478" font-size="10" font-family="Sora">always!</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH INSERT DELETE -->
+  <div id="bst-search">
+    <div class="sub-heading">Search, Insert & Delete in BST</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🔍</div>BST Search + Insert<span class="badge badge-teal">LeetCode 700 · 701</span></div>
+
+      <div class="dry-run">
+        <div class="dry-run-title">Search for 7 in BST root=6</div>
+        <div class="step">
+          <span class="step-num">node=6</span>
+          <div class="step-info">7 > 6 → right mein jao</div>
+          <span class="step-result sr-amber">go right →</span>
+        </div>
+        <div class="step">
+          <span class="step-num">node=8</span>
+          <div class="step-info">7 < 8 → left mein jao</div>
+          <span class="step-result sr-amber">go left ←</span>
+        </div>
+        <div class="step">
+          <span class="step-num">node=7</span>
+          <div class="step-info">7 == 7 → found!</div>
+          <span class="step-result sr-green">✅ return node</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · BST Search + Insert</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// BST Search</span>
+TreeNode* <span class="fn">searchBST</span>(TreeNode* root, <span class="tp">int</span> val) {
+    <span class="kw">if</span> (!root || root-&gt;val == val) <span class="kw">return</span> root;
+    <span class="kw">if</span> (val &lt; root-&gt;val)
+        <span class="kw">return</span> <span class="fn">searchBST</span>(root-&gt;left, val);   <span class="cm">// left mein jao</span>
+    <span class="kw">return</span> <span class="fn">searchBST</span>(root-&gt;right, val);     <span class="cm">// right mein jao</span>
+}
+
+<span class="cm">// BST Insert</span>
+TreeNode* <span class="fn">insertIntoBST</span>(TreeNode* root, <span class="tp">int</span> val) {
+    <span class="kw">if</span> (!root) <span class="kw">return new</span> <span class="fn">TreeNode</span>(val); <span class="cm">// sahi jagah mili — insert!</span>
+    <span class="kw">if</span> (val &lt; root-&gt;val)
+        root-&gt;left  = <span class="fn">insertIntoBST</span>(root-&gt;left, val);
+    <span class="kw">else</span>
+        root-&gt;right = <span class="fn">insertIntoBST</span>(root-&gt;right, val);
+    <span class="kw">return</span> root;
+}
+
+<span class="cm">// BST Delete — 3 cases!</span>
+TreeNode* <span class="fn">deleteNode</span>(TreeNode* root, <span class="tp">int</span> key) {
+    <span class="kw">if</span> (!root) <span class="kw">return</span> <span class="nm">nullptr</span>;
+
+    <span class="kw">if</span> (key &lt; root-&gt;val)
+        root-&gt;left  = <span class="fn">deleteNode</span>(root-&gt;left, key);
+    <span class="kw">else if</span> (key &gt; root-&gt;val)
+        root-&gt;right = <span class="fn">deleteNode</span>(root-&gt;right, key);
+    <span class="kw">else</span> {
+        <span class="cm">// Case 1: Leaf node → seedha delete karo</span>
+        <span class="kw">if</span> (!root-&gt;left &amp;&amp; !root-&gt;right) <span class="kw">return</span> <span class="nm">nullptr</span>;
+        <span class="cm">// Case 2: Ek hi child → us child se replace karo</span>
+        <span class="kw">if</span> (!root-&gt;left)  <span class="kw">return</span> root-&gt;right;
+        <span class="kw">if</span> (!root-&gt;right) <span class="kw">return</span> root-&gt;left;
+        <span class="cm">// Case 3: Do children → inorder successor (right ka leftmost) se replace karo</span>
+        TreeNode* succ = root-&gt;right;
+        <span class="kw">while</span> (succ-&gt;left) succ = succ-&gt;left;  <span class="cm">// right subtree ka min</span>
+        root-&gt;val   = succ-&gt;val;              <span class="cm">// value replace karo</span>
+        root-&gt;right = <span class="fn">deleteNode</span>(root-&gt;right, succ-&gt;val); <span class="cm">// successor delete</span>
+    }
+    <span class="kw">return</span> root;
+}</pre>
+      </div>
+      <div class="warn">⚠️ Delete ke 3 cases yaad rakho: (1) Leaf → null. (2) One child → replace. (3) Two children → inorder successor se replace karo!</div>
+    </div>
+  </div>
+
+  <!-- VALIDATE BST -->
+  <div id="bst-valid">
+    <div class="sub-heading">Validate BST</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--coral-bg)">✅</div>Validate Binary Search Tree<span class="badge badge-coral">LeetCode 98</span></div>
+      <div class="hi-block">Sirf left &lt; root &lt; right check karna kaafi nahi! Poore subtree ka range check karna padta hai. <b>Min-Max range</b> pass karo — har node is range mein honi chahiye.</div>
+
+      <div class="dry-run">
+        <div class="dry-run-title">Wrong approach: sirf direct children compare → fail on [5, 1, 4, null, null, 3, 6]</div>
+        <div class="step">
+          <span class="step-num">Problem</span>
+          <div class="step-info">root=5, right=4 → 4&lt;5 ye toh galat hai. Par agar 5→(3→(1,4), 7) — node 4 locally 1&lt;4&lt;3 looks ok but globally 4&gt;3=parent → INVALID!</div>
+          <span class="step-result sr-coral">range check zaroori!</span>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Validate BST (Min-Max Range)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">bool</span> <span class="fn">validate</span>(TreeNode* node, <span class="tp">long long</span> minVal, <span class="tp">long long</span> maxVal) {
+    <span class="kw">if</span> (!node) <span class="kw">return true</span>;
+    <span class="cm">// Node ki value valid range mein honi chahiye</span>
+    <span class="kw">if</span> (node-&gt;val &lt;= minVal || node-&gt;val &gt;= maxVal) <span class="kw">return false</span>;
+
+    <span class="cm">// Left: max bound update karo (node.val se kam hona chahiye)</span>
+    <span class="cm">// Right: min bound update karo (node.val se zyada hona chahiye)</span>
+    <span class="kw">return</span> <span class="fn">validate</span>(node-&gt;left,  minVal, node-&gt;val) &amp;&amp;
+           <span class="fn">validate</span>(node-&gt;right, node-&gt;val, maxVal);
+}
+
+<span class="tp">bool</span> <span class="fn">isValidBST</span>(TreeNode* root) {
+    <span class="kw">return</span> <span class="fn">validate</span>(root, LLONG_MIN, LLONG_MAX); <span class="cm">// long long use karo overflow ke liye</span>
+}
+
+<span class="cm">// Alternate: Inorder traversal sorted honi chahiye</span>
+<span class="tp">bool</span> <span class="fn">isValidBSTInorder</span>(TreeNode* root) {
+    <span class="tp">long long</span> prev = LLONG_MIN;
+    <span class="tp">function</span>&lt;<span class="tp">bool</span>(TreeNode*)&gt; inorder = [&](TreeNode* node) -&gt; <span class="tp">bool</span> {
+        <span class="kw">if</span> (!node) <span class="kw">return true</span>;
+        <span class="kw">if</span> (!inorder(node-&gt;left)) <span class="kw">return false</span>;
+        <span class="kw">if</span> (node-&gt;val &lt;= prev) <span class="kw">return false</span>; <span class="cm">// sorted nahi → invalid</span>
+        prev = node-&gt;val;
+        <span class="kw">return</span> inorder(node-&gt;right);
+    };
+    <span class="kw">return</span> inorder(root);
+}</pre>
+      </div>
+      <div class="tip">💡 Validate BST = min-max range pass karo. Ya inorder traversal strictly increasing honi chahiye. Dono O(n) hain.</div>
+    </div>
+  </div>
+
+  <!-- KTH SMALLEST -->
+  <div id="bst-kth">
+    <div class="sub-heading">Kth Smallest + Other BST Problems</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🔢</div>Kth Smallest + BST to Sorted Array<span class="badge badge-amber">LeetCode 230</span></div>
+      <div class="hi-block">BST ka inorder traversal = sorted order. Kth smallest = inorder traversal mein kth element. Counter use karo — kth element milte hi return karo, poora traversal karne ki zaroorat nahi.</div>
+
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Kth Smallest + BST Operations</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// Kth Smallest in BST</span>
+<span class="tp">int</span> cnt, ans;
+<span class="kw">void</span> <span class="fn">inorderK</span>(TreeNode* node, <span class="tp">int</span> k) {
+    <span class="kw">if</span> (!node || cnt &gt;= k) <span class="kw">return</span>;
+    <span class="fn">inorderK</span>(node-&gt;left, k);
+    cnt++;                              <span class="cm">// ek aur node visit hua</span>
+    <span class="kw">if</span> (cnt == k) { ans = node-&gt;val; <span class="kw">return</span>; } <span class="cm">// kth mila!</span>
+    <span class="fn">inorderK</span>(node-&gt;right, k);
+}
+
+<span class="tp">int</span> <span class="fn">kthSmallest</span>(TreeNode* root, <span class="tp">int</span> k) {
+    cnt = <span class="nm">0</span>; ans = -<span class="nm">1</span>;
+    <span class="fn">inorderK</span>(root, k);
+    <span class="kw">return</span> ans;
+}
+
+<span class="cm">// Convert Sorted Array to BST (LeetCode 108)</span>
+TreeNode* <span class="fn">sortedArrayToBST</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> l, <span class="tp">int</span> r) {
+    <span class="kw">if</span> (l &gt; r) <span class="kw">return</span> <span class="nm">nullptr</span>;
+    <span class="tp">int</span> mid = l + (r - l) / <span class="nm">2</span>;
+    TreeNode* root = <span class="kw">new</span> <span class="fn">TreeNode</span>(nums[mid]); <span class="cm">// middle = root (balanced)</span>
+    root-&gt;left  = <span class="fn">sortedArrayToBST</span>(nums, l, mid - <span class="nm">1</span>);
+    root-&gt;right = <span class="fn">sortedArrayToBST</span>(nums, mid + <span class="nm">1</span>, r);
+    <span class="kw">return</span> root;
+}
+
+<span class="cm">// Lowest Common Ancestor in BST (simpler than general LCA!)</span>
+TreeNode* <span class="fn">lcaBST</span>(TreeNode* root, TreeNode* p, TreeNode* q) {
+    <span class="kw">if</span> (p-&gt;val &lt; root-&gt;val &amp;&amp; q-&gt;val &lt; root-&gt;val)
+        <span class="kw">return</span> <span class="fn">lcaBST</span>(root-&gt;left, p, q);   <span class="cm">// dono left mein</span>
+    <span class="kw">if</span> (p-&gt;val &gt; root-&gt;val &amp;&amp; q-&gt;val &gt; root-&gt;val)
+        <span class="kw">return</span> <span class="fn">lcaBST</span>(root-&gt;right, p, q);  <span class="cm">// dono right mein</span>
+    <span class="kw">return</span> root;                             <span class="cm">// split point = LCA!</span>
+}</pre>
+      </div>
+      <div class="tip">💡 BST LCA bahut simple hai — BST property use karo. Agar dono nodes ek taraf hain toh us taraf jao. Split hote hi current node LCA hai!</div>
+    </div>
+
+    <!-- SUMMARY TABLE -->
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📋</div>Trees — Quick Summary Table</div>
+      <table>
+        <tr><th>Pattern</th><th>Algorithm</th><th>Time</th><th>Key Idea</th></tr>
+        <tr><td>DFS Traversal</td><td>Pre/In/Post order</td><td>O(n)</td><td>Recursive/stack. In = sorted for BST</td></tr>
+        <tr><td>BFS Traversal</td><td>Level Order</td><td>O(n)</td><td>Queue + levelSize trick</td></tr>
+        <tr><td>Top Down</td><td>Path Sum, Depth</td><td>O(n)</td><td>Pass params to children</td></tr>
+        <tr><td>Bottom Up</td><td>Height, Diameter</td><td>O(n)</td><td>Get from children, combine, return</td></tr>
+        <tr><td>Path Based</td><td>Max Path Sum</td><td>O(n)</td><td>Global var + single arm return</td></tr>
+        <tr><td>BST Ops</td><td>Search/Insert/Delete</td><td>O(log n)</td><td>BST property: left&lt;root&lt;right</td></tr>
+        <tr><td>Validate BST</td><td>Min-Max range</td><td>O(n)</td><td>Range pass, not just children check</td></tr>
+      </table>
+      <div class="tip" style="margin-top:12px">💡 Tree problems mein sabse pehle socho: DFS ya BFS? Top-down ya bottom-up? Global variable chahiye? BST hai toh BST property use karo!</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+  const pages = ['p1','p2','p3','p4'];
+  const subs  = ['sub1','sub2','sub3','sub4'];
+
+  function showPage(id, btn) {
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => document.getElementById(s).style.display = i===idx?'block':'none');
+    window.scrollTo(0,0);
+  }
+
+  function go(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent='Copied!'; btn.style.color='#1dd6a0';
+      setTimeout(()=>{ btn.textContent='Copy'; btn.style.color=''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => document.getElementById(s).style.display = i===0?'block':'none');
+</script>
+</body>
+</html>

@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Heap Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:#2a3245;
+    --text:#e8eaf6;--muted:#8892a4;
+    --teal:#1dd6a0;--teal-bg:#0d2e24;
+    --purple:#a78bfa;--purple-bg:#1e1633;
+    --amber:#fbbf24;--amber-bg:#2a1f0a;
+    --blue:#60a5fa;--blue-bg:#0e1f35;
+    --coral:#fb7185;--coral-bg:#2a0e16;
+    --green:#86efac;--green-bg:#0b2018;
+    --pink:#f472b6;--pink-bg:#2a0e1e;
+    --orange:#fb923c;--orange-bg:#2a1508;
+    --cyan:#22d3ee;--cyan-bg:#0a2530;
+    --code-bg:#0a0d14;
+    --kw:#f9a870;--fn:#79c0ff;--cm:#5a6478;--tp:#f472b6;--st:#a5d6a7;--nm:#ce93d8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px;}
+
+  /* SIDEBAR */
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:248px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:100;}
+  .sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+  .sidebar-logo h1{font-size:13px;font-weight:600;color:var(--cyan);letter-spacing:.08em;text-transform:uppercase;}
+  .sidebar-logo p{font-size:11px;color:var(--muted);margin-top:2px;}
+  .nav-section{padding:0 12px;margin-bottom:8px;}
+  .nav-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;}
+  .nav-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .nav-link:hover{background:var(--bg3);color:var(--text);}
+  .nav-link.active{background:var(--bg3);color:var(--cyan);font-weight:500;}
+  .nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .sub-links{padding-left:24px;margin-top:2px;}
+  .sub-link{display:block;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;border-radius:6px;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .sub-link:hover{color:var(--text);background:var(--bg3);}
+
+  /* MAIN */
+  .main{margin-left:248px;padding:40px 48px;max-width:980px;}
+  .page{display:none;}.page.active{display:block;}
+
+  /* PAGE HEADER */
+  .page-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .breadcrumb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .page-header h2{font-size:26px;font-weight:600;margin-bottom:6px;}
+  .page-header p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+  .badge-teal{background:var(--teal-bg);color:var(--teal);border:1px solid #1a5c44;}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid #3d2d6e;}
+  .badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid #6b4c0f;}
+  .badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid #1a3a5c;}
+  .badge-coral{background:var(--coral-bg);color:var(--coral);border:1px solid #5c1a27;}
+  .badge-orange{background:var(--orange-bg);color:var(--orange);border:1px solid #7a3010;}
+  .badge-green{background:var(--green-bg);color:var(--green);border:1px solid #155a30;}
+  .badge-pink{background:var(--pink-bg);color:var(--pink);border:1px solid #5c1a3a;}
+  .badge-cyan{background:var(--cyan-bg);color:var(--cyan);border:1px solid #0a4a5c;}
+
+  /* CARDS */
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;}
+  .card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+  /* LANG BLOCKS */
+  .lang-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 5px;}
+  .en-block{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:var(--text);margin-bottom:8px;}
+  .hi-block{background:var(--purple-bg);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:#c4b5fd;margin-bottom:8px;}
+
+  /* CODE */
+  .code-wrap{position:relative;margin:12px 0;}
+  .code-label{background:var(--bg3);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:7px 14px;font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+  .copy-btn{font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all .15s;}
+  .copy-btn:hover{color:var(--teal);border-color:var(--teal);}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;white-space:pre;}
+  .kw{color:var(--kw);}.fn{color:var(--fn);}.cm{color:var(--cm);font-style:italic;}
+  .tp{color:var(--tp);}.st{color:var(--st);}.nm{color:var(--nm);}
+
+  /* DRY RUN */
+  .dry-run{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0;overflow-x:auto;}
+  .dry-run-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+  .step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .step-num{font-size:11px;font-weight:600;color:var(--muted);min-width:80px;padding-top:3px;}
+  .step-info{font-size:12.5px;color:var(--text);flex:1;line-height:1.7;}
+  .step-result{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap;align-self:flex-start;}
+  .sr-green{background:var(--green-bg);color:var(--green);}
+  .sr-amber{background:var(--amber-bg);color:var(--amber);}
+  .sr-coral{background:var(--coral-bg);color:var(--coral);}
+  .sr-blue{background:var(--blue-bg);color:var(--blue);}
+  .sr-cyan{background:var(--cyan-bg);color:var(--cyan);}
+  .sr-purple{background:var(--purple-bg);color:var(--purple);}
+
+  /* HEAP VISUAL */
+  .heap-visual{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0;overflow-x:auto;}
+  .heap-visual-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+  .heap-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:6px 0;}
+  .h-box{min-width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .h-box.top{background:var(--cyan-bg);color:var(--cyan);border-color:#0a4a5c;}
+  .h-box.hi{background:var(--amber-bg);color:var(--amber);border-color:#6b4c0f;}
+  .h-box.add{background:var(--green-bg);color:var(--green);border-color:#155a30;}
+  .h-box.rem{background:var(--coral-bg);color:var(--coral);border-color:#5c1a27;}
+  .h-label{font-size:10px;color:var(--muted);text-align:center;margin-top:2px;}
+  .h-wrap{display:flex;flex-direction:column;align-items:center;}
+  .h-arrow{font-size:16px;color:var(--muted);}
+
+  /* GRID */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0;}
+  .mini-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.7;}
+  .mini-card b{font-weight:600;display:block;margin-bottom:4px;}
+  .cx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0;}
+  .cx-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+  .cx-val{font-size:20px;font-weight:600;font-family:'JetBrains Mono',monospace;margin:4px 0;}
+  .cx-label{font-size:11px;color:var(--muted);}
+
+  /* MISC */
+  .divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+  .tip{border-left:3px solid var(--teal);background:var(--teal-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#6ee7c0;margin:12px 0;line-height:1.7;}
+  .warn{border-left:3px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#fcd97a;margin:12px 0;line-height:1.7;}
+  .info{border-left:3px solid var(--cyan);background:var(--cyan-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#67e8f9;margin:12px 0;line-height:1.7;}
+  .sub-heading{font-size:14px;font-weight:600;margin:22px 0 10px;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .sub-heading::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--cyan);display:block;}
+  code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:4px;color:var(--teal);}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;}
+  th{background:var(--bg3);color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+  td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.6;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--bg3);}
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+  @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:28px 16px 40px;}.grid2,.grid3,.cx-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Heap Patterns · Bilingual</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Heap Patterns</div>
+
+    <button class="nav-link active" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#22d3ee"></span>Heap Basics
+    </button>
+    <div class="sub-links" id="sub1">
+      <button class="sub-link" onclick="go('h-what')">What is a Heap?</button>
+      <button class="sub-link" onclick="go('h-minmax')">Min vs Max Heap</button>
+      <button class="sub-link" onclick="go('h-ops')">Operations</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>Top K / Kth Element
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="go('tk-kth')">Kth Largest</button>
+      <button class="sub-link" onclick="go('tk-topk')">Top K Frequent</button>
+      <button class="sub-link" onclick="go('tk-kcp')">K Closest Points</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#fb923c"></span>Greedy + Heap
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="go('gh-task')">Task Scheduler</button>
+      <button class="sub-link" onclick="go('gh-meet')">Meeting Rooms</button>
+      <button class="sub-link" onclick="go('gh-reorg')">Reorganize String</button>
+      <button class="sub-link" onclick="go('gh-huff')">Huffman Encoding</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p4',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>K-way Merge
+    </button>
+    <div class="sub-links" id="sub4" style="display:none">
+      <button class="sub-link" onclick="go('km-lists')">Merge K Lists</button>
+      <button class="sub-link" onclick="go('km-sorted')">K Sorted Arrays</button>
+      <button class="sub-link" onclick="go('km-median')">Median Stream</button>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════════════════════════════
+     PAGE 1 — HEAP BASICS
+══════════════════════════════════════════ -->
+<div class="page active" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">Heap Patterns · Pattern 0 of 3 · Foundation</div>
+    <h2>Heap — Basics &amp; Foundation</h2>
+    <p>Priority Queue ka underlying data structure. Fast min/max access — O(log n) insert/delete, O(1) peek.</p>
+    <div class="badge-row">
+      <span class="badge badge-cyan">O(1) peek top</span>
+      <span class="badge badge-teal">O(log n) push/pop</span>
+      <span class="badge badge-amber">O(n) build heap</span>
+      <span class="badge badge-blue">Complete Binary Tree</span>
+    </div>
+  </div>
+
+  <!-- WHAT IS A HEAP -->
+  <div id="h-what">
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--cyan-bg)">🏔️</div>What is a Heap?</div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+      <div class="en-block">
+        A Heap is a <b>complete binary tree</b> stored as an array. It satisfies the <b>heap property</b>:<br>
+        • <b>Min Heap</b>: Parent ≤ Children (root = smallest element)<br>
+        • <b>Max Heap</b>: Parent ≥ Children (root = largest element)<br><br>
+        For node at index <code>i</code>: left child = <code>2i+1</code>, right child = <code>2i+2</code>, parent = <code>(i-1)/2</code>.
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Heap ek <b>complete binary tree</b> hai jise array mein store karte hain. Iska ek rule hai:<br>
+        • <b>Min Heap</b>: Parent hamesha children se chhota ya equal → root = sabse chhota<br>
+        • <b>Max Heap</b>: Parent hamesha children se bada ya equal → root = sabse bada<br><br>
+        Array mein index <code>i</code> pe node ka left child <code>2i+1</code> pe, right child <code>2i+2</code> pe hota hai. Yahi magic hai!
+      </div>
+
+      <!-- HEAP SVG VISUAL -->
+      <div class="heap-visual">
+        <div class="heap-visual-title">Min Heap — array = [1, 3, 2, 7, 5, 9, 6]</div>
+        <div style="display:flex;justify-content:center;margin-bottom:16px;">
+          <svg width="360" height="170" viewBox="0 0 360 170" xmlns="http://www.w3.org/2000/svg">
+            <line x1="180" y1="35" x2="110" y2="90"  stroke="#2a3245" stroke-width="2"/>
+            <line x1="180" y1="35" x2="250" y2="90"  stroke="#2a3245" stroke-width="2"/>
+            <line x1="110" y1="90" x2="68"  y2="145" stroke="#2a3245" stroke-width="2"/>
+            <line x1="110" y1="90" x2="152" y2="145" stroke="#2a3245" stroke-width="2"/>
+            <line x1="250" y1="90" x2="208" y2="145" stroke="#2a3245" stroke-width="2"/>
+            <line x1="250" y1="90" x2="292" y2="145" stroke="#2a3245" stroke-width="2"/>
+            <circle cx="180" cy="35"  r="22" fill="#0a2530" stroke="#22d3ee" stroke-width="2"/>
+            <circle cx="110" cy="90"  r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+            <circle cx="250" cy="90"  r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+            <circle cx="68"  cy="145" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+            <circle cx="152" cy="145" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+            <circle cx="208" cy="145" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+            <circle cx="292" cy="145" r="22" fill="#1e2535" stroke="#2a3245" stroke-width="1.5"/>
+            <text x="180" y="40"  text-anchor="middle" fill="#22d3ee" font-size="14" font-family="JetBrains Mono" font-weight="600">1</text>
+            <text x="110" y="95"  text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">3</text>
+            <text x="250" y="95"  text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">2</text>
+            <text x="68"  y="150" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">7</text>
+            <text x="152" y="150" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">5</text>
+            <text x="208" y="150" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">9</text>
+            <text x="292" y="150" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono" font-weight="600">6</text>
+            <text x="8"  y="40"  fill="#5a6478" font-size="10" font-family="Sora">i=0</text>
+            <text x="8"  y="95"  fill="#5a6478" font-size="10" font-family="Sora">i=1,2</text>
+            <text x="8"  y="150" fill="#5a6478" font-size="10" font-family="Sora">i=3..6</text>
+          </svg>
+        </div>
+        <div class="heap-visual-title" style="margin-bottom:8px;">Array representation:</div>
+        <div class="heap-row">
+          <div class="h-wrap"><div class="h-box top">1</div><div class="h-label">idx 0</div></div>
+          <div class="h-wrap"><div class="h-box">3</div><div class="h-label">idx 1</div></div>
+          <div class="h-wrap"><div class="h-box">2</div><div class="h-label">idx 2</div></div>
+          <div class="h-wrap"><div class="h-box">7</div><div class="h-label">idx 3</div></div>
+          <div class="h-wrap"><div class="h-box">5</div><div class="h-label">idx 4</div></div>
+          <div class="h-wrap"><div class="h-box">9</div><div class="h-label">idx 5</div></div>
+          <div class="h-wrap"><div class="h-box">6</div><div class="h-label">idx 6</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;">Parent of idx 3 = (3-1)/2 = 1 → value 3. Parent of idx 4 = (4-1)/2 = 1 → value 3. ✓ Both children (7,5) ≥ parent (3)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIN VS MAX -->
+  <div id="h-minmax">
+    <div class="sub-heading">Min Heap vs Max Heap</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">⚖️</div>Min Heap vs Max Heap — C++ mein</div>
+      <div class="hi-block">C++ mein <code>priority_queue</code> default <b>Max Heap</b> hoti hai. Min Heap ke liye <code>greater&lt;int&gt;</code> pass karo. Yeh confusion ka sabse common source hai — yaad rakho!</div>
+      <div class="grid2">
+        <div class="mini-card"><b style="color:var(--teal)">Min Heap — Chhota element top pe</b>Kth largest, top K, median stream mein use hota hai.<br><code>priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt;</code></div>
+        <div class="mini-card"><b style="color:var(--amber)">Max Heap — Bada element top pe</b>Default C++ PQ. K smallest dhundhne mein, Greedy problems mein.<br><code>priority_queue&lt;int&gt;</code></div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Min Heap vs Max Heap Syntax</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">// MAX HEAP (default) — bada element top pe</span>
+<span class="tp">priority_queue</span>&lt;<span class="tp">int</span>&gt; maxHeap;
+maxHeap.push(<span class="nm">3</span>); maxHeap.push(<span class="nm">1</span>); maxHeap.push(<span class="nm">7</span>);
+cout &lt;&lt; maxHeap.top(); <span class="cm">// 7 → sabse bada</span>
+
+<span class="cm">// MIN HEAP — chhota element top pe</span>
+<span class="tp">priority_queue</span>&lt;<span class="tp">int</span>, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;, <span class="tp">greater</span>&lt;<span class="tp">int</span>&gt;&gt; minHeap;
+minHeap.push(<span class="nm">3</span>); minHeap.push(<span class="nm">1</span>); minHeap.push(<span class="nm">7</span>);
+cout &lt;&lt; minHeap.top(); <span class="cm">// 1 → sabse chhota</span>
+
+<span class="cm">// Custom comparator — pairs ke liye (freq, val)</span>
+<span class="tp">auto</span> cmp = [](<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&amp; a, <span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&amp; b){
+    <span class="kw">return</span> a.first &gt; b.first; <span class="cm">// min heap by first element</span>
+};
+<span class="tp">priority_queue</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;, <span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;, <span class="kw">decltype</span>(cmp)&gt; pq(cmp);</pre>
+      </div>
+      <div class="warn">⚠️ Sabse common mistake: Max heap use kiya jab min heap chahiye tha (ya ulta). Jab bhi Kth largest dhundhna ho → MIN heap use karo (size K). Jab Kth smallest → MAX heap!</div>
+    </div>
+  </div>
+
+  <!-- OPERATIONS -->
+  <div id="h-ops">
+    <div class="sub-heading">Heap Operations — Push &amp; Pop with Heapify</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">⚙️</div>Push (Bubble Up) &amp; Pop (Bubble Down)</div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+      <div class="en-block">
+        <b>Push</b>: Add at end, then bubble up (swap with parent if violation).<br>
+        <b>Pop</b>: Remove root, move last element to root, then bubble down (swap with smaller child in min-heap).
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        <b>Push</b>: End mein add karo, phir oopar jaate jao (parent se chhota hua? swap karo) — "Bubble Up".<br>
+        <b>Pop</b>: Root hatao, last element ko root pe laao, phir neeche jaate jao (children se bada hua? swap karo) — "Bubble Down / Heapify Down".
+      </div>
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">Min Heap mein 1 push karo — Heap: [3, 5, 7, 9]</div>
+        <div class="step">
+          <span class="step-num">Step 1</span>
+          <div class="step-info">
+            <div class="heap-row">
+              <div class="h-wrap"><div class="h-box top">3</div><div class="h-label">root</div></div>
+              <div class="h-box">5</div><div class="h-box">7</div><div class="h-box">9</div>
+              <div class="h-wrap"><div class="h-box add">1</div><div class="h-label">added</div></div>
+            </div>
+            1 ko end mein add kiya → idx=4
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">Bubble Up</span>
+          <div class="step-info">parent of 4 = idx 1 (val=5). 1 &lt; 5 → swap!</div>
+          <span class="step-result sr-amber">swap 1↔5</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Bubble Up</span>
+          <div class="step-info">parent of 1 = idx 0 (val=3). 1 &lt; 3 → swap!</div>
+          <span class="step-result sr-amber">swap 1↔3</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Done</span>
+          <div class="step-info">
+            <div class="heap-row">
+              <div class="h-wrap"><div class="h-box top">1</div><div class="h-label">root</div></div>
+              <div class="h-box">3</div><div class="h-box">7</div><div class="h-box">9</div><div class="h-box">5</div>
+            </div>
+          </div>
+          <span class="step-result sr-green">✅ Min Heap maintained</span>
+        </div>
+      </div>
+      <div class="cx-grid">
+        <div class="cx-card"><div class="cx-label">push()</div><div class="cx-val" style="color:var(--teal)">O(log n)</div><div class="cx-label">Bubble Up</div></div>
+        <div class="cx-card"><div class="cx-label">pop()</div><div class="cx-val" style="color:var(--teal)">O(log n)</div><div class="cx-label">Bubble Down</div></div>
+        <div class="cx-card"><div class="cx-label">top()</div><div class="cx-val" style="color:var(--cyan)">O(1)</div><div class="cx-label">Just root</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PAGE 2 — TOP K / KTH ELEMENT
+══════════════════════════════════════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">Heap Patterns · Pattern 1 of 3</div>
+    <h2>Top K / Kth Element / K Closest Points</h2>
+    <p>Heap se efficiently Kth largest/smallest ya Top K elements nikalo — sorting se better O(n log k).</p>
+    <div class="badge-row">
+      <span class="badge badge-amber">O(n log k) time</span>
+      <span class="badge badge-teal">O(k) space</span>
+      <span class="badge badge-cyan">Min Heap of size K</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">💡</div>Core Pattern — Size-K Min Heap</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      To find <b>Kth Largest</b>: maintain a <b>min-heap of size K</b>. When heap size exceeds K, pop the smallest. At the end, top of heap = Kth largest.<br><br>
+      Why min-heap for Kth largest? Because the smallest among the K largest is what we want to track — when something smaller arrives, pop it!
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Kth Largest</b> ke liye: <b>K size ka min heap</b> maintain karo. Jab heap size K se zyada ho, pop karo (chhota nikaalo). End mein heap ka top = Kth largest.<br><br>
+      Logic: Top K bade numbers rakhne hain. Min heap mein sabse chhota top pe hoga. Naya element aaya? Agar heap top se bada hai toh top hatao, naya daalo — K bade numbers hamesha heap mein rahenge!
+    </div>
+  </div>
+
+  <!-- KTH LARGEST -->
+  <div id="tk-kth">
+    <div class="sub-heading">Kth Largest Element in Array</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🥇</div>Kth Largest Element<span class="badge badge-amber">LeetCode 215</span></div>
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">nums=[3,2,1,5,6,4], k=2 → Expected: 5</div>
+        <div class="step">
+          <span class="step-num">push 3</span>
+          <div class="step-info">heap=[3], size=1 ≤ k=2 → no pop</div>
+          <span class="step-result sr-cyan">heap:[3]</span>
+        </div>
+        <div class="step">
+          <span class="step-num">push 2</span>
+          <div class="step-info">heap=[2,3], size=2 ≤ k=2 → no pop</div>
+          <span class="step-result sr-cyan">heap:[2,3]</span>
+        </div>
+        <div class="step">
+          <span class="step-num">push 1</span>
+          <div class="step-info">heap=[1,3,2], size=3 &gt; k=2 → pop min(1) → heap=[2,3]</div>
+          <span class="step-result sr-amber">pop 1</span>
+        </div>
+        <div class="step">
+          <span class="step-num">push 5</span>
+          <div class="step-info">heap=[2,3,5], size=3 &gt; k=2 → pop min(2) → heap=[3,5]</div>
+          <span class="step-result sr-amber">pop 2</span>
+        </div>
+        <div class="step">
+          <span class="step-num">push 6</span>
+          <div class="step-info">heap=[3,5,6], size=3 &gt; k=2 → pop min(3) → heap=[5,6]</div>
+          <span class="step-result sr-amber">pop 3</span>
+        </div>
+        <div class="step">
+          <span class="step-num">push 4</span>
+          <div class="step-info">heap=[4,6,5], size=3 &gt; k=2 → pop min(4) → heap=[5,6]</div>
+          <span class="step-result sr-amber">pop 4</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Answer</span>
+          <div class="step-info">heap.top() = 5 → Kth (2nd) largest = 5</div>
+          <span class="step-result sr-green">✅ return 5</span>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Kth Largest Element</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">findKthLargest</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> k) {
+    <span class="cm">// Min heap of size k — Kth largest dhundhne ke liye</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">int</span>, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;, <span class="tp">greater</span>&lt;<span class="tp">int</span>&gt;&gt; minH;
+
+    <span class="kw">for</span> (<span class="tp">int</span> num : nums) {
+        minH.push(num);
+        <span class="kw">if</span> (minH.size() &gt; k)
+            minH.pop();   <span class="cm">// sabse chhota nikalo — K bade maintain karo</span>
+    }
+    <span class="kw">return</span> minH.top(); <span class="cm">// top = Kth largest!</span>
+}
+
+<span class="cm">// Kth Smallest ke liye: MAX heap of size k use karo</span>
+<span class="tp">int</span> <span class="fn">findKthSmallest</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> k) {
+    <span class="tp">priority_queue</span>&lt;<span class="tp">int</span>&gt; maxH;  <span class="cm">// max heap</span>
+    <span class="kw">for</span> (<span class="tp">int</span> num : nums) {
+        maxH.push(num);
+        <span class="kw">if</span> (maxH.size() &gt; k)
+            maxH.pop();   <span class="cm">// sabse bada nikalo — K chhote maintain karo</span>
+    }
+    <span class="kw">return</span> maxH.top(); <span class="cm">// top = Kth smallest!</span>
+}</pre>
+      </div>
+      <div class="tip">💡 Golden Rule: <b>Kth Largest → Min Heap size K</b> · <b>Kth Smallest → Max Heap size K</b>. Ulta lagta hai par sahi hai — kyunki heap ke top pe boundary element hota hai!</div>
+    </div>
+  </div>
+
+  <!-- TOP K FREQUENT -->
+  <div id="tk-topk">
+    <div class="sub-heading">Top K Frequent Elements</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📊</div>Top K Frequent Elements<span class="badge badge-teal">LeetCode 347</span></div>
+      <div class="hi-block">Pehle HashMap se frequencies count karo. Phir min heap maintain karo size K ka — frequency ke basis pe. Heap mein K most frequent elements rahenge. End mein heap se result nikaalo.</div>
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">nums=[1,1,1,2,2,3], k=2 → Expected: [1,2]</div>
+        <div class="step">
+          <span class="step-num">HashMap</span>
+          <div class="step-info">freq = {1:3, 2:2, 3:1}</div>
+        </div>
+        <div class="step">
+          <span class="step-num">push {3,1}</span>
+          <div class="step-info">heap=[(3,1)], size=1</div>
+          <span class="step-result sr-cyan">ok</span>
+        </div>
+        <div class="step">
+          <span class="step-num">push {2,2}</span>
+          <div class="step-info">heap=[(2,2),(3,1)], size=2</div>
+          <span class="step-result sr-cyan">ok</span>
+        </div>
+        <div class="step">
+          <span class="step-num">push {1,3}</span>
+          <div class="step-info">heap=[(1,3),(3,1),(2,2)], size=3 &gt; k=2 → pop min freq → pop (1,3)? No! min freq = 1 (for num=3)</div>
+          <span class="step-result sr-amber">pop {1,3} → pop freq=1</span>
+        </div>
+        <div class="step">
+          <span class="step-num">Answer</span>
+          <div class="step-info">heap has {(2,2),(3,1)} → nums 2 and 1 → [1,2]</div>
+          <span class="step-result sr-green">✅ [1,2]</span>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Top K Frequent Elements</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">topKFrequent</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> k) {
+    <span class="cm">// Step 1: Frequency count karo</span>
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; freq;
+    <span class="kw">for</span> (<span class="tp">int</span> n : nums) freq[n]++;
+
+    <span class="cm">// Step 2: Min heap by frequency (freq, num)</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;,
+                   <span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;,
+                   <span class="tp">greater</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;&gt; minH;
+
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; [num, cnt] : freq) {
+        minH.push({cnt, num});
+        <span class="kw">if</span> (minH.size() &gt; k)
+            minH.pop(); <span class="cm">// sabse kam frequent nikalo</span>
+    }
+
+    <span class="cm">// Step 3: Result collect karo</span>
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; result;
+    <span class="kw">while</span> (!minH.empty()) {
+        result.push_back(minH.top().second);
+        minH.pop();
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- K CLOSEST POINTS -->
+  <div id="tk-kcp">
+    <div class="sub-heading">K Closest Points to Origin</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">📍</div>K Closest Points to Origin<span class="badge badge-blue">LeetCode 973</span></div>
+      <div class="hi-block">Distance calculate karo (sqrt skip kar sakte ho — comparison ke liye). Max heap size K maintain karo distance ke basis pe. Jab heap size &gt; K, bade distance wala pop karo. Heap mein K closest points bachenge.</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · K Closest Points to Origin</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; <span class="fn">kClosest</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; points, <span class="tp">int</span> k) {
+    <span class="cm">// Max heap — distance ke basis pe (bade distance ko hatate hain)</span>
+    <span class="cm">// {dist², x, y} store karo</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">tuple</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt; maxH;
+
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; p : points) {
+        <span class="tp">int</span> dist = p[<span class="nm">0</span>]*p[<span class="nm">0</span>] + p[<span class="nm">1</span>]*p[<span class="nm">1</span>]; <span class="cm">// sqrt ki zaroorat nahi!</span>
+        maxH.push({dist, p[<span class="nm">0</span>], p[<span class="nm">1</span>]});
+        <span class="kw">if</span> (maxH.size() &gt; k)
+            maxH.pop(); <span class="cm">// sabse door wala point nikalo</span>
+    }
+
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; result;
+    <span class="kw">while</span> (!maxH.empty()) {
+        <span class="kw">auto</span> [d, x, y] = maxH.top(); maxH.pop();
+        result.push_back({x, y});
+    }
+    <span class="kw">return</span> result;
+}</pre>
+      </div>
+      <div class="tip">💡 K Closest → MAX heap size K (bada distance top pe, pop when overflow). K Farthest → MIN heap size K. Distance ke liye sqrt skip karo — comparison mein zaroorat nahi!</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PAGE 3 — GREEDY + HEAP
+══════════════════════════════════════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">Heap Patterns · Pattern 2 of 3</div>
+    <h2>Greedy + Heap</h2>
+    <p>Greedy decisions mein heap use karo — har step pe best available option lo. Scheduling, frequency-based, encoding problems.</p>
+    <div class="badge-row">
+      <span class="badge badge-orange">Task Scheduler</span>
+      <span class="badge badge-teal">Meeting Rooms</span>
+      <span class="badge badge-purple">Reorganize String</span>
+      <span class="badge badge-pink">Huffman Encoding</span>
+    </div>
+  </div>
+
+  <!-- TASK SCHEDULER -->
+  <div id="gh-task">
+    <div class="sub-heading">Task Scheduler</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--orange-bg)">⏱️</div>Task Scheduler<span class="badge badge-orange">LeetCode 621</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">
+        At each time slot, pick the most frequent available task (greedy). If a task was just executed, it must cool down for n slots before it can run again. Use a <b>max heap</b> for frequencies and a <b>queue</b> for cooling tasks with their available time.
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Greedy idea: har time slot mein sabse zyada frequent available task chuno — yahi optimal hai. <b>Max heap</b> mein frequencies rakho. Jo task abhi cool down mein hai use <b>queue</b> mein rakho with available time. Jab queue ka front available ho jaaye, usse heap mein wapas daalo.
+      </div>
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">tasks=["A","A","A","B","B","B"], n=2 → Expected: 8</div>
+        <div class="step"><span class="step-num">t=1</span><div class="step-info">heap=[{3,A},{3,B}]. Pick A (freq 3). A→freq 2, available at t=4. queue=[(2,4)]</div><span class="step-result sr-amber">A</span></div>
+        <div class="step"><span class="step-num">t=2</span><div class="step-info">heap=[{3,B}]. Pick B (freq 3). B→freq 2, available at t=5. queue=[(2,4),(2,5)]</div><span class="step-result sr-amber">B</span></div>
+        <div class="step"><span class="step-num">t=3</span><div class="step-info">heap empty, queue front (2,4) not ready (t&lt;4) → idle!</div><span class="step-result sr-coral">IDLE</span></div>
+        <div class="step"><span class="step-num">t=4</span><div class="step-info">Queue front (2,4) ready → push {2,A} to heap. Pick A. A→freq 1, avail t=7.</div><span class="step-result sr-amber">A</span></div>
+        <div class="step"><span class="step-num">t=5</span><div class="step-info">Queue front (2,5) ready → push {2,B}. Pick B. B→freq 1, avail t=8.</div><span class="step-result sr-amber">B</span></div>
+        <div class="step"><span class="step-num">t=6</span><div class="step-info">Heap empty, queue front avail at t=7 → idle</div><span class="step-result sr-coral">IDLE</span></div>
+        <div class="step"><span class="step-num">t=7,8</span><div class="step-info">A then B — done!</div><span class="step-result sr-green">✅ Total = 8</span></div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Task Scheduler</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">leastInterval</span>(<span class="tp">vector</span>&lt;<span class="tp">char</span>&gt;&amp; tasks, <span class="tp">int</span> n) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>,<span class="tp">int</span>&gt; freq;
+    <span class="kw">for</span> (<span class="tp">char</span> t : tasks) freq[t]++;
+
+    <span class="cm">// Max heap — sabse frequent task pehle</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">int</span>&gt; maxH;
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; [c, f] : freq) maxH.push(f);
+
+    <span class="cm">// Queue: {remaining_freq, available_at_time}</span>
+    <span class="tp">queue</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt; cooldown;
+    <span class="tp">int</span> time = <span class="nm">0</span>;
+
+    <span class="kw">while</span> (!maxH.empty() || !cooldown.empty()) {
+        time++;
+
+        <span class="cm">// Cooldown se koi task ready? Heap mein wapas daalo</span>
+        <span class="kw">if</span> (!cooldown.empty() &amp;&amp; cooldown.front().second == time)  {
+            maxH.push(cooldown.front().first);
+            cooldown.pop();
+        }
+
+        <span class="kw">if</span> (!maxH.empty()) {
+            <span class="tp">int</span> remaining = maxH.top() - <span class="nm">1</span>; maxH.pop();
+            <span class="kw">if</span> (remaining &gt; <span class="nm">0</span>)
+                cooldown.push({remaining, time + n + <span class="nm">1</span>}); <span class="cm">// n slots baad available</span>
+        }
+        <span class="cm">// Agar heap aur cooldown dono empty nahi lekin heap empty → idle time</span>
+    }
+    <span class="kw">return</span> time;
+}</pre>
+      </div>
+      <div class="tip">💡 Greedy + Heap pattern: Max heap se best task lo → execute → cooldown queue mein daalo → waqt pe wapas heap mein. Yeh simulate karna pattern hai!</div>
+    </div>
+  </div>
+
+  <!-- MEETING ROOMS -->
+  <div id="gh-meet">
+    <div class="sub-heading">Meeting Rooms II</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🏢</div>Meeting Rooms II — Min Rooms<span class="badge badge-teal">LeetCode 253</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">Sort meetings by start time. Use a <b>min heap of end times</b>. For each meeting: if heap top (earliest ending meeting) ends before current starts → reuse that room (pop heap). Otherwise → need a new room. Push current meeting's end time.</div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">Start time se sort karo. <b>Min heap mein end times</b> rakho. Har meeting ke liye: agar heap ka top (sabse pehle khatam hone wali meeting) current se pehle khatam ho jaaye → woh room free hai, reuse karo (pop + push). Warna naya room chahiye (sirf push). Heap ka size = rooms in use!</div>
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">intervals=[[0,30],[5,10],[15,20]] → Expected: 2 rooms</div>
+        <div class="step"><span class="step-num">[0,30]</span><div class="step-info">heap empty → new room. Push end=30. heap=[30]</div><span class="step-result sr-amber">rooms=1</span></div>
+        <div class="step"><span class="step-num">[5,10]</span><div class="step-info">heap top=30 &gt; start=5 → overlap → new room. Push end=10. heap=[10,30]</div><span class="step-result sr-amber">rooms=2</span></div>
+        <div class="step"><span class="step-num">[15,20]</span><div class="step-info">heap top=10 ≤ start=15 → room free! Pop 10, push 20. heap=[20,30]</div><span class="step-result sr-green">rooms=2 (reused)</span></div>
+        <div class="step"><span class="step-num">Answer</span><div class="step-info">Max heap size at any point = 2</div><span class="step-result sr-green">✅ return 2</span></div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Meeting Rooms II</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">int</span> <span class="fn">minMeetingRooms</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; intervals) {
+    <span class="cm">// Start time se sort karo</span>
+    sort(intervals.begin(), intervals.end());
+
+    <span class="cm">// Min heap of end times — sabse pehle khatam hone wala top pe</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">int</span>,<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;,<span class="tp">greater</span>&lt;<span class="tp">int</span>&gt;&gt; minH;
+
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; mtg : intervals) {
+        <span class="cm">// Kya koi room free hua? (earliest end ≤ current start)</span>
+        <span class="kw">if</span> (!minH.empty() &amp;&amp; minH.top() &lt;= mtg[<span class="nm">0</span>])
+            minH.pop();  <span class="cm">// room reuse karo</span>
+
+        minH.push(mtg[<span class="nm">1</span>]); <span class="cm">// current meeting ka end time daalo</span>
+    }
+    <span class="kw">return</span> minH.size(); <span class="cm">// heap size = rooms needed</span>
+}</pre>
+      </div>
+      <div class="tip">💡 Meeting Rooms = Min Heap of end times. Heap size = currently occupied rooms. Agar top ≤ current start → room free (pop). Simple aur elegant!</div>
+    </div>
+  </div>
+
+  <!-- REORGANIZE STRING -->
+  <div id="gh-reorg">
+    <div class="sub-heading">Reorganize String</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🔀</div>Reorganize String<span class="badge badge-purple">LeetCode 767</span></div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">String rearrange karo taaki koi bhi do adjacent characters same na hon. Greedy: hamesha sabse frequent available character choose karo — prev se alag hona chahiye. Max heap se har step pe most frequent lo, prev ko temporarily side mein rakho.</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Reorganize String</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">string</span> <span class="fn">reorganizeString</span>(<span class="tp">string</span> s) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>,<span class="tp">int</span>&gt; freq;
+    <span class="kw">for</span> (<span class="tp">char</span> c : s) freq[c]++;
+
+    <span class="cm">// Max heap: {frequency, char}</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">char</span>&gt;&gt; maxH;
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; [c, f] : freq) maxH.push({f, c});
+
+    <span class="tp">string</span> result;
+    <span class="cm">// prev = previously placed char (adjacent mein nahi aa sakta)</span>
+    <span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">char</span>&gt; prev = {<span class="nm">-1</span>, <span class="st">'#'</span>};
+
+    <span class="kw">while</span> (!maxH.empty()) {
+        <span class="kw">auto</span> [f, c] = maxH.top(); maxH.pop();
+        result += c;
+
+        <span class="cm">// Prev wala character wapas heap mein daalo (agar freq > 0)</span>
+        <span class="kw">if</span> (prev.first &gt; <span class="nm">0</span>) maxH.push(prev);
+
+        <span class="cm">// Current ko prev banao (next iteration mein side mein rahega)</span>
+        prev = {f - <span class="nm">1</span>, c};
+    }
+    <span class="cm">// Agar result length != s length → possible nahi</span>
+    <span class="kw">return</span> result.size() == s.size() ? result : <span class="st">""</span>;
+}</pre>
+      </div>
+      <div class="tip">💡 Reorganize String ka pattern: Max heap se pick karo, prev character ko temporarily hold karo (adjacent ban na jaaye), phir prev ko wapas heap mein daalo. "Hold and release" pattern!</div>
+    </div>
+  </div>
+
+  <!-- HUFFMAN ENCODING -->
+  <div id="gh-huff">
+    <div class="sub-heading">Huffman Encoding</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🗜️</div>Huffman Encoding<span class="badge badge-pink">Classic Algorithm</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">
+        Huffman builds an optimal prefix-free binary encoding. Frequent characters get shorter codes, rare ones get longer. <br><br>
+        Algorithm: Use a <b>min heap of frequencies</b>. Repeatedly pick the 2 smallest nodes, merge them (sum = new node), push back. Repeat until 1 node remains = root of Huffman tree.
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        Zyada frequent characters → chhota code. Kam frequent → lamba code. Compression ke liye best!<br><br>
+        Algorithm: <b>Min heap</b> mein frequencies daalo. Baar baar: 2 sabse chhote nodes nikalao, unhe merge karo (sum = naya node), wapas daalo. Jab ek node bache → Huffman tree ka root!
+      </div>
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">chars=[a,b,c,d,e,f], freq=[5,9,12,13,16,45]</div>
+        <div class="step"><span class="step-num">Init</span><div class="step-info">Min heap: [5,9,12,13,16,45]</div></div>
+        <div class="step"><span class="step-num">Merge 1</span><div class="step-info">Pop 5(a) and 9(b) → merge = 14. Push 14. heap=[12,13,14,16,45]</div><span class="step-result sr-amber">14=a+b</span></div>
+        <div class="step"><span class="step-num">Merge 2</span><div class="step-info">Pop 12(c) and 13(d) → merge = 25. Push 25. heap=[14,16,25,45]</div><span class="step-result sr-amber">25=c+d</span></div>
+        <div class="step"><span class="step-num">Merge 3</span><div class="step-info">Pop 14(a+b) and 16(e) → merge = 30. Push 30. heap=[25,30,45]</div><span class="step-result sr-amber">30=ab+e</span></div>
+        <div class="step"><span class="step-num">Merge 4</span><div class="step-info">Pop 25(c+d) and 30(a+b+e) → merge = 55. heap=[45,55]</div><span class="step-result sr-amber">55</span></div>
+        <div class="step"><span class="step-num">Merge 5</span><div class="step-info">Pop 45(f) and 55 → merge = 100. heap=[100] → Root!</div><span class="step-result sr-green">✅ Huffman Tree built!</span></div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Huffman Encoding</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">struct</span> <span class="fn">HNode</span> {
+    <span class="tp">char</span> ch; <span class="tp">int</span> freq;
+    HNode *left, *right;
+    <span class="fn">HNode</span>(<span class="tp">char</span> c, <span class="tp">int</span> f) : ch(c), freq(f), left(<span class="nm">nullptr</span>), right(<span class="nm">nullptr</span>) {}
+};
+
+<span class="kw">struct</span> <span class="fn">Compare</span> {
+    <span class="tp">bool</span> <span class="kw">operator</span>()(HNode* a, HNode* b) {
+        <span class="kw">return</span> a-&gt;freq &gt; b-&gt;freq; <span class="cm">// min heap by freq</span>
+    }
+};
+
+HNode* <span class="fn">buildHuffman</span>(<span class="tp">vector</span>&lt;<span class="tp">char</span>&gt;&amp; chars, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; freqs) {
+    <span class="tp">priority_queue</span>&lt;HNode*, <span class="tp">vector</span>&lt;HNode*&gt;, Compare&gt; minH;
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; chars.size(); i++)
+        minH.push(<span class="kw">new</span> <span class="fn">HNode</span>(chars[i], freqs[i]));
+
+    <span class="kw">while</span> (minH.size() &gt; <span class="nm">1</span>) {
+        HNode* l = minH.top(); minH.pop(); <span class="cm">// sabse chhota</span>
+        HNode* r = minH.top(); minH.pop(); <span class="cm">// doosra chhota</span>
+
+        HNode* merged = <span class="kw">new</span> <span class="fn">HNode</span>(<span class="st">'\0'</span>, l-&gt;freq + r-&gt;freq);
+        merged-&gt;left = l; merged-&gt;right = r;
+        minH.push(merged); <span class="cm">// merged node wapas heap mein</span>
+    }
+    <span class="kw">return</span> minH.top(); <span class="cm">// Huffman tree ka root</span>
+}
+
+<span class="cm">// Codes generate karo (DFS on Huffman tree)</span>
+<span class="kw">void</span> <span class="fn">getCodes</span>(HNode* node, <span class="tp">string</span> code,
+              <span class="tp">unordered_map</span>&lt;<span class="tp">char</span>,<span class="tp">string</span>&gt;&amp; codes) {
+    <span class="kw">if</span> (!node) <span class="kw">return</span>;
+    <span class="kw">if</span> (!node-&gt;left &amp;&amp; !node-&gt;right) {  <span class="cm">// leaf = actual character</span>
+        codes[node-&gt;ch] = code;
+        <span class="kw">return</span>;
+    }
+    <span class="fn">getCodes</span>(node-&gt;left,  code + <span class="st">"0"</span>, codes); <span class="cm">// left = 0</span>
+    <span class="fn">getCodes</span>(node-&gt;right, code + <span class="st">"1"</span>, codes); <span class="cm">// right = 1</span>
+}</pre>
+      </div>
+      <div class="tip">💡 Huffman = Min Heap se baar baar 2 chhote lo, merge karo, wapas daalo. Yeh greedy optimal hai — proof: frequent chars tree mein upar honge (chhota code), rare chars neeche (lamba code).</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PAGE 4 — K-WAY MERGE
+══════════════════════════════════════════ -->
+<div class="page" id="p4">
+  <div class="page-header">
+    <div class="breadcrumb">Heap Patterns · Pattern 3 of 3</div>
+    <h2>K-way Merge</h2>
+    <p>K sorted lists/arrays ko efficiently merge karo. Heap se har step pe minimum element nikalo — O(n log k).</p>
+    <div class="badge-row">
+      <span class="badge badge-purple">O(n log k) time</span>
+      <span class="badge badge-teal">O(k) heap space</span>
+      <span class="badge badge-blue">Min Heap</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🔀</div>Core Concept — K-way Merge</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      To merge K sorted structures efficiently: put the first element from each into a min heap (with its source index). Repeatedly extract the minimum, add it to result, and push the next element from that source. This gives O(n log k) vs O(nk) brute force.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      K sorted lists/arrays merge karne ke liye: har list ka pehla element min heap mein daalo (list index aur position ke saath). Repeatedly: min nikaalo, result mein add karo, aur usi list ka agla element heap mein push karo. Yahi K-way merge ka core idea hai!
+    </div>
+  </div>
+
+  <!-- MERGE K SORTED LISTS -->
+  <div id="km-lists">
+    <div class="sub-heading">Merge K Sorted Lists</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🔗</div>Merge K Sorted Linked Lists<span class="badge badge-purple">LeetCode 23</span></div>
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">lists = [[1,4,5],[1,3,4],[2,6]] → Expected: [1,1,2,3,4,4,5,6]</div>
+        <div class="step"><span class="step-num">Init heap</span><div class="step-info">Push heads: {1,list0}, {1,list1}, {2,list2}. heap=[(1,0),(1,1),(2,2)]</div></div>
+        <div class="step"><span class="step-num">Pop (1,0)</span><div class="step-info">result=[1]. Push next from list0: {4,list0}. heap=[(1,1),(2,2),(4,0)]</div><span class="step-result sr-cyan">result:[1]</span></div>
+        <div class="step"><span class="step-num">Pop (1,1)</span><div class="step-info">result=[1,1]. Push next from list1: {3,list1}. heap=[(2,2),(4,0),(3,1)]</div><span class="step-result sr-cyan">result:[1,1]</span></div>
+        <div class="step"><span class="step-num">Pop (2,2)</span><div class="step-info">result=[1,1,2]. Push next from list2: {6,list2}.</div><span class="step-result sr-cyan">result:[1,1,2]</span></div>
+        <div class="step"><span class="step-num">...</span><div class="step-info">Continue until heap empty</div><span class="step-result sr-green">✅ [1,1,2,3,4,4,5,6]</span></div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Merge K Sorted Linked Lists</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">struct</span> <span class="fn">ListNode</span> { <span class="tp">int</span> val; ListNode* next; };
+
+ListNode* <span class="fn">mergeKLists</span>(<span class="tp">vector</span>&lt;ListNode*&gt;&amp; lists) {
+    <span class="cm">// Min heap: {val, node*} — val ke basis pe compare</span>
+    <span class="kw">auto</span> cmp = [](ListNode* a, ListNode* b){ <span class="kw">return</span> a-&gt;val &gt; b-&gt;val; };
+    <span class="tp">priority_queue</span>&lt;ListNode*, <span class="tp">vector</span>&lt;ListNode*&gt;, <span class="kw">decltype</span>(cmp)&gt; minH(cmp);
+
+    <span class="cm">// Har list ka head heap mein daalo</span>
+    <span class="kw">for</span> (<span class="kw">auto</span> node : lists)
+        <span class="kw">if</span> (node) minH.push(node);
+
+    ListNode dummy(<span class="nm">0</span>);
+    ListNode* curr = &amp;dummy;
+
+    <span class="kw">while</span> (!minH.empty()) {
+        ListNode* node = minH.top(); minH.pop();
+        curr-&gt;next = node;       <span class="cm">// result mein add karo</span>
+        curr = curr-&gt;next;
+        <span class="kw">if</span> (node-&gt;next) minH.push(node-&gt;next); <span class="cm">// agla element push karo</span>
+    }
+    <span class="kw">return</span> dummy.next;
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- K SORTED ARRAYS -->
+  <div id="km-sorted">
+    <div class="sub-heading">K Sorted Arrays Merge</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--blue-bg)">📋</div>Merge K Sorted Arrays<span class="badge badge-blue">Classic</span></div>
+      <div class="hi-block">Same K-way merge pattern — bas array index track karo (array number, element index). Heap mein {value, arrayIdx, elemIdx} store karo.</div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Merge K Sorted Arrays</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">mergeKArrays</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; arrays) {
+    <span class="cm">// Min heap: {value, arrayIdx, elemIdx}</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">tuple</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>,<span class="tp">int</span>&gt;,
+                   <span class="tp">vector</span>&lt;<span class="tp">tuple</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;,
+                   <span class="tp">greater</span>&lt;&gt;&gt; minH;
+
+    <span class="cm">// Har array ka pehla element heap mein daalo</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; arrays.size(); i++)
+        <span class="kw">if</span> (!arrays[i].empty())
+            minH.push({arrays[i][<span class="nm">0</span>], i, <span class="nm">0</span>});
+
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; result;
+    <span class="kw">while</span> (!minH.empty()) {
+        <span class="kw">auto</span> [val, ai, ei] = minH.top(); minH.pop();
+        result.push_back(val);
+        <span class="cm">// Is array mein aur elements hain?</span>
+        <span class="kw">if</span> (ei + <span class="nm">1</span> &lt; arrays[ai].size())
+            minH.push({arrays[ai][ei+<span class="nm">1</span>], ai, ei+<span class="nm">1</span>});
+    }
+    <span class="kw">return</span> result;
+}
+
+<span class="cm">// Kth Smallest in M×N Sorted Matrix (LeetCode 378)</span>
+<span class="tp">int</span> <span class="fn">kthSmallestMatrix</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; matrix, <span class="tp">int</span> k) {
+    <span class="tp">int</span> n = matrix.size();
+    <span class="tp">priority_queue</span>&lt;<span class="tp">tuple</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>,<span class="tp">int</span>&gt;,
+                   <span class="tp">vector</span>&lt;<span class="tp">tuple</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;,
+                   <span class="tp">greater</span>&lt;&gt;&gt; minH;
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; n; i++)
+        minH.push({matrix[i][<span class="nm">0</span>], i, <span class="nm">0</span>}); <span class="cm">// har row ka pehla element</span>
+
+    <span class="kw">while</span> (--k) {
+        <span class="kw">auto</span> [val, r, c] = minH.top(); minH.pop();
+        <span class="kw">if</span> (c + <span class="nm">1</span> &lt; n) minH.push({matrix[r][c+<span class="nm">1</span>], r, c+<span class="nm">1</span>});
+    }
+    <span class="kw">return</span> get&lt;<span class="nm">0</span>&gt;(minH.top());
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEDIAN FROM STREAM -->
+  <div id="km-median">
+    <div class="sub-heading">Median from Data Stream</div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:var(--coral-bg)">📊</div>Find Median from Data Stream<span class="badge badge-coral">LeetCode 295 · Hard</span></div>
+      <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+      <div class="en-block">
+        Use <b>two heaps</b>: a max heap for the lower half and a min heap for the upper half. Keep them balanced (sizes differ by at most 1). <br>
+        • Median = max heap top (odd total) or average of both tops (even total).
+      </div>
+      <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+      <div class="hi-block">
+        <b>Do heaps</b> use karo: <b>Max heap</b> = lower half ke numbers (bade numbers top pe). <b>Min heap</b> = upper half ke numbers (chhote numbers top pe).<br>
+        Dono roughly equal size mein rakho. Median = max heap ka top (odd) ya dono tops ka average (even). Har new element pe balance maintain karo!
+      </div>
+      <div class="divider"></div>
+      <div class="dry-run">
+        <div class="dry-run-title">Stream: 1, 2, 3, 4, 5 → Medians: 1, 1.5, 2, 2.5, 3</div>
+        <div class="step"><span class="step-num">add 1</span><div class="step-info">maxH=[1], minH=[]. |maxH|=1 &gt; |minH|+1? No. Median=maxH.top()=1</div><span class="step-result sr-cyan">median=1</span></div>
+        <div class="step"><span class="step-num">add 2</span><div class="step-info">Push to maxH=[2,1], balance: pop max(2) to minH. maxH=[1],minH=[2]. Median=(1+2)/2=1.5</div><span class="step-result sr-cyan">median=1.5</span></div>
+        <div class="step"><span class="step-num">add 3</span><div class="step-info">Push to maxH=[3,1], balance: pop max(3) to minH=[2,3]. maxH=[1]. Wait—rebalance: |minH|>|maxH|, pop min(2) to maxH=[2,1]. median=maxH.top()=2</div><span class="step-result sr-cyan">median=2</span></div>
+        <div class="step"><span class="step-num">add 4,5</span><div class="step-info">Same process... maxH=[lower half], minH=[upper half]</div><span class="step-result sr-green">✅ Always O(log n) add, O(1) median</span></div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label"><span>🔵 C++ · Median Finder — Two Heaps</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">class</span> <span class="fn">MedianFinder</span> {
+    <span class="tp">priority_queue</span>&lt;<span class="tp">int</span>&gt; maxH;                            <span class="cm">// lower half</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">int</span>,<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;,<span class="tp">greater</span>&lt;<span class="tp">int</span>&gt;&gt; minH; <span class="cm">// upper half</span>
+<span class="kw">public</span>:
+    <span class="kw">void</span> <span class="fn">addNum</span>(<span class="tp">int</span> num) {
+        <span class="cm">// Pehle maxH mein daalo</span>
+        maxH.push(num);
+
+        <span class="cm">// maxH ka top minH ke top se bada? Cross karna nahi chahiye</span>
+        <span class="kw">if</span> (!minH.empty() &amp;&amp; maxH.top() &gt; minH.top()) {
+            minH.push(maxH.top()); maxH.pop();
+        }
+
+        <span class="cm">// Size balance karo — maxH ya minH ek se zyada bada nahi hona chahiye</span>
+        <span class="kw">if</span> (maxH.size() &gt; minH.size() + <span class="nm">1</span>) {
+            minH.push(maxH.top()); maxH.pop();
+        } <span class="kw">else if</span> (minH.size() &gt; maxH.size()) {
+            maxH.push(minH.top()); minH.pop();
+        }
+    }
+
+    <span class="tp">double</span> <span class="fn">findMedian</span>() {
+        <span class="kw">if</span> (maxH.size() &gt; minH.size())
+            <span class="kw">return</span> maxH.top();                         <span class="cm">// odd total → middle</span>
+        <span class="kw">return</span> (maxH.top() + minH.top()) / <span class="nm">2.0</span>;      <span class="cm">// even → average</span>
+    }
+};</pre>
+      </div>
+      <div class="tip">💡 Two Heaps pattern: maxH = lower half (top = largest of small), minH = upper half (top = smallest of large). Balance maintain karo — dono size mein 1 se zyada difference nahi!</div>
+
+      <!-- FINAL SUMMARY -->
+      <div class="divider"></div>
+      <div class="card-title" style="margin-top:4px"><div class="icon" style="background:var(--teal-bg)">📋</div>Heap Patterns — Complete Summary</div>
+      <table>
+        <tr><th>Pattern</th><th>Heap Type</th><th>Size</th><th>Time</th><th>Classic Problems</th></tr>
+        <tr>
+          <td><span style="color:var(--amber);font-weight:600">Kth Largest</span></td>
+          <td>Min Heap</td><td>K</td><td>O(n log k)</td>
+          <td>LC 215, 703</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--teal);font-weight:600">Top K Frequent</span></td>
+          <td>Min Heap (by freq)</td><td>K</td><td>O(n log k)</td>
+          <td>LC 347, 692</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--blue);font-weight:600">K Closest</span></td>
+          <td>Max Heap (by dist)</td><td>K</td><td>O(n log k)</td>
+          <td>LC 973, 658</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--orange);font-weight:600">Task Scheduler</span></td>
+          <td>Max Heap + Queue</td><td>All</td><td>O(n log n)</td>
+          <td>LC 621, 1834</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--coral);font-weight:600">Meeting Rooms</span></td>
+          <td>Min Heap (end times)</td><td>Rooms</td><td>O(n log n)</td>
+          <td>LC 253, 1353</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--purple);font-weight:600">K-way Merge</span></td>
+          <td>Min Heap</td><td>K</td><td>O(n log k)</td>
+          <td>LC 23, 378, 632</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--pink);font-weight:600">Median Stream</span></td>
+          <td>Max + Min Heap</td><td>n/2 each</td><td>O(log n)</td>
+          <td>LC 295, 480</td>
+        </tr>
+      </table>
+      <div class="tip" style="margin-top:12px">💡 Heap use karo jab: "Top K", "Kth element", "minimum rooms/time", "merge sorted", ya "dynamic median" type problems ho. Priority Queue = Heap in C++!</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+  const pages=['p1','p2','p3','p4'];
+  const subs=['sub1','sub2','sub3','sub4'];
+
+  function showPage(id,btn){
+    pages.forEach(p=>document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx=pages.indexOf(id);
+    subs.forEach((s,i)=>document.getElementById(s).style.display=i===idx?'block':'none');
+    window.scrollTo(0,0);
+  }
+
+  function go(id){
+    const el=document.getElementById(id);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function copyCode(btn){
+    const pre=btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(()=>{
+      btn.textContent='Copied!';btn.style.color='#1dd6a0';
+      setTimeout(()=>{btn.textContent='Copy';btn.style.color='';},1500);
+    });
+  }
+
+  subs.forEach((s,i)=>document.getElementById(s).style.display=i===0?'block':'none');
+</script>
+</body>
+</html>

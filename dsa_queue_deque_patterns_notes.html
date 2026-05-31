@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Queue / Deque Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:#2a3245;
+    --text:#e8eaf6;--muted:#8892a4;
+    --teal:#1dd6a0;--teal-bg:#0d2e24;
+    --purple:#a78bfa;--purple-bg:#1e1633;
+    --amber:#fbbf24;--amber-bg:#2a1f0a;
+    --blue:#60a5fa;--blue-bg:#0e1f35;
+    --coral:#fb7185;--coral-bg:#2a0e16;
+    --green:#86efac;--green-bg:#0b2018;
+    --pink:#f472b6;--pink-bg:#2a0e1e;
+    --orange:#fb923c;--orange-bg:#2a1400;
+    --code-bg:#0a0d14;
+    --kw:#f9a870;--fn:#79c0ff;--cm:#5a6478;--tp:#f472b6;--str:#a5d6a7;--nm:#ce93d8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px;}
+
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:248px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:100;}
+  .sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+  .sidebar-logo h1{font-size:13px;font-weight:600;color:var(--orange);letter-spacing:.08em;text-transform:uppercase;}
+  .sidebar-logo p{font-size:11px;color:var(--muted);margin-top:2px;}
+  .nav-section{padding:0 12px;margin-bottom:8px;}
+  .nav-section-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;}
+  .nav-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .nav-link:hover{background:var(--bg3);color:var(--text);}
+  .nav-link.active{background:var(--bg3);color:var(--orange);font-weight:500;}
+  .nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .sub-links{padding-left:24px;margin-top:2px;}
+  .sub-link{display:block;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;border-radius:6px;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .sub-link:hover{color:var(--text);background:var(--bg3);}
+
+  .main{margin-left:248px;padding:40px 48px;max-width:980px;}
+  .page{display:none;} .page.active{display:block;}
+
+  .page-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .page-header .breadcrumb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .page-header h2{font-size:26px;font-weight:600;margin-bottom:6px;}
+  .page-header p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+  .badge-teal  {background:var(--teal-bg);  color:var(--teal);  border:1px solid #1a5c44;}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid #3d2d6e;}
+  .badge-amber {background:var(--amber-bg); color:var(--amber); border:1px solid #6b4c0f;}
+  .badge-blue  {background:var(--blue-bg);  color:var(--blue);  border:1px solid #1a3a5c;}
+  .badge-coral {background:var(--coral-bg); color:var(--coral); border:1px solid #5c1a27;}
+  .badge-pink  {background:var(--pink-bg);  color:var(--pink);  border:1px solid #5c1a3a;}
+  .badge-green {background:var(--green-bg); color:var(--green); border:1px solid #155a30;}
+  .badge-orange{background:var(--orange-bg);color:var(--orange);border:1px solid #6b3200;}
+
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;}
+  .card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card-title .icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+  .lang-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 5px;}
+  .en-block{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:var(--text);margin-bottom:8px;}
+  .hi-block{background:var(--purple-bg);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:#c4b5fd;margin-bottom:8px;}
+
+  .code-wrap{position:relative;margin:12px 0;}
+  .code-label{background:var(--bg3);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:7px 14px;font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+  .copy-btn{font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all .15s;}
+  .copy-btn:hover{color:var(--teal);border-color:var(--teal);}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;white-space:pre;}
+  .kw{color:var(--kw);}.fn{color:var(--fn);}.cm{color:var(--cm);font-style:italic;}
+  .tp{color:var(--tp);}.st{color:var(--str);}.nm{color:var(--nm);}
+
+  .dry-run{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0;overflow-x:auto;}
+  .dry-run-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+  .step{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .step-num{font-size:10px;font-weight:600;color:var(--muted);min-width:72px;}
+  .arr-row{display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap;}
+  .a-box{min-width:34px;height:32px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);padding:0 6px;font-family:'JetBrains Mono',monospace;}
+  .a-box.hi    {background:var(--amber-bg); color:var(--amber); border-color:#6b4c0f;}
+  .a-box.match {background:var(--pink-bg);  color:var(--pink);  border-color:#5c1a3a;}
+  .a-box.found {background:var(--green-bg); color:var(--green); border-color:#155a30;}
+  .a-box.fail  {background:var(--coral-bg); color:var(--coral); border-color:#5c1a27;}
+  .a-box.teal  {background:var(--teal-bg);  color:var(--teal);  border-color:#1a5c44;}
+  .a-box.blue  {background:var(--blue-bg);  color:var(--blue);  border-color:#1a3a5c;}
+  .a-box.orng  {background:var(--orange-bg);color:var(--orange);border-color:#6b3200;}
+  .q-box{display:flex;gap:2px;align-items:center;}
+  .q-front{font-size:9px;color:var(--teal);margin-right:2px;}
+  .q-back {font-size:9px;color:var(--coral);margin-left:2px;}
+  .step-info{font-size:12px;color:var(--muted);flex:1;min-width:160px;}
+  .step-result{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+  .sr-high{background:var(--coral-bg); color:var(--coral);}
+  .sr-low {background:var(--amber-bg); color:var(--amber);}
+  .sr-eq  {background:var(--green-bg); color:var(--green);}
+  .sr-pink{background:var(--pink-bg);  color:var(--pink);}
+  .sr-orng{background:var(--orange-bg);color:var(--orange);}
+
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;}
+  .tbl th{background:var(--bg3);color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+  .tbl td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.6;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl tr:hover td{background:var(--bg3);}
+
+  .divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+  .tip {border-left:3px solid var(--teal); background:var(--teal-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#6ee7c0;margin:12px 0;line-height:1.7;}
+  .warn{border-left:3px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#fcd97a;margin:12px 0;line-height:1.7;}
+  .info{border-left:3px solid var(--blue); background:var(--blue-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#93c5fd;margin:12px 0;line-height:1.7;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0;}
+  .mini-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.7;}
+  .mini-card b{font-weight:600;display:block;margin-bottom:4px;}
+  .sub-heading{font-size:14px;font-weight:600;margin:22px 0 10px;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .sub-heading::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--orange);display:block;}
+  code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:4px;color:var(--teal);}
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+  @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:28px 16px 40px;}.grid2,.grid3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Queue / Deque Patterns · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Queue / Deque Patterns</div>
+
+    <button class="nav-link active" onclick="showPage('p0',this)">
+      <span class="nav-dot" style="background:#fb923c"></span>Queue Basics
+    </button>
+    <div class="sub-links" id="sub0">
+      <button class="sub-link" onclick="scrollTo2('q-what')">What is Queue</button>
+      <button class="sub-link" onclick="scrollTo2('q-deque')">Deque vs Queue</button>
+      <button class="sub-link" onclick="scrollTo2('q-ops')">C++ STL Cheatsheet</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>FIFO Processing
+    </button>
+    <div class="sub-links" id="sub1" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('fifo-rotten')">Rotten Oranges (BFS)</button>
+      <button class="sub-link" onclick="scrollTo2('fifo-walls')">Walls & Gates</button>
+      <button class="sub-link" onclick="scrollTo2('fifo-snake')">Snake & Ladder</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#60a5fa"></span>Level-wise Processing
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('lw-levelorder')">Level Order Traversal</button>
+      <button class="sub-link" onclick="scrollTo2('lw-zigzag')">Zigzag Level Order</button>
+      <button class="sub-link" onclick="scrollTo2('lw-rightview')">Right Side View</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#1dd6a0"></span>Circular Queue
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('cq-design')">Design Circular Queue</button>
+      <button class="sub-link" onclick="scrollTo2('cq-hits')">Hit Counter</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p4',this)">
+      <span class="nav-dot" style="background:#f472b6"></span>Deque Based
+    </button>
+    <div class="sub-links" id="sub4" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('dq-sliding')">Sliding Window Maximum</button>
+      <button class="sub-link" onclick="scrollTo2('dq-monotonic')">Monotonic Deque</button>
+      <button class="sub-link" onclick="scrollTo2('dq-firstneg')">First Negative in Window</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p5',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Comparison Table
+    </button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════ PAGE 0 — BASICS ══════════════════ -->
+<div class="page active" id="p0">
+  <div class="page-header">
+    <div class="breadcrumb">Queue / Deque Patterns · Foundation</div>
+    <h2>🚦 Queue / Deque — Basics</h2>
+    <p>Queue = FIFO (First In First Out). Deque = Double Ended Queue — dono taraf se insert/delete. BFS ka backbone!</p>
+    <div class="badge-row">
+      <span class="badge badge-orange">FIFO</span>
+      <span class="badge badge-blue">BFS backbone</span>
+      <span class="badge badge-teal">O(1) enqueue/dequeue</span>
+    </div>
+  </div>
+
+  <div id="q-what">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--orange-bg)">🚦</div>Queue kya hai?</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      A Queue is a linear data structure that follows <b>FIFO</b> — First In, First Out. Like a real-life queue (line). Elements are added at the <b>back</b> and removed from the <b>front</b>.<br>
+      <b>Key operations:</b> enqueue (push), dequeue (pop), front/peek — all O(1).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Queue ek line ki tarah hai — <b>FIFO</b> (pehle aaya, pehle gaya). Jaise movie ticket line mein pehla banda pehle andar jaata hai. Elements <b>back</b> se daalo aur <b>front</b> se nikalo.<br>
+      <b>Key operations:</b> enqueue (daalo), dequeue (nikalo), front (dekho) — sab O(1).
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">Queue Operations Visualization</div>
+      <div class="step">
+        <span class="step-num">enqueue 1,2,3</span>
+        <div class="q-box">
+          <span class="q-front">FRONT→</span>
+          <div class="a-box teal">1</div>
+          <div class="a-box">2</div>
+          <div class="a-box orng">3</div>
+          <span class="q-back">←BACK</span>
+        </div>
+        <div class="step-info">3 elements in queue</div>
+      </div>
+      <div class="step">
+        <span class="step-num">dequeue()</span>
+        <div class="q-box">
+          <div class="a-box fail">1 ❌</div>
+          <span style="color:var(--muted);font-size:18px;margin:0 4px">→</span>
+          <span class="q-front">FRONT→</span>
+          <div class="a-box teal">2</div>
+          <div class="a-box orng">3</div>
+          <span class="q-back">←BACK</span>
+        </div>
+        <div class="step-info">1 removed from front</div>
+        <span class="step-result sr-orng">returns 1</span>
+      </div>
+      <div class="step">
+        <span class="step-num">enqueue 4</span>
+        <div class="q-box">
+          <span class="q-front">FRONT→</span>
+          <div class="a-box teal">2</div>
+          <div class="a-box">3</div>
+          <div class="a-box orng">4</div>
+          <span class="q-back">←BACK</span>
+        </div>
+        <div class="step-info">4 added at back</div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="q-deque">
+  <div class="sub-heading">Deque — Double Ended Queue</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">↔️</div>Deque vs Queue</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      A <b>Deque</b> (Double Ended Queue) allows insert and delete from <b>both front and back</b> — O(1). It's a superset of both Queue and Stack. Used in sliding window problems, monotonic deque, and palindrome checking.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Deque</b> mein <b>dono taraf se</b> (front aur back) insert aur delete O(1) mein hota hai. Queue aur Stack dono ka superset hai. Sliding window maximum, monotonic deque aur palindrome check mein use hota hai.
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">Deque Operations</div>
+      <div class="step">
+        <span class="step-num">push_back 1,2,3</span>
+        <div class="q-box">
+          <span class="q-front">F→</span>
+          <div class="a-box teal">1</div><div class="a-box">2</div><div class="a-box orng">3</div>
+          <span class="q-back">←B</span>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">push_front 0</span>
+        <div class="q-box">
+          <span class="q-front">F→</span>
+          <div class="a-box hi">0</div><div class="a-box teal">1</div><div class="a-box">2</div><div class="a-box orng">3</div>
+          <span class="q-back">←B</span>
+        </div>
+        <div class="step-info">0 added at FRONT!</div>
+        <span class="step-result sr-pink">front insert</span>
+      </div>
+      <div class="step">
+        <span class="step-num">pop_back()</span>
+        <div class="q-box">
+          <span class="q-front">F→</span>
+          <div class="a-box hi">0</div><div class="a-box teal">1</div><div class="a-box">2</div>
+          <div class="a-box fail">3❌</div>
+          <span class="q-back">←B</span>
+        </div>
+        <div class="step-info">3 removed from BACK!</div>
+        <span class="step-result sr-orng">back delete</span>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div class="mini-card">
+        <b style="color:var(--orange)">Queue</b>
+        push_back, pop_front only<br>
+        Use: BFS, FIFO processing
+      </div>
+      <div class="mini-card">
+        <b style="color:var(--pink)">Deque</b>
+        push/pop from both ends<br>
+        Use: Sliding window, monotonic
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="q-ops">
+  <div class="sub-heading">C++ STL Cheatsheet</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">📋</div>C++ Queue / Deque STL Operations</div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Queue & Deque STL</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// ══ QUEUE ══</span>
+<span class="tp">queue</span>&lt;<span class="tp">int</span>&gt; q;
+q.push(<span class="nm">10</span>);       <span class="cm">// back mein add (enqueue)    O(1)</span>
+q.pop();          <span class="cm">// front se remove (dequeue)  O(1)</span>
+q.front();        <span class="cm">// front element dekho        O(1)</span>
+q.back();         <span class="cm">// back element dekho         O(1)</span>
+q.empty();        <span class="cm">// khali hai?                 O(1)</span>
+q.size();         <span class="cm">// kitne elements             O(1)</span>
+
+<span class="cm">// ══ DEQUE ══</span>
+<span class="tp">deque</span>&lt;<span class="tp">int</span>&gt; dq;
+dq.push_back(<span class="nm">10</span>);  <span class="cm">// back se daalo    O(1)</span>
+dq.push_front(<span class="nm">5</span>);  <span class="cm">// front se daalo  O(1)</span>
+dq.pop_back();     <span class="cm">// back se nikalo  O(1)</span>
+dq.pop_front();    <span class="cm">// front se nikalo O(1)</span>
+dq.front();        <span class="cm">// front dekho     O(1)</span>
+dq.back();         <span class="cm">// back dekho      O(1)</span>
+dq[i];             <span class="cm">// index access    O(1)</span>
+
+<span class="cm">// ══ BFS TEMPLATE (queue use karta hai) ══</span>
+<span class="tp">queue</span>&lt;<span class="tp">int</span>&gt; bfsQ;
+bfsQ.push(start);
+<span class="kw">while</span> (!bfsQ.empty()) {
+    <span class="tp">int</span> node = bfsQ.front(); bfsQ.pop();
+    <span class="cm">// process node</span>
+    <span class="kw">for</span> (<span class="kw">auto</span> neighbor : adj[node])
+        bfsQ.push(neighbor);
+}</pre>
+    </div>
+    <div class="tip">💡 BFS mein hamesha <code>queue</code> use karo. Sliding window max mein <code>deque</code>. Stack ke liye <code>stack</code> ya <code>deque</code>. <code>priority_queue</code> = heap (BFS nahi, Dijkstra ke liye).</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 1 — FIFO PROCESSING ══════════════════ -->
+<div class="page" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">Queue/Deque · Pattern 1 of 4</div>
+    <h2>🔄 FIFO Processing</h2>
+    <p>Queue ka core use — BFS (Breadth First Search). Grid problems, shortest path, multi-source BFS.</p>
+    <div class="badge-row">
+      <span class="badge badge-amber">BFS = Queue</span>
+      <span class="badge badge-teal">Shortest path</span>
+      <span class="badge badge-blue">Multi-source BFS</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🔄</div>Core Concept — FIFO / BFS</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      BFS uses a queue to process nodes <b>level by level</b>. All nodes at distance 1 first, then distance 2, etc. This guarantees the shortest path in an unweighted graph/grid.<br>
+      <b>Multi-source BFS</b>: enqueue ALL starting nodes simultaneously. BFS from multiple sources at once — used in Rotten Oranges, Walls & Gates.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      BFS queue use karke nodes ko <b>level by level</b> process karta hai. Pehle distance 1 wale, phir 2, etc. Unweighted graph/grid mein shortest path guarantee karta hai.<br>
+      <b>Multi-source BFS</b>: saare starting nodes ek saath queue mein daalo. Ek hi BFS se multiple sources simultaneously process — Rotten Oranges, Walls & Gates mein use hota hai.
+    </div>
+  </div>
+
+  <!-- ROTTEN ORANGES -->
+  <div id="fifo-rotten">
+  <div class="sub-heading">Problem 1 — Rotten Oranges</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🍊</div>Rotten Oranges<span class="badge badge-amber">LeetCode 994</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      <b>Multi-source BFS</b>: First enqueue ALL rotten oranges (value=2) into the queue. Each minute, spread rot to all 4 neighbors. Count minutes = BFS levels. If any fresh orange remains → return -1.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Multi-source BFS</b>: Pehle saare sade hue oranges (value=2) ek saath queue mein daalo. Har minute, 4 neighbors mein rot spread karo. Minutes count = BFS levels. Agar koi fresh orange bacha → -1 return karo.
+    </div>
+
+    <div class="divider"></div>
+    <div class="dry-run">
+      <div class="dry-run-title">grid=[[2,1,1],[1,1,0],[0,1,1]] → Expected: 4</div>
+      <div class="step">
+        <span class="step-num">t=0 init</span>
+        <div style="display:grid;grid-template-columns:repeat(3,34px);gap:3px">
+          <div class="a-box fail">2</div><div class="a-box hi">1</div><div class="a-box hi">1</div>
+          <div class="a-box hi">1</div><div class="a-box hi">1</div><div class="a-box">0</div>
+          <div class="a-box">0</div><div class="a-box hi">1</div><div class="a-box hi">1</div>
+        </div>
+        <div class="step-info">Queue: {(0,0)}. Fresh=6</div>
+      </div>
+      <div class="step">
+        <span class="step-num">t=1</span>
+        <div style="display:grid;grid-template-columns:repeat(3,34px);gap:3px">
+          <div class="a-box fail">2</div><div class="a-box fail">2</div><div class="a-box hi">1</div>
+          <div class="a-box fail">2</div><div class="a-box hi">1</div><div class="a-box">0</div>
+          <div class="a-box">0</div><div class="a-box hi">1</div><div class="a-box hi">1</div>
+        </div>
+        <div class="step-info">Spread to (0,1) and (1,0). Fresh=4</div>
+        <span class="step-result sr-orng">min=1</span>
+      </div>
+      <div class="step">
+        <span class="step-num">t=2,3,4</span>
+        <div class="step-info">Continue spreading... all fresh rot at t=4</div>
+        <span class="step-result sr-eq">✅ ans=4</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Rotten Oranges (Multi-Source BFS)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">orangesRotting</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; grid) {
+    <span class="tp">int</span> m = grid.size(), n = grid[<span class="nm">0</span>].size();
+    <span class="tp">queue</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt; q;
+    <span class="tp">int</span> fresh = <span class="nm">0</span>, minutes = <span class="nm">0</span>;
+
+    <span class="cm">// Step 1: Saare rotten enqueue karo + fresh count karo</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; m; i++)
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="nm">0</span>; j &lt; n; j++) {
+            <span class="kw">if</span> (grid[i][j] == <span class="nm">2</span>) q.push({i, j});
+            <span class="kw">if</span> (grid[i][j] == <span class="nm">1</span>) fresh++;
+        }
+
+    <span class="tp">int</span> dirs[<span class="nm">4</span>][<span class="nm">2</span>] = {{<span class="nm">0</span>,<span class="nm">1</span>},{<span class="nm">0</span>,-<span class="nm">1</span>},{<span class="nm">1</span>,<span class="nm">0</span>},{-<span class="nm">1</span>,<span class="nm">0</span>}};
+
+    <span class="cm">// Step 2: Multi-source BFS — level by level</span>
+    <span class="kw">while</span> (!q.empty() &amp;&amp; fresh &gt; <span class="nm">0</span>) {
+        <span class="tp">int</span> sz = q.size();           <span class="cm">// current level size</span>
+        <span class="kw">for</span> (<span class="tp">int</span> k = <span class="nm">0</span>; k &lt; sz; k++) {
+            <span class="kw">auto</span> [r, c] = q.front(); q.pop();
+            <span class="kw">for</span> (<span class="kw">auto</span>&amp; d : dirs) {
+                <span class="tp">int</span> nr = r+d[<span class="nm">0</span>], nc = c+d[<span class="nm">1</span>];
+                <span class="kw">if</span> (nr&gt;=<span class="nm">0</span> &amp;&amp; nr&lt;m &amp;&amp; nc&gt;=<span class="nm">0</span> &amp;&amp; nc&lt;n &amp;&amp; grid[nr][nc]==<span class="nm">1</span>) {
+                    grid[nr][nc] = <span class="nm">2</span>;   <span class="cm">// rot spread karo</span>
+                    fresh--;
+                    q.push({nr, nc});
+                }
+            }
+        }
+        minutes++;
+    }
+    <span class="kw">return</span> fresh == <span class="nm">0</span> ? minutes : -<span class="nm">1</span>;
+}</pre>
+    </div>
+    <div class="tip">💡 Level size <code>sz = q.size()</code> snapshot lena CRITICAL hai — usi level ke nodes process karo, naye wale next level ke hain. Yahi BFS level tracking ka trick hai!</div>
+  </div>
+  </div>
+
+  <!-- WALLS AND GATES -->
+  <div id="fifo-walls">
+  <div class="sub-heading">Problem 2 — Walls & Gates (Multi-Source BFS)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🚪</div>Walls &amp; Gates<span class="badge badge-teal">LeetCode 286</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Fill each empty room with the distance to its nearest gate. Enqueue ALL gates (value=0) simultaneously. BFS naturally fills minimum distances level by level. Walls (value=-1) are skipped.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Har empty room ko nearest gate ki distance se fill karo. Saare gates (value=0) ek saath queue mein daalo. BFS automatically minimum distances level by level fill karta hai. Walls (-1) skip karo.
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Walls & Gates</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">void</span> <span class="fn">wallsAndGates</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; rooms) {
+    <span class="tp">int</span> m = rooms.size(), n = rooms[<span class="nm">0</span>].size();
+    <span class="kw">const</span> <span class="tp">int</span> INF = <span class="nm">2147483647</span>;
+    <span class="tp">queue</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt; q;
+
+    <span class="cm">// Saare gates queue mein daalo</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; m; i++)
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="nm">0</span>; j &lt; n; j++)
+            <span class="kw">if</span> (rooms[i][j] == <span class="nm">0</span>) q.push({i, j});
+
+    <span class="tp">int</span> dirs[<span class="nm">4</span>][<span class="nm">2</span>] = {{<span class="nm">0</span>,<span class="nm">1</span>},{<span class="nm">0</span>,-<span class="nm">1</span>},{<span class="nm">1</span>,<span class="nm">0</span>},{-<span class="nm">1</span>,<span class="nm">0</span>}};
+    <span class="kw">while</span> (!q.empty()) {
+        <span class="kw">auto</span> [r, c] = q.front(); q.pop();
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; d : dirs) {
+            <span class="tp">int</span> nr = r+d[<span class="nm">0</span>], nc = c+d[<span class="nm">1</span>];
+            <span class="kw">if</span> (nr&gt;=<span class="nm">0</span> &amp;&amp; nr&lt;m &amp;&amp; nc&gt;=<span class="nm">0</span> &amp;&amp; nc&lt;n &amp;&amp; rooms[nr][nc]==INF) {
+                rooms[nr][nc] = rooms[r][c] + <span class="nm">1</span>; <span class="cm">// distance update</span>
+                q.push({nr, nc});
+            }
+        }
+    }
+}</pre>
+    </div>
+    <div class="tip">💡 Multi-source BFS = saare sources ek saath queue mein. BFS ki property: pehli baar kisi cell pe pahuncho → wo minimum distance hai. Dobara visit ki zaroorat nahi!</div>
+  </div>
+  </div>
+
+  <!-- SNAKE AND LADDER -->
+  <div id="fifo-snake">
+  <div class="sub-heading">Problem 3 — Snakes and Ladders</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🐍</div>Snakes &amp; Ladders<span class="badge badge-purple">LeetCode 909</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Minimum moves = BFS on a graph where nodes are board positions 1..n². From each cell, roll dice (1–6) → reach 6 neighbors. If snake/ladder exists at destination → jump. BFS level = number of moves.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Minimum moves = BFS. Nodes = board positions 1..n². Har cell se dice roll karo (1–6) → 6 neighbors. Destination pe snake/ladder hai → jump karo. BFS level = moves count. Shortest path guaranteed!</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Snakes & Ladders (BFS)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">snakesAndLadders</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; board) {
+    <span class="tp">int</span> n = board.size();
+
+    <span class="cm">// Cell number (1-indexed) → {row, col} converter</span>
+    <span class="kw">auto</span> <span class="fn">getPos</span> = [&amp;](<span class="tp">int</span> cell) -&gt; <span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; {
+        cell--;  <span class="cm">// 0-indexed</span>
+        <span class="tp">int</span> row = n - <span class="nm">1</span> - cell / n;   <span class="cm">// bottom se upar</span>
+        <span class="tp">int</span> col = (cell / n % <span class="nm">2</span> == <span class="nm">0</span>) ? cell % n : n - <span class="nm">1</span> - cell % n;
+        <span class="kw">return</span> {row, col};
+    };
+
+    <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt; visited(n*n+<span class="nm">1</span>, <span class="kw">false</span>);
+    <span class="tp">queue</span>&lt;<span class="tp">int</span>&gt; q;
+    q.push(<span class="nm">1</span>); visited[<span class="nm">1</span>] = <span class="kw">true</span>;
+    <span class="tp">int</span> moves = <span class="nm">0</span>;
+
+    <span class="kw">while</span> (!q.empty()) {
+        <span class="tp">int</span> sz = q.size();
+        <span class="kw">while</span> (sz--) {
+            <span class="tp">int</span> cell = q.front(); q.pop();
+            <span class="kw">if</span> (cell == n*n) <span class="kw">return</span> moves;
+
+            <span class="kw">for</span> (<span class="tp">int</span> dice = <span class="nm">1</span>; dice &lt;= <span class="nm">6</span> &amp;&amp; cell+dice &lt;= n*n; dice++) {
+                <span class="kw">auto</span> [r, c] = <span class="fn">getPos</span>(cell + dice);
+                <span class="tp">int</span> next = (board[r][c] != -<span class="nm">1</span>) ? board[r][c] : cell+dice;
+                <span class="kw">if</span> (!visited[next]) {
+                    visited[next] = <span class="kw">true</span>;
+                    q.push(next);
+                }
+            }
+        }
+        moves++;
+    }
+    <span class="kw">return</span> -<span class="nm">1</span>;
+}</pre>
+    </div>
+    <div class="tip">💡 Board → graph conversion: cell number 1..n² ko grid coordinate mein convert karo. Bottom-left se shuru, alternating direction (boustrophedon). BFS se minimum moves guaranteed!</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 2 — LEVEL-WISE PROCESSING ══════════════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">Queue/Deque · Pattern 2 of 4</div>
+    <h2>🌳 Level-wise Processing</h2>
+    <p>Binary tree ko level by level process karo — BFS + queue. Level order, zigzag, right view sab isi se.</p>
+    <div class="badge-row">
+      <span class="badge badge-blue">Tree BFS</span>
+      <span class="badge badge-teal">Level snapshot</span>
+      <span class="badge badge-orange">sz = q.size() trick</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🌳</div>Core Concept — Level Snapshot Trick</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      Key trick: <code>int sz = q.size()</code> before processing each level. Loop exactly <code>sz</code> times → processes all nodes of current level. New children added during this loop belong to next level. This separates levels cleanly.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Key trick: har level process karne se pehle <code>int sz = q.size()</code> snapshot lo. Exactly <code>sz</code> baar loop chalao → current level ke saare nodes process ho jaate hain. Is loop mein add hone wale children next level ke hain. Levels cleanly separate ho jaate hain!
+    </div>
+  </div>
+
+  <!-- LEVEL ORDER -->
+  <div id="lw-levelorder">
+  <div class="sub-heading">Problem 1 — Level Order Traversal</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">📊</div>Binary Tree Level Order<span class="badge badge-blue">LeetCode 102</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Use BFS. For each level: snapshot queue size → process exactly that many nodes → collect their values → push children. Each iteration of outer while = one level.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">BFS use karo. Har level ke liye: queue size snapshot lo → usi count ke nodes process karo → unki values collect karo → children push karo. Outer while ka har iteration = ek level.</div>
+
+    <div class="divider"></div>
+    <div class="dry-run">
+      <div class="dry-run-title">Tree: 3→[9,20], 20→[15,7]</div>
+      <div class="step">
+        <span class="step-num">Level 0</span>
+        <div class="q-box"><span class="q-front">Q:</span><div class="a-box teal">3</div></div>
+        <div class="step-info">sz=1, process 3, push 9,20</div>
+        <span class="step-result sr-orng">[[3]]</span>
+      </div>
+      <div class="step">
+        <span class="step-num">Level 1</span>
+        <div class="q-box"><span class="q-front">Q:</span><div class="a-box teal">9</div><div class="a-box orng">20</div></div>
+        <div class="step-info">sz=2, process 9,20. Push 15,7</div>
+        <span class="step-result sr-orng">[[3],[9,20]]</span>
+      </div>
+      <div class="step">
+        <span class="step-num">Level 2</span>
+        <div class="q-box"><span class="q-front">Q:</span><div class="a-box teal">15</div><div class="a-box orng">7</div></div>
+        <div class="step-info">sz=2, process 15,7. No children.</div>
+        <span class="step-result sr-eq">✅ [[3],[9,20],[15,7]]</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Level Order Traversal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; <span class="fn">levelOrder</span>(<span class="tp">TreeNode</span>* root) {
+    <span class="kw">if</span> (!root) <span class="kw">return</span> {};
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; result;
+    <span class="tp">queue</span>&lt;<span class="tp">TreeNode</span>*&gt; q;
+    q.push(root);
+
+    <span class="kw">while</span> (!q.empty()) {
+        <span class="tp">int</span> sz = q.size();           <span class="cm">// ← Level snapshot!</span>
+        <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; level;
+
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; sz; i++) {
+            <span class="tp">TreeNode</span>* node = q.front(); q.pop();
+            level.push_back(node-&gt;val);
+            <span class="kw">if</span> (node-&gt;left)  q.push(node-&gt;left);
+            <span class="kw">if</span> (node-&gt;right) q.push(node-&gt;right);
+        }
+        result.push_back(level);      <span class="cm">// ek level complete</span>
+    }
+    <span class="kw">return</span> result;
+}</pre>
+    </div>
+    <div class="tip">💡 Yeh template bahut powerful hai — Level Order ke sab variants isi se bante hain. Bas andar kya karna hai woh change karo!</div>
+  </div>
+  </div>
+
+  <!-- ZIGZAG -->
+  <div id="lw-zigzag">
+  <div class="sub-heading">Problem 2 — Zigzag Level Order</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">⚡</div>Zigzag Level Order<span class="badge badge-pink">LeetCode 103</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Same as Level Order but alternate direction each level. Use a boolean <code>leftToRight</code> flag. When false, reverse the level vector before adding to result. OR use a deque per level — add to front when going right-to-left.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Level Order jaisa hi — but har level ki direction alternate karo. Boolean <code>leftToRight</code> flag use karo. False hone par level vector reverse karo. Ya level ke liye deque use karo — right-to-left mein front pe add karo.</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Zigzag Level Order</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; <span class="fn">zigzagLevelOrder</span>(<span class="tp">TreeNode</span>* root) {
+    <span class="kw">if</span> (!root) <span class="kw">return</span> {};
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; result;
+    <span class="tp">queue</span>&lt;<span class="tp">TreeNode</span>*&gt; q;
+    q.push(root);
+    <span class="tp">bool</span> leftToRight = <span class="kw">true</span>;
+
+    <span class="kw">while</span> (!q.empty()) {
+        <span class="tp">int</span> sz = q.size();
+        <span class="tp">deque</span>&lt;<span class="tp">int</span>&gt; level;  <span class="cm">// deque for flexible insertion</span>
+
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; sz; i++) {
+            <span class="tp">TreeNode</span>* node = q.front(); q.pop();
+            <span class="kw">if</span> (leftToRight)
+                level.push_back(node-&gt;val);   <span class="cm">// L→R: back mein</span>
+            <span class="kw">else</span>
+                level.push_front(node-&gt;val);  <span class="cm">// R→L: front mein</span>
+            <span class="kw">if</span> (node-&gt;left)  q.push(node-&gt;left);
+            <span class="kw">if</span> (node-&gt;right) q.push(node-&gt;right);
+        }
+        result.push_back({level.begin(), level.end()});
+        leftToRight = !leftToRight;  <span class="cm">// direction flip!</span>
+    }
+    <span class="kw">return</span> result;
+}</pre>
+    </div>
+    <div class="tip">💡 Deque ka use level ke andar karo — <code>push_front</code> se right-to-left automatically ho jaata hai. BFS queue alag hai, level deque alag — confuse mat hona!</div>
+  </div>
+  </div>
+
+  <!-- RIGHT SIDE VIEW -->
+  <div id="lw-rightview">
+  <div class="sub-heading">Problem 3 — Binary Tree Right Side View</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">👁️</div>Right Side View<span class="badge badge-teal">LeetCode 199</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Level Order traversal — just pick the <b>last element</b> of each level. That's the rightmost node visible from the right side. One-line addition to the level order template.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Level Order karo — bas har level ka <b>last element</b> result mein lo. Wahi right side se visible hota hai. Level order template mein sirf ek line ka change!</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Right Side View</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">rightSideView</span>(<span class="tp">TreeNode</span>* root) {
+    <span class="kw">if</span> (!root) <span class="kw">return</span> {};
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; result;
+    <span class="tp">queue</span>&lt;<span class="tp">TreeNode</span>*&gt; q;
+    q.push(root);
+
+    <span class="kw">while</span> (!q.empty()) {
+        <span class="tp">int</span> sz = q.size();
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; sz; i++) {
+            <span class="tp">TreeNode</span>* node = q.front(); q.pop();
+            <span class="kw">if</span> (i == sz - <span class="nm">1</span>)               <span class="cm">// ← last node of level!</span>
+                result.push_back(node-&gt;val);
+            <span class="kw">if</span> (node-&gt;left)  q.push(node-&gt;left);
+            <span class="kw">if</span> (node-&gt;right) q.push(node-&gt;right);
+        }
+    }
+    <span class="kw">return</span> result;
+}
+
+<span class="cm">// Left Side View: i == 0 → first node of each level</span>
+<span class="cm">// Max per Level: track max in inner loop</span>
+<span class="cm">// Average per Level: sum/sz in inner loop</span></pre>
+    </div>
+    <div class="tip">💡 Level Order template bahut versatile hai — sirf inner loop ke andar change karo: last element (right view), first element (left view), max/min/avg (various problems).</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 3 — CIRCULAR QUEUE ══════════════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">Queue/Deque · Pattern 3 of 4</div>
+    <h2>🔁 Circular Queue Pattern</h2>
+    <p>Fixed-size queue jahan last position ke baad wapas first position pe aao — modular arithmetic use karta hai.</p>
+    <div class="badge-row">
+      <span class="badge badge-teal">Modulo trick</span>
+      <span class="badge badge-amber">Fixed capacity</span>
+      <span class="badge badge-blue">O(1) all ops</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🔁</div>Core Concept — Circular Queue</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      A circular queue reuses empty space at the front. Use two pointers <code>head</code> and <code>tail</code>, and <code>count</code> to track size. Advance pointers using <b>modulo</b>: <code>(ptr + 1) % capacity</code>. This "wraps around" the array.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Circular queue front ki khali jagah reuse karti hai. <code>head</code>, <code>tail</code> pointers aur <code>count</code> use karo. Pointer advance karne ke liye <b>modulo</b>: <code>(ptr + 1) % capacity</code>. Array ke end ke baad automatically start pe wapas aa jaata hai!
+    </div>
+
+    <div class="dry-run">
+      <div class="dry-run-title">Circular Queue capacity=4: enqueue 1,2,3,4 → dequeue → enqueue 5</div>
+      <div class="step">
+        <span class="step-num">enq 1,2,3,4</span>
+        <div class="arr-row">
+          <div class="a-box teal">1</div><div class="a-box">2</div><div class="a-box">3</div><div class="a-box orng">4</div>
+        </div>
+        <div class="step-info">head=0, tail=3, count=4. FULL</div>
+        <span class="step-result sr-orng">FULL</span>
+      </div>
+      <div class="step">
+        <span class="step-num">dequeue()</span>
+        <div class="arr-row">
+          <div class="a-box fail">_</div><div class="a-box teal">2</div><div class="a-box">3</div><div class="a-box orng">4</div>
+        </div>
+        <div class="step-info">head=(0+1)%4=1. count=3. idx 0 free!</div>
+        <span class="step-result sr-eq">returns 1</span>
+      </div>
+      <div class="step">
+        <span class="step-num">enqueue 5</span>
+        <div class="arr-row">
+          <div class="a-box hi">5</div><div class="a-box teal">2</div><div class="a-box">3</div><div class="a-box orng">4</div>
+        </div>
+        <div class="step-info">tail=(3+1)%4=0. 5 at idx 0! WRAP AROUND ✅</div>
+        <span class="step-result sr-pink">wrap!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESIGN CIRCULAR QUEUE -->
+  <div id="cq-design">
+  <div class="sub-heading">Problem 1 — Design Circular Queue</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">⚙️</div>Design Circular Queue<span class="badge badge-teal">LeetCode 622</span></div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Circular Queue Implementation</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">class</span> <span class="tp">MyCircularQueue</span> {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; data;
+    <span class="tp">int</span> head, tail, count, cap;
+<span class="kw">public</span>:
+    <span class="fn">MyCircularQueue</span>(<span class="tp">int</span> k) : data(k), head(<span class="nm">0</span>), tail(-<span class="nm">1</span>), count(<span class="nm">0</span>), cap(k) {}
+
+    <span class="tp">bool</span> <span class="fn">enQueue</span>(<span class="tp">int</span> val) {
+        <span class="kw">if</span> (<span class="fn">isFull</span>()) <span class="kw">return false</span>;
+        tail = (tail + <span class="nm">1</span>) % cap;  <span class="cm">// modulo wrap!</span>
+        data[tail] = val;
+        count++;
+        <span class="kw">return true</span>;
+    }
+
+    <span class="tp">bool</span> <span class="fn">deQueue</span>() {
+        <span class="kw">if</span> (<span class="fn">isEmpty</span>()) <span class="kw">return false</span>;
+        head = (head + <span class="nm">1</span>) % cap;  <span class="cm">// modulo wrap!</span>
+        count--;
+        <span class="kw">return true</span>;
+    }
+
+    <span class="tp">int</span>  <span class="fn">Front</span>()   { <span class="kw">return</span> <span class="fn">isEmpty</span>() ? -<span class="nm">1</span> : data[head]; }
+    <span class="tp">int</span>  <span class="fn">Rear</span>()    { <span class="kw">return</span> <span class="fn">isEmpty</span>() ? -<span class="nm">1</span> : data[tail]; }
+    <span class="tp">bool</span> <span class="fn">isEmpty</span>() { <span class="kw">return</span> count == <span class="nm">0</span>; }
+    <span class="tp">bool</span> <span class="fn">isFull</span>()  { <span class="kw">return</span> count == cap; }
+};
+<span class="cm">// Trick: Full/Empty distinguish → count variable use karo</span>
+<span class="cm">// (head == tail+1 se dono cases same dikhte hain — confusing!)</span></pre>
+    </div>
+    <div class="tip">💡 Full aur Empty dono mein head == (tail+1)%cap ho sakta hai — isliye alag <code>count</code> variable rakhna best practice hai!</div>
+  </div>
+  </div>
+
+  <!-- HIT COUNTER -->
+  <div id="cq-hits">
+  <div class="sub-heading">Problem 2 — Hit Counter (Circular Queue Application)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🎯</div>Hit Counter<span class="badge badge-amber">LeetCode 362</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Count hits in the last 300 seconds. Use a circular array of size 300. For each second slot: store hit count. When querying, sum up valid slots (within 300 second window). Old data automatically overwritten.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Last 300 seconds mein hits count karo. Size 300 ka circular array use karo. Har second slot mein hit count store karo. Query karte waqt valid slots (300 second window ke andar) sum karo. Purana data automatically overwrite ho jaata hai!</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Hit Counter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">class</span> <span class="tp">HitCounter</span> {
+    <span class="tp">int</span> times[<span class="nm">300</span>] = {}, hits[<span class="nm">300</span>] = {};
+<span class="kw">public</span>:
+    <span class="kw">void</span> <span class="fn">hit</span>(<span class="tp">int</span> timestamp) {
+        <span class="tp">int</span> idx = timestamp % <span class="nm">300</span>;     <span class="cm">// circular slot</span>
+        <span class="kw">if</span> (times[idx] != timestamp) { <span class="cm">// naya timestamp → reset</span>
+            times[idx] = timestamp;
+            hits[idx] = <span class="nm">0</span>;
+        }
+        hits[idx]++;
+    }
+
+    <span class="tp">int</span> <span class="fn">getHits</span>(<span class="tp">int</span> timestamp) {
+        <span class="tp">int</span> total = <span class="nm">0</span>;
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; <span class="nm">300</span>; i++)
+            <span class="cm">// Sirf valid window ke hits count karo</span>
+            <span class="kw">if</span> (timestamp - times[i] &lt; <span class="nm">300</span>)
+                total += hits[i];
+        <span class="kw">return</span> total;
+    }
+};</pre>
+    </div>
+    <div class="tip">💡 <code>timestamp % 300</code> circular array index deta hai. Same slot pe purana data automatically overwrite hota hai. O(300) = O(1) effectively!</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 4 — DEQUE BASED ══════════════════ -->
+<div class="page" id="p4">
+  <div class="page-header">
+    <div class="breadcrumb">Queue/Deque · Pattern 4 of 4</div>
+    <h2>↔️ Deque Based</h2>
+    <p>Sliding window ke saath deque — window ka max/min O(n) mein nikalo. Monotonic deque ka magic!</p>
+    <div class="badge-row">
+      <span class="badge badge-pink">Monotonic Deque</span>
+      <span class="badge badge-teal">O(n) overall</span>
+      <span class="badge badge-amber">Sliding Window Max</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">📐</div>Core Concept — Monotonic Deque</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      A <b>Monotonic Deque</b> maintains elements in decreasing (or increasing) order. For sliding window maximum:<br>
+      1. Remove elements from <b>back</b> that are smaller than current (they can never be max)<br>
+      2. Remove elements from <b>front</b> that are outside the window<br>
+      3. Front always = current window's maximum!<br>
+      Each element is pushed/popped at most once → O(n) total.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Monotonic Deque</b> mein elements decreasing (ya increasing) order mein hote hain. Sliding window maximum ke liye:<br>
+      1. <b>Back</b> se woh elements hatao jo current se chhote hain (woh kabhi max nahi ban sakte)<br>
+      2. <b>Front</b> se woh elements hatao jo window se bahar ho gaye<br>
+      3. Front hamesha = current window ka maximum!<br>
+      Har element zyada se zyada ek baar push/pop hota hai → O(n) total.
+    </div>
+  </div>
+
+  <!-- SLIDING WINDOW MAXIMUM -->
+  <div id="dq-sliding">
+  <div class="sub-heading">Problem 1 — Sliding Window Maximum</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🪟</div>Sliding Window Maximum<span class="badge badge-pink">LeetCode 239</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Maintain a deque of <b>indices</b> in decreasing order of their values. For each new element: pop from back while <code>nums[back] &lt;= nums[i]</code>. Pop from front if <code>front &lt;= i-k</code> (out of window). <code>nums[dq.front()]</code> = window max.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Deque mein <b>indices</b> store karo (values nahi), decreasing value order mein. Har naye element ke liye: back se pop karo jab tak <code>nums[back] &lt;= nums[i]</code>. Front pop karo agar window se bahar (<code>front &lt;= i-k</code>). <code>nums[dq.front()]</code> = window max!</div>
+
+    <div class="divider"></div>
+    <div class="dry-run">
+      <div class="dry-run-title">nums=[1,3,-1,-3,5,3,6,7], k=3</div>
+      <div class="step">
+        <span class="step-num">i=0, n=1</span>
+        <div class="arr-row"><div class="a-box hi">1</div><div class="a-box">3</div><div class="a-box">-1</div></div>
+        <div class="step-info">dq=[0]. No window yet.</div>
+      </div>
+      <div class="step">
+        <span class="step-num">i=1, n=3</span>
+        <div class="arr-row"><div class="a-box">1</div><div class="a-box hi">3</div><div class="a-box">-1</div></div>
+        <div class="step-info">nums[0]=1 &lt; 3 → pop 0. dq=[1]. No window yet.</div>
+        <span class="step-result sr-pink">pop smaller</span>
+      </div>
+      <div class="step">
+        <span class="step-num">i=2, n=-1</span>
+        <div class="arr-row"><div class="a-box">1</div><div class="a-box">3</div><div class="a-box hi">-1</div></div>
+        <div class="step-info">-1 &lt; 3 → keep. dq=[1,2]. Window complete → max=nums[1]=3</div>
+        <span class="step-result sr-eq">max=3</span>
+      </div>
+      <div class="step">
+        <span class="step-num">i=4, n=5</span>
+        <div class="arr-row"><div class="a-box">...</div><div class="a-box hi">5</div></div>
+        <div class="step-info">Pop 3,-1 (smaller). Pop front idx 1 (out of window). dq=[4]. max=5</div>
+        <span class="step-result sr-eq">max=5</span>
+      </div>
+      <div class="step">
+        <span class="step-num">Result</span>
+        <div class="step-info">All windows: [3,3,1,5,5,6,7]→[3,3,5,5,6,7]</div>
+        <span class="step-result sr-eq">✅ [3,3,5,5,6,7]</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Sliding Window Maximum (Monotonic Deque)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">maxSlidingWindow</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums, <span class="tp">int</span> k) {
+    <span class="tp">deque</span>&lt;<span class="tp">int</span>&gt; dq;   <span class="cm">// stores INDICES, decreasing value order</span>
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; result;
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; nums.size(); i++) {
+        <span class="cm">// Step 1: Back se smaller elements hatao</span>
+        <span class="kw">while</span> (!dq.empty() &amp;&amp; nums[dq.back()] &lt;= nums[i])
+            dq.pop_back();
+
+        dq.push_back(i);  <span class="cm">// current index add</span>
+
+        <span class="cm">// Step 2: Front se out-of-window elements hatao</span>
+        <span class="kw">if</span> (dq.front() &lt;= i - k)
+            dq.pop_front();
+
+        <span class="cm">// Step 3: Window complete hote hi max record karo</span>
+        <span class="kw">if</span> (i &gt;= k - <span class="nm">1</span>)
+            result.push_back(nums[dq.front()]); <span class="cm">// front = max!</span>
+    }
+    <span class="kw">return</span> result;
+}
+<span class="cm">// Time: O(n) — har element zyada se zyada ek push + ek pop</span>
+<span class="cm">// Space: O(k) — deque mein zyada se zyada k elements</span></pre>
+    </div>
+    <div class="tip">💡 Deque mein values nahi, <b>indices</b> store karo! Isse window check (front &lt;= i-k) easy ho jaata hai. Front hamesha current window ka max index hai.</div>
+    <div class="warn">⚠️ Back se pop karte waqt <code>&lt;=</code> use karo — equal values pe bhi pop karo warna duplicate maxes aa sakte hain.</div>
+  </div>
+  </div>
+
+  <!-- MONOTONIC DEQUE PATTERN -->
+  <div id="dq-monotonic">
+  <div class="sub-heading">Pattern — Monotonic Deque (Min Variant)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">📉</div>Monotonic Deque — Min Window<span class="badge badge-blue">Pattern</span></div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Max ke liye: back se <b>chhote</b> elements pop karo (decreasing deque → front = max).<br>
+      Min ke liye: back se <b>bade</b> elements pop karo (increasing deque → front = min).<br>
+      Sirf ek condition change hoti hai!
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Max vs Min Monotonic Deque</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// ══ MAX (Decreasing deque) ══</span>
+<span class="kw">while</span> (!dq.empty() &amp;&amp; nums[dq.back()] &lt;= nums[i])
+    dq.pop_back();  <span class="cm">// pop if back is SMALLER → keep bigger</span>
+<span class="cm">// Front = maximum of window</span>
+
+<span class="cm">// ══ MIN (Increasing deque) ══</span>
+<span class="kw">while</span> (!dq.empty() &amp;&amp; nums[dq.back()] &gt;= nums[i])
+    dq.pop_back();  <span class="cm">// pop if back is BIGGER → keep smaller</span>
+<span class="cm">// Front = minimum of window</span>
+
+<span class="cm">// ══ Application: Shortest Subarray with Sum >= K (LC 862) ══</span>
+<span class="cm">// Prefix sum + monotonic deque combo use karo</span></pre>
+    </div>
+    <div class="tip">💡 Monotonic Deque = Sliding Window + Deque. Max chahiye → decreasing deque. Min chahiye → increasing deque. Same template, ek condition change!</div>
+  </div>
+  </div>
+
+  <!-- FIRST NEGATIVE IN WINDOW -->
+  <div id="dq-firstneg">
+  <div class="sub-heading">Problem 2 — First Negative in Every Window</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">➖</div>First Negative in Window<span class="badge badge-amber">Classic Deque</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Maintain a deque of negative element indices. For each window: remove front if out of window, add current if negative, output <code>nums[dq.front()]</code> if deque non-empty else 0.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Negative elements ke indices ka deque maintain karo. Har window ke liye: front ko hatao agar window se bahar, current add karo agar negative hai, <code>nums[dq.front()]</code> return karo (pehla negative) ya 0 agar koi nahi.</div>
+
+    <div class="dry-run">
+      <div class="dry-run-title">arr=[-8,2,-6,5,-2,4,7], k=2 → [-8,-6,-6,-2,-2,0]</div>
+      <div class="step">
+        <span class="step-num">i=0,1</span>
+        <div class="arr-row"><div class="a-box fail">-8</div><div class="a-box">2</div></div>
+        <div class="step-info">dq=[0]. first neg = arr[0] = -8</div>
+        <span class="step-result sr-high">-8</span>
+      </div>
+      <div class="step">
+        <span class="step-num">i=1,2</span>
+        <div class="arr-row"><div class="a-box">2</div><div class="a-box fail">-6</div></div>
+        <div class="step-info">pop 0 (out). dq=[2]. first neg = -6</div>
+        <span class="step-result sr-high">-6</span>
+      </div>
+      <div class="step">
+        <span class="step-num">i=5,6</span>
+        <div class="arr-row"><div class="a-box">4</div><div class="a-box">7</div></div>
+        <div class="step-info">No negatives in window. dq empty → 0</div>
+        <span class="step-result sr-eq">0</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · First Negative in Every Window of Size K</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">firstNegInWindow</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr, <span class="tp">int</span> k) {
+    <span class="tp">deque</span>&lt;<span class="tp">int</span>&gt; dq;  <span class="cm">// negative elements ke indices</span>
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; result;
+    <span class="tp">int</span> n = arr.size();
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="cm">// Front: window se bahar nikla?</span>
+        <span class="kw">if</span> (!dq.empty() &amp;&amp; dq.front() &lt;= i - k)
+            dq.pop_front();
+
+        <span class="cm">// Negative hai toh deque mein daalo</span>
+        <span class="kw">if</span> (arr[i] &lt; <span class="nm">0</span>)
+            dq.push_back(i);
+
+        <span class="cm">// Window complete hone ke baad result add karo</span>
+        <span class="kw">if</span> (i &gt;= k - <span class="nm">1</span>)
+            result.push_back(dq.empty() ? <span class="nm">0</span> : arr[dq.front()]);
+    }
+    <span class="kw">return</span> result;
+}</pre>
+    </div>
+    <div class="tip">💡 Yahan deque mein sirf negative indices store hote hain — window max jaisa hi pattern hai but condition alag hai. Deque ka front = first (leftmost) negative in window.</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 5 — COMPARISON ══════════════════ -->
+<div class="page" id="p5">
+  <div class="page-header">
+    <div class="breadcrumb">Queue/Deque · Quick Reference</div>
+    <h2>📊 Queue/Deque — Comparison</h2>
+    <p>Kaunsa pattern kab use karna hai — ek jagah sab kuch.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--orange-bg)">🗺️</div>Pattern Decision Guide</div>
+    <table class="tbl">
+      <tr><th>Pattern</th><th>Data Structure</th><th>When to use</th><th>Key trick</th></tr>
+      <tr>
+        <td><span style="color:var(--amber);font-weight:600">FIFO / BFS</span></td>
+        <td>queue&lt;T&gt;</td>
+        <td>Shortest path, grid problems, multi-source spread</td>
+        <td>sz = q.size() for levels; enqueue all sources simultaneously</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--blue);font-weight:600">Level-wise</span></td>
+        <td>queue&lt;TreeNode*&gt;</td>
+        <td>Tree level order, right/left view, zigzag, max per level</td>
+        <td>sz snapshot before inner loop; inner loop processes one level</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--teal);font-weight:600">Circular Queue</span></td>
+        <td>array + head/tail</td>
+        <td>Fixed-size buffer, hit counter, rate limiter</td>
+        <td>(ptr + 1) % capacity for wrap-around</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--pink);font-weight:600">Deque / Monotonic</span></td>
+        <td>deque&lt;int&gt; (indices)</td>
+        <td>Sliding window max/min, first negative, shortest subarray</td>
+        <td>Pop back if smaller (max) or larger (min); pop front if out of window</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">⚡</div>All Problems Summary</div>
+    <table class="tbl">
+      <tr><th>Problem</th><th>Pattern</th><th>Time</th><th>Space</th><th>LC</th></tr>
+      <tr><td>Rotten Oranges</td><td>Multi-source BFS</td><td>O(m·n)</td><td>O(m·n)</td><td>#994</td></tr>
+      <tr><td>Walls & Gates</td><td>Multi-source BFS</td><td>O(m·n)</td><td>O(m·n)</td><td>#286</td></tr>
+      <tr><td>Snakes & Ladders</td><td>BFS on graph</td><td>O(n²)</td><td>O(n²)</td><td>#909</td></tr>
+      <tr><td>Level Order Traversal</td><td>Tree BFS</td><td>O(n)</td><td>O(n)</td><td>#102</td></tr>
+      <tr><td>Zigzag Level Order</td><td>Tree BFS + Deque</td><td>O(n)</td><td>O(n)</td><td>#103</td></tr>
+      <tr><td>Right Side View</td><td>Tree BFS</td><td>O(n)</td><td>O(n)</td><td>#199</td></tr>
+      <tr><td>Design Circular Queue</td><td>Circular Queue</td><td>O(1) all</td><td>O(k)</td><td>#622</td></tr>
+      <tr><td>Hit Counter</td><td>Circular Queue</td><td>O(1)/O(300)</td><td>O(300)</td><td>#362</td></tr>
+      <tr><td>Sliding Window Max</td><td>Monotonic Deque</td><td>O(n)</td><td>O(k)</td><td>#239</td></tr>
+      <tr><td>First Negative Window</td><td>Monotonic Deque</td><td>O(n)</td><td>O(k)</td><td>Classic</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🧠</div>Kab kya use karo — Decision</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>"Grid mein shortest path / spread?"</b> → BFS + queue (multi-source agar multiple starts)<br>
+      <b>"Tree ka level by level process?"</b> → BFS + sz=q.size() trick<br>
+      <b>"Fixed size buffer / wrap around?"</b> → Circular Queue (modulo trick)<br>
+      <b>"Sliding window max/min in O(n)?"</b> → Monotonic Deque (indices store karo)<br>
+      <b>"Window ka first/last special element?"</b> → Deque (sirf special elements indices store karo)
+    </div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>"Shortest path / spread in grid?"</b> → BFS + queue (multi-source if multiple starts)<br>
+      <b>"Tree level by level?"</b> → BFS + sz=q.size() level snapshot<br>
+      <b>"Fixed capacity wrap-around?"</b> → Circular Queue (modulo)<br>
+      <b>"Sliding window max/min O(n)?"</b> → Monotonic Deque (store indices not values)<br>
+      <b>"First special element in window?"</b> → Deque (store only qualifying indices)
+    </div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="mini-card"><b style="color:var(--amber)">queue</b>Only push_back + pop_front. BFS aur FIFO ke liye. Level tracking ke liye sz snapshot.</div>
+      <div class="mini-card"><b style="color:var(--pink)">deque</b>push/pop dono ends. Monotonic window ke liye best. Indices store karo values nahi!</div>
+      <div class="mini-card"><b style="color:var(--teal)">circular arr</b>Fixed size + modulo = O(1) all. Queue overhead nahi. Hit counter, ring buffer.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">⚠️</div>Common Mistakes</div>
+    <div class="warn">⚠️ <b>Level Order:</b> <code>sz = q.size()</code> snapshot lena mat bhoolo! Agar directly <code>q.size()</code> loop condition mein use karo toh naye children bhi same level mein process ho jaate hain.</div>
+    <div class="warn">⚠️ <b>Multi-source BFS:</b> Saare sources ek saath enqueue karo initialization mein — ek ek karke nahi. Warna distances wrong honge.</div>
+    <div class="warn">⚠️ <b>Monotonic Deque:</b> Values nahi, <b>indices</b> store karo. Values se out-of-window check impossible hai.</div>
+    <div class="warn">⚠️ <b>Circular Queue:</b> Full aur empty dono mein <code>head == (tail+1)%cap</code> ho sakta hai — alag <code>count</code> variable rakhna best practice hai confusion avoid karne ke liye.</div>
+    <div class="tip">💡 <b>BFS vs DFS:</b> Shortest path → BFS (queue). Explore all paths → DFS (stack/recursion). "Minimum steps/distance" wale problems mein hamesha BFS prefer karo!</div>
+  </div>
+</div>
+
+</main>
+
+<script>
+  const pages = ['p0','p1','p2','p3','p4','p5'];
+  const subs  = ['sub0','sub1','sub2','sub3','sub4'];
+
+  function showPage(id, btn) {
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = i===idx ? 'block' : 'none';
+    });
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = i===0 ? 'block' : 'none';
+  });
+</script>
+</body>
+</html>

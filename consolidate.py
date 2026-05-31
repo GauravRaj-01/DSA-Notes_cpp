@@ -9,22 +9,30 @@ output_file = os.path.join(source_dir, "DSA-GAURAV.html")
 ordered_files = [
     {"filename": "dsa_array_patterns_notes.html", "title": "Array Patterns", "vol": "Volume 1", "icon": "array"},
     {"filename": "dsa_string_patterns_notes.html", "title": "String Patterns", "vol": "Volume 2", "icon": "string"},
-    {"filename": "sorting_algorithms_notes.html", "title": "Sorting Algorithms", "vol": "Volume 3", "icon": "sorting"},
-    {"filename": "dsa_linked_list_notes.html", "title": "Linked List Patterns", "vol": "Volume 4", "icon": "linkedlist"},
-    {"filename": "dsa_stack_notes.html", "title": "Stack Patterns", "vol": "Volume 5", "icon": "stack"},
-    {"filename": "dsa_hashmap_patterns_notes.html", "title": "HashMap Patterns", "vol": "Volume 6", "icon": "hashmap"},
-    {"filename": "dsa_dp_patterns_notes.html", "title": "Dynamic Programming", "vol": "Volume 7", "icon": "dp"}
+    {"filename": "dsa_hashmap_patterns_notes.html", "title": "HashMap Patterns", "vol": "Volume 3", "icon": "hashmap"},
+    {"filename": "dsa_stack_notes.html", "title": "Stack Patterns", "vol": "Volume 4", "icon": "stack"},
+    {"filename": "dsa_queue_deque_patterns_notes.html", "title": "Queue & Deque", "vol": "Volume 5", "icon": "queue"},
+    {"filename": "dsa_linked_list_notes.html", "title": "Linked List Patterns", "vol": "Volume 6", "icon": "linkedlist"},
+    {"filename": "dsa_trees_patterns_notes.html", "title": "Tree Patterns", "vol": "Volume 7", "icon": "trees"},
+    {"filename": "dsa_recursion_patterns_notes.html", "title": "Recursion Patterns", "vol": "Volume 8", "icon": "recursion"},
+    {"filename": "dsa_heap_patterns_notes.html", "title": "Heap Patterns", "vol": "Volume 9", "icon": "heap"},
+    {"filename": "dsa_dp_patterns_notes2.html", "title": "Dynamic Programming", "vol": "Volume 10", "icon": "dp"},
+    {"filename": "sorting_algorithms_notes.html", "title": "Sorting Algorithms", "vol": "Volume 11", "icon": "sorting"}
 ]
 
 # SVG Icons Map for extreme premium visual fidelity
 svg_icons = {
     "array": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 3h4v4H3V3zm6 0h4v4H9V3zm6 0h4v4h-4V3zM3 9h4v4H3V9zm6 0h4v4H9V9zm6 0h4v4h-4V9zM3 15h4v4H3v-4zm6 0h4v4H9v-4zm6 0h4v4h-4v-4z" fill="currentColor"/></svg>',
     "string": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 9h16v2H4V9zm0 4h10v2H4v-2zM4 5h16v2H4V5zm0 12h14v2H4v-2z" fill="currentColor"/></svg>',
-    "sorting": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" fill="currentColor"/></svg>',
-    "linkedlist": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 6H8v2h8V6zm4 5h-4v2h4v-2zM4 11h4v2H4v-2zm12 5H8v2h8v-2z" fill="currentColor"/></svg>',
-    "stack": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 17c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-2h14v2zm0-5c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1V9h14v3zm0-6c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1V3h14v3z" fill="currentColor"/></svg>',
     "hashmap": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" fill="currentColor"/></svg>',
-    "dp": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 6h-4v2h4v2h-4v2h4v2H9V7h6v2z" fill="currentColor"/></svg>'
+    "stack": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 17c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-2h14v2zm0-5c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1V9h14v3zm0-6c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1V3h14v3z" fill="currentColor"/></svg>',
+    "queue": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M2 9a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9zm12 0a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V9z" fill="currentColor" opacity="0.4"/><path d="M8 9a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V9z" fill="currentColor"/></svg>',
+    "linkedlist": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 6H8v2h8V6zm4 5h-4v2h4v-2zM4 11h4v2H4v-2zm12 5H8v2h8v-2z" fill="currentColor"/></svg>',
+    "trees": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-6 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm12 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zM12 8l-4 4m8 0l-4-4m0 10v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>',
+    "recursion": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 1 10 10c0 4-3 7-7 7s-6.5-2.5-6.5-5.5S11 8.5 13.5 8.5s3.5 1.5 3.5 3.5S15 15 13.5 15s-1.5-1-1.5-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>',
+    "heap": '<svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3" fill="currentColor"/><circle cx="6" cy="13" r="3" fill="currentColor" opacity="0.4"/><circle cx="18" cy="13" r="3" fill="currentColor" opacity="0.4"/><path d="M10 7.5L7.5 11M14 7.5l2.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    "dp": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 6h-4v2h4v2h-4v2h4v2H9V7h6v2z" fill="currentColor"/></svg>',
+    "sorting": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" fill="currentColor"/></svg>'
 }
 
 # Read and base64 encode all files
@@ -663,11 +671,11 @@ master_html += """  </div>
       
       <div class="stats-row">
         <div class="stat-box">
-          <div class="stat-val">7</div>
+          <div class="stat-val">11</div>
           <div class="stat-lbl">Core Volumes</div>
         </div>
         <div class="stat-box">
-          <div class="stat-val">35+</div>
+          <div class="stat-val">70+</div>
           <div class="stat-lbl">DSA Patterns</div>
         </div>
         <div class="stat-box">

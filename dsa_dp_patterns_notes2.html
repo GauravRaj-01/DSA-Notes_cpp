@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Dynamic Programming Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:#2a3245;
+    --text:#e8eaf6;--muted:#8892a4;
+    --teal:#1dd6a0;--teal-bg:#0d2e24;
+    --purple:#a78bfa;--purple-bg:#1e1633;
+    --amber:#fbbf24;--amber-bg:#2a1f0a;
+    --blue:#60a5fa;--blue-bg:#0e1f35;
+    --coral:#fb7185;--coral-bg:#2a0e16;
+    --green:#86efac;--green-bg:#0b2018;
+    --pink:#f472b6;--pink-bg:#2a0e1e;
+    --orange:#fb923c;--orange-bg:#2a1400;
+    --code-bg:#0a0d14;
+    --kw:#f9a870;--fn:#79c0ff;--cm:#5a6478;--tp:#f472b6;--str:#a5d6a7;--nm:#ce93d8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px;}
+
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:252px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:100;}
+  .sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+  .sidebar-logo h1{font-size:13px;font-weight:600;color:var(--orange);letter-spacing:.08em;text-transform:uppercase;}
+  .sidebar-logo p{font-size:11px;color:var(--muted);margin-top:2px;}
+  .nav-section{padding:0 12px;margin-bottom:8px;}
+  .nav-section-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;}
+  .nav-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .nav-link:hover{background:var(--bg3);color:var(--text);}
+  .nav-link.active{background:var(--bg3);color:var(--orange);font-weight:500;}
+  .nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .sub-links{padding-left:24px;margin-top:2px;}
+  .sub-link{display:block;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;border-radius:6px;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .sub-link:hover{color:var(--text);background:var(--bg3);}
+
+  .main{margin-left:252px;padding:40px 48px;max-width:980px;}
+  .page{display:none;} .page.active{display:block;}
+
+  .page-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .page-header .breadcrumb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .page-header h2{font-size:26px;font-weight:600;margin-bottom:6px;}
+  .page-header p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+  .badge-teal  {background:var(--teal-bg);  color:var(--teal);  border:1px solid #1a5c44;}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid #3d2d6e;}
+  .badge-amber {background:var(--amber-bg); color:var(--amber); border:1px solid #6b4c0f;}
+  .badge-blue  {background:var(--blue-bg);  color:var(--blue);  border:1px solid #1a3a5c;}
+  .badge-coral {background:var(--coral-bg); color:var(--coral); border:1px solid #5c1a27;}
+  .badge-pink  {background:var(--pink-bg);  color:var(--pink);  border:1px solid #5c1a3a;}
+  .badge-green {background:var(--green-bg); color:var(--green); border:1px solid #155a30;}
+  .badge-orange{background:var(--orange-bg);color:var(--orange);border:1px solid #6b3200;}
+
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;}
+  .card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card-title .icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+  .lang-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 5px;}
+  .en-block{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:var(--text);margin-bottom:8px;}
+  .hi-block{background:var(--purple-bg);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:#c4b5fd;margin-bottom:8px;}
+
+  .code-wrap{position:relative;margin:12px 0;}
+  .code-label{background:var(--bg3);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:7px 14px;font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+  .copy-btn{font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all .15s;}
+  .copy-btn:hover{color:var(--teal);border-color:var(--teal);}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;white-space:pre;}
+  .kw{color:var(--kw);}.fn{color:var(--fn);}.cm{color:var(--cm);font-style:italic;}
+  .tp{color:var(--tp);}.st{color:var(--str);}.nm{color:var(--nm);}
+
+  .dry-run{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0;overflow-x:auto;}
+  .dry-run-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+  .step{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .step-num{font-size:10px;font-weight:600;color:var(--muted);min-width:72px;}
+  .arr-row{display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap;}
+  .a-box{min-width:34px;height:32px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);padding:0 6px;font-family:'JetBrains Mono',monospace;}
+  .a-box.hi    {background:var(--amber-bg); color:var(--amber); border-color:#6b4c0f;}
+  .a-box.match {background:var(--pink-bg);  color:var(--pink);  border-color:#5c1a3a;}
+  .a-box.found {background:var(--green-bg); color:var(--green); border-color:#155a30;}
+  .a-box.fail  {background:var(--coral-bg); color:var(--coral); border-color:#5c1a27;}
+  .a-box.teal  {background:var(--teal-bg);  color:var(--teal);  border-color:#1a5c44;}
+  .a-box.blue  {background:var(--blue-bg);  color:var(--blue);  border-color:#1a3a5c;}
+  .a-box.orng  {background:var(--orange-bg);color:var(--orange);border-color:#6b3200;}
+  .a-box.purp  {background:var(--purple-bg);color:var(--purple);border-color:#3d2d6e;}
+
+  .step-info{font-size:12px;color:var(--muted);flex:1;min-width:160px;}
+  .step-result{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+  .sr-high{background:var(--coral-bg); color:var(--coral);}
+  .sr-low {background:var(--amber-bg); color:var(--amber);}
+  .sr-eq  {background:var(--green-bg); color:var(--green);}
+  .sr-pink{background:var(--pink-bg);  color:var(--pink);}
+  .sr-orng{background:var(--orange-bg);color:var(--orange);}
+  .sr-blue{background:var(--blue-bg);  color:var(--blue);}
+  .sr-teal{background:var(--teal-bg);  color:var(--teal);}
+
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;}
+  .tbl th{background:var(--bg3);color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+  .tbl td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.6;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl tr:hover td{background:var(--bg3);}
+
+  .divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+  .tip {border-left:3px solid var(--teal); background:var(--teal-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#6ee7c0;margin:12px 0;line-height:1.7;}
+  .warn{border-left:3px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#fcd97a;margin:12px 0;line-height:1.7;}
+  .info{border-left:3px solid var(--blue); background:var(--blue-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#93c5fd;margin:12px 0;line-height:1.7;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0;}
+  .mini-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.7;}
+  .mini-card b{font-weight:600;display:block;margin-bottom:4px;}
+  .sub-heading{font-size:14px;font-weight:600;margin:22px 0 10px;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .sub-heading::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--orange);display:block;}
+  code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:4px;color:var(--teal);}
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+  @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:28px 16px 40px;}.grid2,.grid3{grid-template-columns:1fr;}}
+
+  /* DP table cells */
+  .dp-table{border-collapse:collapse;margin:8px 0;font-family:'JetBrains Mono',monospace;font-size:12px;}
+  .dp-table td,.dp-table th{border:1px solid var(--border);padding:7px 12px;text-align:center;}
+  .dp-table th{background:var(--bg3);color:var(--muted);font-size:11px;}
+  .dp-table td{background:var(--bg2);color:var(--text);}
+  .dp-table td.hi{background:var(--amber-bg);color:var(--amber);}
+  .dp-table td.found{background:var(--green-bg);color:var(--green);}
+  .dp-table td.teal{background:var(--teal-bg);color:var(--teal);}
+  .dp-table td.pink{background:var(--pink-bg);color:var(--pink);}
+  .dp-table td.blue{background:var(--blue-bg);color:var(--blue);}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Dynamic Programming · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">DP Patterns</div>
+
+    <button class="nav-link active" onclick="showPage('p0',this)">
+      <span class="nav-dot" style="background:#fb923c"></span>DP Basics
+    </button>
+    <div class="sub-links" id="sub0">
+      <button class="sub-link" onclick="scrollTo2('dp-what')">What is DP</button>
+      <button class="sub-link" onclick="scrollTo2('dp-memo-tab')">Memoization vs Tabulation</button>
+      <button class="sub-link" onclick="scrollTo2('dp-1d-2d')">1D vs 2D DP</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>Linear DP (1D)
+    </button>
+    <div class="sub-links" id="sub1" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('ld-climb')">Climbing Stairs</button>
+      <button class="sub-link" onclick="scrollTo2('ld-rob')">House Robber</button>
+      <button class="sub-link" onclick="scrollTo2('ld-lis')">LIS</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#60a5fa"></span>Knapsack / Decision DP
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('ks-01')">0/1 Knapsack</button>
+      <button class="sub-link" onclick="scrollTo2('ks-unbounded')">Unbounded Knapsack</button>
+      <button class="sub-link" onclick="scrollTo2('ks-subset')">Subset Sum</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#1dd6a0"></span>Sequence DP (2D)
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('sq-lcs')">LCS</button>
+      <button class="sub-link" onclick="scrollTo2('sq-edit')">Edit Distance</button>
+      <button class="sub-link" onclick="scrollTo2('sq-grid')">Grid DP</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p4',this)">
+      <span class="nav-dot" style="background:#f472b6"></span>Partition / Interval DP
+    </button>
+    <div class="sub-links" id="sub4" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('pt-partition')">Partition DP</button>
+      <button class="sub-link" onclick="scrollTo2('pt-interval')">Interval DP</button>
+      <button class="sub-link" onclick="scrollTo2('pt-palindrome')">Palindrome DP</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p5',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Advanced DP
+    </button>
+    <div class="sub-links" id="sub5" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('adv-bitmask')">Bitmask DP</button>
+      <button class="sub-link" onclick="scrollTo2('adv-digit')">Digit DP</button>
+      <button class="sub-link" onclick="scrollTo2('adv-tree')">DP on Trees</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p6',this)">
+      <span class="nav-dot" style="background:#86efac"></span>Comparison Table
+    </button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════ PAGE 0 — BASICS ══════════════════ -->
+<div class="page active" id="p0">
+  <div class="page-header">
+    <div class="breadcrumb">Dynamic Programming · Foundation</div>
+    <h2>🧠 Dynamic Programming — Basics</h2>
+    <p>DP = Overlapping subproblems + Optimal substructure. Recursion ki memory ke saath — already solved problems dubara mat solve karo!</p>
+    <div class="badge-row">
+      <span class="badge badge-orange">Memoization</span>
+      <span class="badge badge-blue">Tabulation</span>
+      <span class="badge badge-teal">Overlapping Subproblems</span>
+      <span class="badge badge-purple">Optimal Substructure</span>
+    </div>
+  </div>
+
+  <div id="dp-what">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--orange-bg)">🧠</div>Dynamic Programming kya hai?</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>Dynamic Programming</b> is an optimization technique to solve problems by breaking them into <b>overlapping subproblems</b> and storing their results to avoid recomputation.<br><br>
+      Two key properties required:<br>
+      1. <b>Overlapping Subproblems</b> — same smaller problems appear again and again.<br>
+      2. <b>Optimal Substructure</b> — optimal solution is built from optimal solutions of subproblems.<br><br>
+      Think of it as: <b>Recursion + Caching</b> = Dynamic Programming.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Dynamic Programming</b> ek technique hai jisme problem ko chhote pieces mein todke solve karte hain — aur jo already solve ho gaya usse <b>yaad rakh lete hain</b> (cache karte hain), dobara solve nahi karte.<br><br>
+      Do cheezein zaruri hain:<br>
+      1. <b>Overlapping Subproblems</b> — same chhote problems baar baar aate hain.<br>
+      2. <b>Optimal Substructure</b> — bada problem ka best answer chhote problems ke best answers se banta hai.<br><br>
+      Simple formula: <b>Recursion + Memory = DP</b>
+    </div>
+    <div class="tip">💡 <b>DP vs Greedy:</b> Greedy locally best choice leta hai. DP har choice try karke globally best dhundta hai. Agar "max/min/count ways" wala problem ho → DP try karo first!</div>
+  </div>
+  </div>
+
+  <div id="dp-memo-tab">
+  <div class="sub-heading">Memoization (Top-Down) vs Tabulation (Bottom-Up)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">⚡</div>Fibonacci Example — Memoization vs Tabulation</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>Memoization (Top-Down):</b> Start from the big problem, recurse down, cache results in a map/array. Natural to write — just add memo to recursion.<br>
+      <b>Tabulation (Bottom-Up):</b> Start from base cases, build up the table iteratively. Usually more space-efficient.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Memoization (Top-Down):</b> Bade problem se shuru, recursion se chhote mein jaao, result ko map/array mein save karo. Likhna easy hai — bas recursion mein cache add karo.<br>
+      <b>Tabulation (Bottom-Up):</b> Base cases se shuru, iteratively table fill karo. Zyada space-efficient hota hai.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Fibonacci — 3 Approaches</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// 1. Pure Recursion — O(2^n) time, O(n) space — SLOW ❌</span>
+<span class="tp">int</span> <span class="fn">fib</span>(<span class="tp">int</span> n) {
+    <span class="kw">if</span> (n &lt;= <span class="nm">1</span>) <span class="kw">return</span> n;
+    <span class="kw">return</span> <span class="fn">fib</span>(n-<span class="nm">1</span>) + <span class="fn">fib</span>(n-<span class="nm">2</span>);  <span class="cm">// same subproblems computed again!</span>
+}
+
+<span class="cm">// 2. Memoization (Top-Down) — O(n) time, O(n) space ✅</span>
+<span class="tp">int</span> memo[<span class="nm">1001</span>];
+<span class="tp">int</span> <span class="fn">fibMemo</span>(<span class="tp">int</span> n) {
+    <span class="kw">if</span> (n &lt;= <span class="nm">1</span>) <span class="kw">return</span> n;
+    <span class="kw">if</span> (memo[n] != -<span class="nm">1</span>) <span class="kw">return</span> memo[n];  <span class="cm">// already solved? return it!</span>
+    <span class="kw">return</span> memo[n] = <span class="fn">fibMemo</span>(n-<span class="nm">1</span>) + <span class="fn">fibMemo</span>(n-<span class="nm">2</span>);
+}
+
+<span class="cm">// 3. Tabulation (Bottom-Up) — O(n) time, O(n) space ✅✅</span>
+<span class="tp">int</span> <span class="fn">fibTab</span>(<span class="tp">int</span> n) {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; dp(n+<span class="nm">1</span>);
+    dp[<span class="nm">0</span>] = <span class="nm">0</span>; dp[<span class="nm">1</span>] = <span class="nm">1</span>;          <span class="cm">// base cases</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">2</span>; i &lt;= n; i++)
+        dp[i] = dp[i-<span class="nm">1</span>] + dp[i-<span class="nm">2</span>]; <span class="cm">// build from small to big</span>
+    <span class="kw">return</span> dp[n];
+}
+
+<span class="cm">// 4. Space Optimized — O(n) time, O(1) space 🚀</span>
+<span class="tp">int</span> <span class="fn">fibOpt</span>(<span class="tp">int</span> n) {
+    <span class="tp">int</span> a = <span class="nm">0</span>, b = <span class="nm">1</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">2</span>; i &lt;= n; i++) {
+        <span class="tp">int</span> c = a + b;
+        a = b; b = c;
+    }
+    <span class="kw">return</span> (n == <span class="nm">0</span>) ? <span class="nm">0</span> : b;
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">fib(5) — Tabulation Table Build-up</div>
+      <div class="step">
+        <span class="step-num">dp array</span>
+        <div class="arr-row">
+          <div style="font-size:10px;color:var(--muted);margin-right:4px">idx:</div>
+          <div class="a-box">0</div><div class="a-box">1</div><div class="a-box">2</div><div class="a-box">3</div><div class="a-box">4</div><div class="a-box">5</div>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">base</span>
+        <div class="arr-row">
+          <div class="a-box teal">0</div><div class="a-box teal">1</div><div class="a-box">?</div><div class="a-box">?</div><div class="a-box">?</div><div class="a-box">?</div>
+        </div>
+        <div class="step-info">dp[0]=0, dp[1]=1</div>
+      </div>
+      <div class="step">
+        <span class="step-num">i=2,3,4,5</span>
+        <div class="arr-row">
+          <div class="a-box teal">0</div><div class="a-box teal">1</div><div class="a-box hi">1</div><div class="a-box hi">2</div><div class="a-box hi">3</div><div class="a-box found">5</div>
+        </div>
+        <div class="step-info">each = prev two</div>
+        <span class="step-result sr-teal">ans = 5</span>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div class="mini-card">
+        <b style="color:var(--orange)">Memoization (Top-Down)</b>
+        Recursion + cache map/array.<br>
+        Easy to code. Stack overflow risk on very large n.
+      </div>
+      <div class="mini-card">
+        <b style="color:var(--teal)">Tabulation (Bottom-Up)</b>
+        Iterative loop. No recursion overhead.<br>
+        Space can be optimized to O(1) often.
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="dp-1d-2d">
+  <div class="sub-heading">1D DP vs 2D DP — Kab kya use karein?</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">📐</div>DP Dimensions Guide</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>1D DP:</b> State depends on ONE variable (index i). Array <code>dp[i]</code>.<br>
+      Examples: Climbing stairs, House robber, Coin change.<br><br>
+      <b>2D DP:</b> State depends on TWO variables (i, j). Matrix <code>dp[i][j]</code>.<br>
+      Examples: LCS, Edit distance, Grid path, 0/1 Knapsack (item index + capacity).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>1D DP:</b> State ek variable par depend karta hai (index i). Array <code>dp[i]</code>.<br>
+      Examples: Climbing stairs, House robber, Coin change.<br><br>
+      <b>2D DP:</b> State do variables par depend karta hai (i, j). Matrix <code>dp[i][j]</code>.<br>
+      Examples: LCS, Edit distance, Grid path, 0/1 Knapsack.
+    </div>
+    <div class="tip">💡 <b>DP banane ka formula:</b> (1) State define karo — dp[i] ka matlab kya hai? (2) Transition likhо — dp[i] kaise banta hai? (3) Base case set karo. (4) Answer kahan hai?</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 1 — LINEAR DP ══════════════════ -->
+<div class="page" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">Dynamic Programming · Pattern 1 of 6</div>
+    <h2>📈 Linear DP (1D)</h2>
+    <p>Single array dp[i] — state sirf ek index par depend karta hai. Climbing stairs se LIS tak.</p>
+    <div class="badge-row">
+      <span class="badge badge-amber">dp[i] = f(dp[i-1])</span>
+      <span class="badge badge-teal">O(n) or O(n²)</span>
+      <span class="badge badge-blue">1D Array State</span>
+    </div>
+  </div>
+
+  <div id="ld-climb">
+  <div class="sub-heading">Problem 1 — Climbing Stairs</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🪜</div>Climbing Stairs<span class="badge badge-amber">LeetCode 70</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      You can climb 1 or 2 steps at a time. How many ways to reach step n?<br>
+      <b>dp[i]</b> = number of ways to reach step i.<br>
+      <b>Transition:</b> dp[i] = dp[i-1] + dp[i-2] (come from 1 below OR 2 below).<br>
+      <b>Base:</b> dp[1]=1, dp[2]=2. It's literally Fibonacci!
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Ek ya do step ek baar mein chadh sakte ho. n steps tak kitne tarike?<br>
+      <b>dp[i]</b> = step i tak pahunchne ke kitne ways hain.<br>
+      <b>Transition:</b> dp[i] = dp[i-1] + dp[i-2] (ya ek neeche se aao ya do neeche se).<br>
+      <b>Base:</b> dp[1]=1, dp[2]=2. Bilkul Fibonacci jaisa hai!
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Climbing Stairs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">climbStairs</span>(<span class="tp">int</span> n) {
+    <span class="kw">if</span> (n &lt;= <span class="nm">2</span>) <span class="kw">return</span> n;
+    <span class="tp">int</span> a = <span class="nm">1</span>, b = <span class="nm">2</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">3</span>; i &lt;= n; i++) {
+        <span class="tp">int</span> c = a + b;
+        a = b; b = c;
+    }
+    <span class="kw">return</span> b;
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">n=5 → Expected: 8</div>
+      <div class="step">
+        <span class="step-num">dp[]</span>
+        <div class="arr-row">
+          <div style="font-size:10px;color:var(--muted);margin-right:2px">Step:</div>
+          <div class="a-box">1</div><div class="a-box">2</div><div class="a-box">3</div><div class="a-box">4</div><div class="a-box">5</div>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">ways</span>
+        <div class="arr-row">
+          <div class="a-box teal">1</div><div class="a-box teal">2</div><div class="a-box hi">3</div><div class="a-box hi">5</div><div class="a-box found">8</div>
+        </div>
+        <div class="step-info">dp[i] = dp[i-1]+dp[i-2]</div>
+        <span class="step-result sr-teal">ans = 8</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="ld-rob">
+  <div class="sub-heading">Problem 2 — House Robber</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">🏠</div>House Robber<span class="badge badge-coral">LeetCode 198</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Rob houses in a row — can't rob two adjacent houses. Maximize money.<br>
+      <b>dp[i]</b> = max money robbing from house 0..i.<br>
+      <b>Transition:</b> dp[i] = max(dp[i-1], dp[i-2] + nums[i]).<br>
+      Either skip house i (take dp[i-1]) OR rob house i (take dp[i-2] + nums[i]).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Line mein ghar loot lo — do adjacent ghar nahi loot sakte. Maximum money chahiye.<br>
+      <b>dp[i]</b> = ghar 0 se i tak max kitna loot sakte hain.<br>
+      <b>Transition:</b> dp[i] = max(dp[i-1], dp[i-2] + nums[i]).<br>
+      Ya ghar i skip karo (dp[i-1] lo) YA ghar i loot lo (dp[i-2] + nums[i]).
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · House Robber</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">rob</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> n = nums.size();
+    <span class="kw">if</span> (n == <span class="nm">1</span>) <span class="kw">return</span> nums[<span class="nm">0</span>];
+    <span class="tp">int</span> prev2 = nums[<span class="nm">0</span>], prev1 = max(nums[<span class="nm">0</span>], nums[<span class="nm">1</span>]);
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">2</span>; i &lt; n; i++) {
+        <span class="tp">int</span> curr = max(prev1,          <span class="cm">// skip house i</span>
+                       prev2 + nums[i]); <span class="cm">// rob house i</span>
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    <span class="kw">return</span> prev1;
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">nums=[2,7,9,3,1] → Expected: 12</div>
+      <div class="step">
+        <span class="step-num">houses</span>
+        <div class="arr-row"><div class="a-box">2</div><div class="a-box">7</div><div class="a-box">9</div><div class="a-box">3</div><div class="a-box">1</div></div>
+      </div>
+      <div class="step">
+        <span class="step-num">dp[]</span>
+        <div class="arr-row">
+          <div class="a-box teal">2</div><div class="a-box teal">7</div>
+          <div class="a-box hi">11</div><div class="a-box hi">11</div><div class="a-box found">12</div>
+        </div>
+        <div class="step-info">rob house 0+2+4 = 2+9+1=12</div>
+        <span class="step-result sr-teal">ans = 12</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="ld-lis">
+  <div class="sub-heading">Problem 3 — Longest Increasing Subsequence (LIS)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--green-bg)">📊</div>LIS — Longest Increasing Subsequence<span class="badge badge-green">LeetCode 300</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Find the length of the longest strictly increasing subsequence.<br>
+      <b>dp[i]</b> = length of LIS ending at index i.<br>
+      <b>Transition:</b> For each j &lt; i, if nums[j] &lt; nums[i]: dp[i] = max(dp[i], dp[j]+1).<br>
+      Answer = max of all dp[i]. Time: O(n²). O(n log n) exists with binary search.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Strictly increasing subsequence ki max length nikalo.<br>
+      <b>dp[i]</b> = index i par khatam hone wali LIS ki length.<br>
+      <b>Transition:</b> Har j &lt; i ke liye, agar nums[j] &lt; nums[i]: dp[i] = max(dp[i], dp[j]+1).<br>
+      Answer = dp[] ka maximum. Time: O(n²). Binary search se O(n log n) bhi hota hai.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · LIS O(n²)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">lengthOfLIS</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> n = nums.size(), ans = <span class="nm">1</span>;
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; dp(n, <span class="nm">1</span>);  <span class="cm">// every element alone is LIS of length 1</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt; n; i++) {
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="nm">0</span>; j &lt; i; j++) {
+            <span class="kw">if</span> (nums[j] &lt; nums[i])
+                dp[i] = max(dp[i], dp[j] + <span class="nm">1</span>);
+        }
+        ans = max(ans, dp[i]);
+    }
+    <span class="kw">return</span> ans;
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">nums=[10,9,2,5,3,7,101,18] → Expected: 4</div>
+      <div class="step">
+        <span class="step-num">nums</span>
+        <div class="arr-row"><div class="a-box">10</div><div class="a-box">9</div><div class="a-box">2</div><div class="a-box">5</div><div class="a-box">3</div><div class="a-box">7</div><div class="a-box">101</div><div class="a-box">18</div></div>
+      </div>
+      <div class="step">
+        <span class="step-num">dp[]</span>
+        <div class="arr-row"><div class="a-box teal">1</div><div class="a-box teal">1</div><div class="a-box teal">1</div><div class="a-box hi">2</div><div class="a-box hi">2</div><div class="a-box hi">3</div><div class="a-box found">4</div><div class="a-box hi">4</div></div>
+        <div class="step-info">LIS: 2→3→7→18 or 2→3→7→101</div>
+        <span class="step-result sr-teal">ans = 4</span>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 2 — KNAPSACK ══════════════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">Dynamic Programming · Pattern 2 of 6</div>
+    <h2>🎒 Knapsack / Decision DP</h2>
+    <p>Har item ke liye decision — lo ya chhodo. Classic interview pattern! 0/1 Knapsack + Unbounded + Subset Sum.</p>
+    <div class="badge-row">
+      <span class="badge badge-amber">Take or Skip</span>
+      <span class="badge badge-teal">dp[i][w]</span>
+      <span class="badge badge-blue">O(n × W)</span>
+      <span class="badge badge-coral">Most Asked Pattern</span>
+    </div>
+  </div>
+
+  <div id="ks-01">
+  <div class="sub-heading">0/1 Knapsack — Core Pattern</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🎒</div>0/1 Knapsack</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      n items, each with weight[i] and value[i]. Knapsack capacity W. Max value you can carry?<br>
+      Each item: either <b>take it (0/1 = one copy)</b> or <b>skip it</b>.<br>
+      <b>dp[i][w]</b> = max value using first i items with capacity w.<br>
+      <b>Transition:</b><br>
+      — If weight[i] &gt; w: dp[i][w] = dp[i-1][w] (can't take)<br>
+      — Else: dp[i][w] = max(dp[i-1][w], dp[i-1][w-wt[i]] + val[i])
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      n items hain, har item ka weight[i] aur value[i] hai. Bag ki capacity W hai. Max value?<br>
+      Har item: ya <b>lo (ek hi baar)</b> ya <b>chhodo</b>.<br>
+      <b>dp[i][w]</b> = pehle i items use karke capacity w mein max value.<br>
+      <b>Transition:</b><br>
+      — Agar weight[i] &gt; w: dp[i][w] = dp[i-1][w] (le nahi sakte)<br>
+      — Nahi toh: dp[i][w] = max(dp[i-1][w], dp[i-1][w-wt[i]] + val[i])
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · 0/1 Knapsack</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">knapsack01</span>(<span class="tp">int</span> W, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; wt, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; val, <span class="tp">int</span> n) {
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; dp(n+<span class="nm">1</span>, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;(W+<span class="nm">1</span>, <span class="nm">0</span>));
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt;= n; i++) {
+        <span class="kw">for</span> (<span class="tp">int</span> w = <span class="nm">0</span>; w &lt;= W; w++) {
+            dp[i][w] = dp[i-<span class="nm">1</span>][w];  <span class="cm">// skip item i</span>
+            <span class="kw">if</span> (wt[i-<span class="nm">1</span>] &lt;= w)
+                dp[i][w] = max(dp[i][w],
+                    dp[i-<span class="nm">1</span>][w - wt[i-<span class="nm">1</span>]] + val[i-<span class="nm">1</span>]); <span class="cm">// take item i</span>
+        }
+    }
+    <span class="kw">return</span> dp[n][W];
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">wt=[1,3,4,5], val=[1,4,5,7], W=7 → Expected: 9</div>
+      <div style="overflow-x:auto;">
+      <table class="dp-table">
+        <tr><th>i\w</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr>
+        <tr><td>0 (no items)</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1 (wt=1,v=1)</td><td>0</td><td class="teal">1</td><td class="teal">1</td><td class="teal">1</td><td class="teal">1</td><td class="teal">1</td><td class="teal">1</td><td class="teal">1</td></tr>
+        <tr><td>2 (wt=3,v=4)</td><td>0</td><td>1</td><td>1</td><td class="hi">4</td><td class="hi">5</td><td class="hi">5</td><td class="hi">5</td><td class="hi">5</td></tr>
+        <tr><td>3 (wt=4,v=5)</td><td>0</td><td>1</td><td>1</td><td>4</td><td>5</td><td>6</td><td>6</td><td class="hi">9</td></tr>
+        <tr><td>4 (wt=5,v=7)</td><td>0</td><td>1</td><td>1</td><td>4</td><td>5</td><td>7</td><td>8</td><td class="found">9</td></tr>
+      </table>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="ks-unbounded">
+  <div class="sub-heading">Unbounded Knapsack — Coin Change</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🪙</div>Coin Change — Unbounded Knapsack<span class="badge badge-teal">LeetCode 322</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Given coin denominations, find min coins to make amount.<br>
+      <b>Unbounded</b> = each coin can be used unlimited times.<br>
+      <b>dp[w]</b> = min coins to make amount w.<br>
+      <b>Transition:</b> dp[w] = min(dp[w], dp[w - coin] + 1) for each coin.<br>
+      Key difference from 0/1: inner loop uses <code>dp[w - coin]</code> (current row, not previous).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Coins di hain, amount banane ke liye minimum coins chahiye.<br>
+      <b>Unbounded</b> = ek coin unlimited baar use kar sakte hain.<br>
+      <b>dp[w]</b> = amount w banane ke liye min coins.<br>
+      <b>Transition:</b> dp[w] = min(dp[w], dp[w - coin] + 1) har coin ke liye.<br>
+      0/1 se fark: current row ka use karo (same item dobara lene ki permission hai).
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Coin Change</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">coinChange</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; coins, <span class="tp">int</span> amount) {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; dp(amount+<span class="nm">1</span>, INT_MAX);
+    dp[<span class="nm">0</span>] = <span class="nm">0</span>;  <span class="cm">// 0 coins to make amount 0</span>
+    <span class="kw">for</span> (<span class="tp">int</span> w = <span class="nm">1</span>; w &lt;= amount; w++) {
+        <span class="kw">for</span> (<span class="tp">int</span> c : coins) {
+            <span class="kw">if</span> (c &lt;= w &amp;&amp; dp[w-c] != INT_MAX)
+                dp[w] = min(dp[w], dp[w-c] + <span class="nm">1</span>);
+        }
+    }
+    <span class="kw">return</span> dp[amount] == INT_MAX ? -<span class="nm">1</span> : dp[amount];
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">coins=[1,2,5], amount=11 → Expected: 3 (5+5+1)</div>
+      <div class="step">
+        <span class="step-num">dp[0..11]</span>
+        <div class="arr-row">
+          <div class="a-box teal">0</div><div class="a-box hi">1</div><div class="a-box hi">1</div>
+          <div class="a-box hi">2</div><div class="a-box hi">2</div><div class="a-box hi">1</div>
+          <div class="a-box hi">2</div><div class="a-box hi">2</div><div class="a-box hi">3</div>
+          <div class="a-box hi">3</div><div class="a-box hi">2</div><div class="a-box found">3</div>
+        </div>
+        <div class="step-info">dp[11]=3 → 5+5+1</div>
+        <span class="step-result sr-teal">ans = 3</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="ks-subset">
+  <div class="sub-heading">Subset Sum / Partition Equal Subset</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">⚖️</div>Partition Equal Subset Sum<span class="badge badge-pink">LeetCode 416</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Can we partition array into two subsets with equal sum?<br>
+      Total sum must be even. Then: can we find a subset with sum = total/2?<br>
+      <b>dp[w]</b> = true if subset with sum w is possible.<br>
+      <b>Transition:</b> dp[w] |= dp[w - num]. Loop w from target → num (to avoid reuse).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Array ko do equal-sum subsets mein todna hai?<br>
+      Total sum even hona chahiye. Phir check karo: kya sum = total/2 ka subset banta hai?<br>
+      <b>dp[w]</b> = true agar w sum ka subset possible hai.<br>
+      <b>Transition:</b> dp[w] |= dp[w - num]. w ko target se num tak reverse mein loop karo.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Partition Equal Subset</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">bool</span> <span class="fn">canPartition</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> total = <span class="fn">accumulate</span>(nums.begin(), nums.end(), <span class="nm">0</span>);
+    <span class="kw">if</span> (total % <span class="nm">2</span> != <span class="nm">0</span>) <span class="kw">return false</span>;
+    <span class="tp">int</span> target = total / <span class="nm">2</span>;
+    <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt; dp(target+<span class="nm">1</span>, <span class="kw">false</span>);
+    dp[<span class="nm">0</span>] = <span class="kw">true</span>;  <span class="cm">// empty subset makes sum 0</span>
+    <span class="kw">for</span> (<span class="tp">int</span> num : nums) {
+        <span class="kw">for</span> (<span class="tp">int</span> w = target; w &gt;= num; w--)  <span class="cm">// reverse loop! 0/1 property</span>
+            dp[w] = dp[w] || dp[w - num];
+    }
+    <span class="kw">return</span> dp[target];
+}</pre>
+    </div>
+    <div class="warn">⚠️ <b>Reverse loop kyun?</b> 0/1 Knapsack mein har item sirf ek baar use hona chahiye. Agar forward loop karoge toh same item multiple times use ho sakta hai. Reverse se ensure hota hai ki current item phir se na lage.</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 3 — SEQUENCE DP ══════════════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">Dynamic Programming · Pattern 3 of 6</div>
+    <h2>🔤 Sequence DP (2D)</h2>
+    <p>Do strings ya sequences par DP. dp[i][j] state — i characters of s1, j characters of s2. LCS, Edit Distance, Grid.</p>
+    <div class="badge-row">
+      <span class="badge badge-blue">dp[i][j] State</span>
+      <span class="badge badge-teal">Two Strings</span>
+      <span class="badge badge-pink">O(m×n)</span>
+    </div>
+  </div>
+
+  <div id="sq-lcs">
+  <div class="sub-heading">LCS — Longest Common Subsequence</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🔤</div>LCS<span class="badge badge-blue">LeetCode 1143</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Find length of longest subsequence common to both strings.<br>
+      <b>dp[i][j]</b> = LCS length of s1[0..i-1] and s2[0..j-1].<br>
+      <b>Transition:</b><br>
+      — If s1[i-1] == s2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 (both chars match!)<br>
+      — Else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) (skip one char from either)
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Dono strings mein jo common subsequence hai uski max length nikalo.<br>
+      <b>dp[i][j]</b> = s1 ke pehle i chars aur s2 ke pehle j chars ka LCS.<br>
+      <b>Transition:</b><br>
+      — Agar s1[i-1] == s2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 (match mila!)<br>
+      — Warna: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) (ek string se ek char skip karo)
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · LCS</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">longestCommonSubsequence</span>(<span class="tp">string</span> s1, <span class="tp">string</span> s2) {
+    <span class="tp">int</span> m = s1.size(), n = s2.size();
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; dp(m+<span class="nm">1</span>, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;(n+<span class="nm">1</span>, <span class="nm">0</span>));
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt;= m; i++) {
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="nm">1</span>; j &lt;= n; j++) {
+            <span class="kw">if</span> (s1[i-<span class="nm">1</span>] == s2[j-<span class="nm">1</span>])
+                dp[i][j] = dp[i-<span class="nm">1</span>][j-<span class="nm">1</span>] + <span class="nm">1</span>;
+            <span class="kw">else</span>
+                dp[i][j] = max(dp[i-<span class="nm">1</span>][j], dp[i][j-<span class="nm">1</span>]);
+        }
+    }
+    <span class="kw">return</span> dp[m][n];
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">s1="abcde", s2="ace" → Expected: 3</div>
+      <div style="overflow-x:auto">
+      <table class="dp-table">
+        <tr><th></th><th>""</th><th>a</th><th>c</th><th>e</th></tr>
+        <tr><td>""</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>a</td><td>0</td><td class="teal">1</td><td>1</td><td>1</td></tr>
+        <tr><td>b</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+        <tr><td>c</td><td>0</td><td>1</td><td class="hi">2</td><td>2</td></tr>
+        <tr><td>d</td><td>0</td><td>1</td><td>2</td><td>2</td></tr>
+        <tr><td>e</td><td>0</td><td>1</td><td>2</td><td class="found">3</td></tr>
+      </table>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="sq-edit">
+  <div class="sub-heading">Edit Distance</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">✏️</div>Edit Distance (Levenshtein)<span class="badge badge-coral">LeetCode 72</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Min operations (insert, delete, replace) to convert word1 to word2.<br>
+      <b>dp[i][j]</b> = min ops to convert word1[0..i-1] to word2[0..j-1].<br>
+      <b>Transition:</b><br>
+      — If chars match: dp[i][j] = dp[i-1][j-1] (no operation needed)<br>
+      — Else: dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) (delete, insert, replace)
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      word1 ko word2 mein convert karne ke liye minimum operations (insert, delete, replace).<br>
+      <b>dp[i][j]</b> = word1 ke i chars ko word2 ke j chars mein convert karne ke min ops.<br>
+      <b>Transition:</b><br>
+      — Agar chars match: dp[i][j] = dp[i-1][j-1] (kuch nahi karna)<br>
+      — Warna: dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) (delete, insert, replace)
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Edit Distance</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">minDistance</span>(<span class="tp">string</span> w1, <span class="tp">string</span> w2) {
+    <span class="tp">int</span> m = w1.size(), n = w2.size();
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; dp(m+<span class="nm">1</span>, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;(n+<span class="nm">1</span>));
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt;= m; i++) dp[i][<span class="nm">0</span>] = i;  <span class="cm">// delete all</span>
+    <span class="kw">for</span> (<span class="tp">int</span> j = <span class="nm">0</span>; j &lt;= n; j++) dp[<span class="nm">0</span>][j] = j;  <span class="cm">// insert all</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt;= m; i++) {
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="nm">1</span>; j &lt;= n; j++) {
+            <span class="kw">if</span> (w1[i-<span class="nm">1</span>] == w2[j-<span class="nm">1</span>])
+                dp[i][j] = dp[i-<span class="nm">1</span>][j-<span class="nm">1</span>];
+            <span class="kw">else</span>
+                dp[i][j] = <span class="nm">1</span> + min({dp[i-<span class="nm">1</span>][j],    <span class="cm">// delete</span>
+                                      dp[i][j-<span class="nm">1</span>],    <span class="cm">// insert</span>
+                                      dp[i-<span class="nm">1</span>][j-<span class="nm">1</span>]}); <span class="cm">// replace</span>
+        }
+    }
+    <span class="kw">return</span> dp[m][n];
+}</pre>
+    </div>
+  </div>
+  </div>
+
+  <div id="sq-grid">
+  <div class="sub-heading">Grid DP — Unique Paths</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--green-bg)">🗺️</div>Unique Paths<span class="badge badge-green">LeetCode 62</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      m×n grid. Start top-left, reach bottom-right. Move only right or down. Count paths.<br>
+      <b>dp[i][j]</b> = number of paths to reach cell (i,j).<br>
+      <b>Transition:</b> dp[i][j] = dp[i-1][j] + dp[i][j-1] (come from top or left).<br>
+      <b>Base:</b> First row and first column = all 1s (only one way each).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      m×n grid hai. Top-left se bottom-right pahuncho. Sirf right ya down move.<br>
+      <b>dp[i][j]</b> = cell (i,j) tak pahunchne ke kitne paths hain.<br>
+      <b>Transition:</b> dp[i][j] = dp[i-1][j] + dp[i][j-1] (upar se aao ya left se).<br>
+      <b>Base:</b> Pehli row aur pehla column sab 1 (ek hi way hai).
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">m=3, n=3 → Expected: 6</div>
+      <div style="overflow-x:auto">
+      <table class="dp-table">
+        <tr><th></th><th>0</th><th>1</th><th>2</th></tr>
+        <tr><td>0</td><td class="teal">1</td><td class="teal">1</td><td class="teal">1</td></tr>
+        <tr><td>1</td><td class="teal">1</td><td class="hi">2</td><td class="hi">3</td></tr>
+        <tr><td>2</td><td class="teal">1</td><td class="hi">3</td><td class="found">6</td></tr>
+      </table>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 4 — PARTITION / INTERVAL DP ══════════════════ -->
+<div class="page" id="p4">
+  <div class="page-header">
+    <div class="breadcrumb">Dynamic Programming · Pattern 4 of 6</div>
+    <h2>✂️ Partition / Interval DP</h2>
+    <p>String ya array ke kisi bhi point par partition karo. dp[i][j] = subarray i to j ka answer. MCM, Palindrome, Burst Balloons.</p>
+    <div class="badge-row">
+      <span class="badge badge-pink">dp[i][j] Interval</span>
+      <span class="badge badge-amber">Cut at every k</span>
+      <span class="badge badge-teal">O(n³)</span>
+    </div>
+  </div>
+
+  <div id="pt-partition">
+  <div class="sub-heading">Matrix Chain Multiplication — Classic Interval DP</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🔢</div>Matrix Chain Multiplication</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Given n matrices, find min cost to multiply them all (by choosing bracket order).<br>
+      <b>dp[i][j]</b> = min cost to multiply matrices from i to j.<br>
+      <b>Transition:</b> Try every split point k: dp[i][j] = min(dp[i][k] + dp[k+1][j] + p[i-1]*p[k]*p[j]).<br>
+      Fill by <b>increasing length</b> of intervals (len=2, 3, ... n).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      n matrices hain, unhe multiply karne ka min cost nikalo (bracket order choose karke).<br>
+      <b>dp[i][j]</b> = i se j tak matrices multiply karne ka min cost.<br>
+      <b>Transition:</b> Har split point k try karo: dp[i][j] = min(dp[i][k] + dp[k+1][j] + p[i-1]*p[k]*p[j]).<br>
+      <b>Increasing length</b> se fill karo (len=2, 3, ... n).
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Matrix Chain Multiplication</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">mcm</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; p) {   <span class="cm">// p has n+1 values for n matrices</span>
+    <span class="tp">int</span> n = p.size() - <span class="nm">1</span>;
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; dp(n+<span class="nm">1</span>, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;(n+<span class="nm">1</span>, <span class="nm">0</span>));
+    <span class="kw">for</span> (<span class="tp">int</span> len = <span class="nm">2</span>; len &lt;= n; len++) {     <span class="cm">// interval length</span>
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt;= n-len+<span class="nm">1</span>; i++) {
+            <span class="tp">int</span> j = i + len - <span class="nm">1</span>;
+            dp[i][j] = INT_MAX;
+            <span class="kw">for</span> (<span class="tp">int</span> k = i; k &lt; j; k++) {       <span class="cm">// try all splits</span>
+                dp[i][j] = min(dp[i][j],
+                    dp[i][k] + dp[k+<span class="nm">1</span>][j] + p[i-<span class="nm">1</span>]*p[k]*p[j]);
+            }
+        }
+    }
+    <span class="kw">return</span> dp[<span class="nm">1</span>][n];
+}</pre>
+    </div>
+  </div>
+  </div>
+
+  <div id="pt-interval">
+  <div class="sub-heading">Burst Balloons — Interval DP</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🎈</div>Burst Balloons<span class="badge badge-teal">LeetCode 312</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Burst balloons to maximize coins. Bursting balloon i gives nums[i-1]*nums[i]*nums[i+1] coins.<br>
+      <b>Key insight:</b> Think reverse — which balloon is burst <b>last</b> in range [i,j]?<br>
+      <b>dp[i][j]</b> = max coins from bursting all balloons between i and j (exclusive).<br>
+      <b>Transition:</b> dp[i][j] = max over k: dp[i][k] + dp[k][j] + nums[i]*nums[k]*nums[j].
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Balloons burst karo, max coins chahiye. Balloon i burst karne par nums[i-1]*nums[i]*nums[i+1] coins milte hain.<br>
+      <b>Key insight:</b> Ulta socho — range [i,j] mein <b>last</b> kaun burst hoga?<br>
+      <b>dp[i][j]</b> = i aur j ke beech ke sab balloons burst karne par max coins.<br>
+      <b>Transition:</b> dp[i][j] = max over k: dp[i][k] + dp[k][j] + nums[i]*nums[k]*nums[j].
+    </div>
+    <div class="tip">💡 Interval DP pattern: Jab bhi "range/interval mein koi action karo" wala problem ho aur optimal bracket/split order chahiye — Interval DP try karo. O(n³) expected.</div>
+  </div>
+  </div>
+
+  <div id="pt-palindrome">
+  <div class="sub-heading">Palindrome Partitioning — Min Cuts</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🔁</div>Palindrome Partitioning II<span class="badge badge-pink">LeetCode 132</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Min cuts to make every substring a palindrome.<br>
+      Precompute <code>isPalin[i][j]</code> = true if s[i..j] is palindrome.<br>
+      <b>dp[i]</b> = min cuts for s[0..i].<br>
+      <b>Transition:</b> If s[j..i] is palindrome, dp[i] = min(dp[i], dp[j-1]+1).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Minimum cuts jisse har substring palindrome ban jaye.<br>
+      Pehle <code>isPalin[i][j]</code> precompute karo — kya s[i..j] palindrome hai?<br>
+      <b>dp[i]</b> = s[0..i] ke liye min cuts.<br>
+      <b>Transition:</b> Agar s[j..i] palindrome hai, dp[i] = min(dp[i], dp[j-1]+1).
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 5 — ADVANCED DP ══════════════════ -->
+<div class="page" id="p5">
+  <div class="page-header">
+    <div class="breadcrumb">Dynamic Programming · Pattern 5 of 6</div>
+    <h2>🚀 Advanced DP</h2>
+    <p>Hard-level patterns — Bitmask DP (subsets), Digit DP (number range), DP on Trees. Competitive programming aur FAANG hard rounds mein aate hain.</p>
+    <div class="badge-row">
+      <span class="badge badge-purple">Bitmask</span>
+      <span class="badge badge-coral">Digit DP</span>
+      <span class="badge badge-green">Tree DP</span>
+      <span class="badge badge-amber">Hard Level</span>
+    </div>
+  </div>
+
+  <div id="adv-bitmask">
+  <div class="sub-heading">Bitmask DP — TSP / Assignment Problems</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🔢</div>Bitmask DP — Travelling Salesman Problem</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      Use a bitmask to represent which <b>subset of nodes/items has been visited/used</b>.<br>
+      <b>dp[mask][i]</b> = min cost to visit all nodes in <code>mask</code>, ending at node i.<br>
+      <b>Transition:</b> For each unvisited node j: dp[mask|(1&lt;&lt;j)][j] = min(..., dp[mask][i] + cost[i][j]).<br>
+      Used when n ≤ 20 (2^20 states). Classic: TSP, Job assignment, Hamiltonian path.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Bitmask se represent karo ki <b>kaun kaun se nodes visit ho chuke hain</b>.<br>
+      <b>dp[mask][i]</b> = <code>mask</code> wale sab nodes visit karke node i par khatam hone ka min cost.<br>
+      <b>Transition:</b> Har unvisited j ke liye: dp[mask|(1&lt;&lt;j)][j] = min(..., dp[mask][i] + cost[i][j]).<br>
+      Jab n ≤ 20 ho tab use karo (2^20 states). Classic problems: TSP, Job assignment.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · TSP with Bitmask DP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">tsp</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; cost, <span class="tp">int</span> n) {
+    <span class="tp">int</span> FULL = (<span class="nm">1</span>&lt;&lt;n) - <span class="nm">1</span>;
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; dp(<span class="nm">1</span>&lt;&lt;n, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;(n, INT_MAX));
+    dp[<span class="nm">1</span>][<span class="nm">0</span>] = <span class="nm">0</span>;  <span class="cm">// start at node 0, mask = 0001</span>
+    <span class="kw">for</span> (<span class="tp">int</span> mask = <span class="nm">1</span>; mask &lt;= FULL; mask++) {
+        <span class="kw">for</span> (<span class="tp">int</span> u = <span class="nm">0</span>; u &lt; n; u++) {
+            <span class="kw">if</span> (!(mask &gt;&gt; u &amp; <span class="nm">1</span>) || dp[mask][u] == INT_MAX) <span class="kw">continue</span>;
+            <span class="kw">for</span> (<span class="tp">int</span> v = <span class="nm">0</span>; v &lt; n; v++) {
+                <span class="kw">if</span> (mask &gt;&gt; v &amp; <span class="nm">1</span>) <span class="kw">continue</span>; <span class="cm">// already visited</span>
+                <span class="tp">int</span> nmask = mask | (<span class="nm">1</span>&lt;&lt;v);
+                dp[nmask][v] = min(dp[nmask][v], dp[mask][u] + cost[u][v]);
+            }
+        }
+    }
+    <span class="tp">int</span> ans = INT_MAX;
+    <span class="kw">for</span> (<span class="tp">int</span> u = <span class="nm">1</span>; u &lt; n; u++)
+        ans = min(ans, dp[FULL][u] + cost[u][<span class="nm">0</span>]); <span class="cm">// return to start</span>
+    <span class="kw">return</span> ans;
+}</pre>
+    </div>
+    <div class="info">ℹ️ <b>Bitmask DP — Common operations:</b><br>
+    <code>mask | (1&lt;&lt;i)</code> = set bit i (mark i as visited)<br>
+    <code>mask &amp; (1&lt;&lt;i)</code> = check if bit i set (is i visited?)<br>
+    <code>mask ^ (1&lt;&lt;i)</code> = toggle bit i<br>
+    <code>mask &amp; (-mask)</code> = lowest set bit (rightmost visited node)
+    </div>
+  </div>
+  </div>
+
+  <div id="adv-digit">
+  <div class="sub-heading">Digit DP — Count numbers in range with property</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">🔢</div>Digit DP — Numbers with no repeated digits</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      Count numbers in range [1, N] with some digit property.<br>
+      Build the number digit by digit. State: (position, tight_constraint, extra_property).<br>
+      <b>tight</b> = are we still bounded by N's digits? Once we place a smaller digit, tight = false.<br>
+      Common properties: no repeated digits, digit sum = k, count of specific digit ≤ k.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Range [1, N] mein kitne numbers mein koi property hai — count karo.<br>
+      Number digit by digit banao. State: (position, tight, extra_property).<br>
+      <b>tight</b> = kya hum abhi bhi N se bound hain? Ek baar chhota digit rakh diya toh tight = false.<br>
+      Common: no repeated digits, digit sum = k, specific digit ≤ k times.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Digit DP Template</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">string</span> num;
+<span class="tp">int</span> memo[<span class="nm">20</span>][<span class="nm">2</span>][<span class="nm">2</span>];  <span class="cm">// [pos][tight][started]</span>
+
+<span class="tp">int</span> <span class="fn">solve</span>(<span class="tp">int</span> pos, <span class="tp">bool</span> tight, <span class="tp">bool</span> started) {
+    <span class="kw">if</span> (pos == num.size()) <span class="kw">return</span> started ? <span class="nm">1</span> : <span class="nm">0</span>;
+    <span class="kw">if</span> (memo[pos][tight][started] != -<span class="nm">1</span>)
+        <span class="kw">return</span> memo[pos][tight][started];
+    <span class="tp">int</span> limit = tight ? (num[pos]-<span class="st">'0'</span>) : <span class="nm">9</span>;
+    <span class="tp">int</span> res = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> d = <span class="nm">0</span>; d &lt;= limit; d++) {
+        <span class="cm">// add your condition here, e.g., no repeated digit</span>
+        res += <span class="fn">solve</span>(pos+<span class="nm">1</span>, tight &amp;&amp; (d==limit), started || d!=<span class="nm">0</span>);
+    }
+    <span class="kw">return</span> memo[pos][tight][started] = res;
+}
+<span class="cm">// call: memset(memo,-1,sizeof(memo)); solve(0,true,false);</span></pre>
+    </div>
+  </div>
+  </div>
+
+  <div id="adv-tree">
+  <div class="sub-heading">DP on Trees</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--green-bg)">🌳</div>DP on Trees — Diameter / Max Independent Set</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      Run DFS on tree, compute DP values bottom-up (leaf to root).<br>
+      Each node's DP value depends on its children's values.<br>
+      Classic: Tree diameter, Max independent set on tree, Tree knapsack.<br>
+      <b>dp[node][0]</b> = answer without taking node, <b>dp[node][1]</b> = with taking node.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Tree par DFS chalao, DP values bottom-up compute karo (leaf se root tak).<br>
+      Har node ki DP value uske children ki values se banti hai.<br>
+      Classic: Tree diameter, Max independent set on tree, Tree knapsack.<br>
+      <b>dp[node][0]</b> = node liye bina, <b>dp[node][1]</b> = node lekar answer.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Max Independent Set on Tree</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; adj[<span class="nm">100005</span>];
+<span class="tp">int</span> dp[<span class="nm">100005</span>][<span class="nm">2</span>];  <span class="cm">// dp[node][0/1] = max nodes without/with node</span>
+
+<span class="kw">void</span> <span class="fn">dfs</span>(<span class="tp">int</span> u, <span class="tp">int</span> par) {
+    dp[u][<span class="nm">0</span>] = <span class="nm">0</span>;  <span class="cm">// don't take u</span>
+    dp[u][<span class="nm">1</span>] = <span class="nm">1</span>;  <span class="cm">// take u</span>
+    <span class="kw">for</span> (<span class="tp">int</span> v : adj[u]) {
+        <span class="kw">if</span> (v == par) <span class="kw">continue</span>;
+        <span class="fn">dfs</span>(v, u);
+        dp[u][<span class="nm">0</span>] += max(dp[v][<span class="nm">0</span>], dp[v][<span class="nm">1</span>]);  <span class="cm">// child can be taken or not</span>
+        dp[u][<span class="nm">1</span>] += dp[v][<span class="nm">0</span>];               <span class="cm">// if u taken, child can't be taken</span>
+    }
+}
+<span class="cm">// answer = max(dp[root][0], dp[root][1])</span></pre>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ PAGE 6 — COMPARISON TABLE ══════════════════ -->
+<div class="page" id="p6">
+  <div class="page-header">
+    <div class="breadcrumb">Dynamic Programming · Master Reference</div>
+    <h2>📊 DP Patterns — Comparison Table</h2>
+    <p>Sab patterns ek jagah — quick reference aur decision guide.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">📋</div>All DP Patterns Summary</div>
+    <table class="tbl">
+      <tr><th>Pattern</th><th>State</th><th>Typical Problems</th><th>Key Trick</th></tr>
+      <tr>
+        <td><span style="color:var(--orange);font-weight:600">Linear 1D</span></td>
+        <td>dp[i]</td>
+        <td>Climbing stairs, House robber, LIS, Max subarray</td>
+        <td>dp[i] = f(dp[i-1], dp[i-2])</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--amber);font-weight:600">0/1 Knapsack</span></td>
+        <td>dp[i][w]</td>
+        <td>Knapsack, Subset sum, Partition equal sum</td>
+        <td>Reverse inner loop for space opt; take or skip</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--teal);font-weight:600">Unbounded Knapsack</span></td>
+        <td>dp[w]</td>
+        <td>Coin change, Rod cutting, Coin change II</td>
+        <td>Forward inner loop (can reuse items)</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--blue);font-weight:600">Sequence 2D</span></td>
+        <td>dp[i][j]</td>
+        <td>LCS, Edit distance, LIS (with 2 strings)</td>
+        <td>Match → diagonal, mismatch → max of sides</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--green);font-weight:600">Grid DP</span></td>
+        <td>dp[i][j]</td>
+        <td>Unique paths, Min path sum, Dungeon game</td>
+        <td>dp[i][j] = dp[i-1][j] + dp[i][j-1]</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--pink);font-weight:600">Interval DP</span></td>
+        <td>dp[i][j]</td>
+        <td>MCM, Burst balloons, Palindrome partition, Stone merge</td>
+        <td>Fill by increasing interval length; try all k splits</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--purple);font-weight:600">Bitmask DP</span></td>
+        <td>dp[mask][i]</td>
+        <td>TSP, Job assignment, Hamiltonian path</td>
+        <td>n ≤ 20; 2^n states; bit ops for visited set</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--coral);font-weight:600">Digit DP</span></td>
+        <td>dp[pos][tight][...]</td>
+        <td>Count numbers in range with property</td>
+        <td>tight flag; build number digit by digit</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--green);font-weight:600">Tree DP</span></td>
+        <td>dp[node][0/1]</td>
+        <td>Tree diameter, Max indep set, Tree knapsack</td>
+        <td>DFS post-order; children before parent</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🧠</div>Kab kya use karo — Decision Guide</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>"Max/min value lena hai, har item ek baar?"</b> → 0/1 Knapsack<br>
+      <b>"Coins/items unlimited baar use kar sakte ho?"</b> → Unbounded Knapsack<br>
+      <b>"Do strings ke beech kuch match karna hai?"</b> → LCS / Edit Distance (2D DP)<br>
+      <b>"Grid mein paths count karna / min cost?"</b> → Grid DP<br>
+      <b>"Range [i,j] mein optimal split karna hai?"</b> → Interval DP (O(n³))<br>
+      <b>"Small set of items, visited/not visited track?"</b> → Bitmask DP (n≤20)<br>
+      <b>"Count numbers in range [1,N] with property?"</b> → Digit DP<br>
+      <b>"Tree par optimal select karna hai?"</b> → DP on Trees (DFS post-order)
+    </div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>"Max/min value, each item once?"</b> → 0/1 Knapsack<br>
+      <b>"Items can be used unlimited times?"</b> → Unbounded Knapsack<br>
+      <b>"Match/align two strings?"</b> → LCS / Edit Distance (2D DP)<br>
+      <b>"Count/minimize paths in a grid?"</b> → Grid DP<br>
+      <b>"Optimal split/partition of a range [i,j]?"</b> → Interval DP (O(n³))<br>
+      <b>"Small set, track visited/used subsets?"</b> → Bitmask DP (n≤20)<br>
+      <b>"Count numbers in range with digit property?"</b> → Digit DP<br>
+      <b>"Optimal selection on a tree?"</b> → DP on Trees (DFS post-order)
+    </div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="mini-card"><b style="color:var(--orange)">Step 1: State</b>dp[i] ka matlab clearly define karo. Kya represent karta hai?</div>
+      <div class="mini-card"><b style="color:var(--teal)">Step 2: Transition</b>dp[i] kaise previous states se banta hai? Formula likho.</div>
+      <div class="mini-card"><b style="color:var(--pink)">Step 3: Base + Answer</b>Base cases set karo. Answer kahan hai — dp[n], dp[n][m], max(dp[])?</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">⚠️</div>Common DP Mistakes</div>
+    <div class="warn">⚠️ <b>0/1 Knapsack:</b> Inner loop ko <b>reverse</b> karna mat bhoolo (target → 0). Forward loop chalane se ek item multiple times use ho jaata hai — Unbounded ban jaata hai!</div>
+    <div class="warn">⚠️ <b>Interval DP:</b> Length ke order mein fill karo, random order mein nahi. Chhote intervals pehle solve honge toh bade intervals unhe use kar payenge.</div>
+    <div class="warn">⚠️ <b>State Definition:</b> dp[i] ka meaning clearly define nahi kiya toh transitions galat ho jaate hain. Pehle state define karo, tab code likho.</div>
+    <div class="warn">⚠️ <b>Base Cases:</b> Bade problems mein base cases miss ho jaate hain. Empty string, 0 items, 0 capacity — sab explicitly set karo.</div>
+    <div class="tip">💡 <b>Memoization shortcut:</b> Agar recursion already likh li hai, sirf ek map/array add karo: <code>if memo[state] exists: return it</code>. Top-down DP instant ban jaata hai!</div>
+    <div class="tip">💡 <b>Space Optimization:</b> Agar dp[i] sirf dp[i-1] par depend karta hai → 1D array use karo. Agar dp[i][j] sirf dp[i-1][...] par depend karta hai → 1D rolling array use karo!</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📝</div>LeetCode Problems — Quick Reference</div>
+    <table class="tbl">
+      <tr><th>Problem</th><th>Pattern</th><th>Time</th><th>Space</th><th>LC #</th></tr>
+      <tr><td>Climbing Stairs</td><td>Linear 1D</td><td>O(n)</td><td>O(1)</td><td>#70</td></tr>
+      <tr><td>House Robber</td><td>Linear 1D</td><td>O(n)</td><td>O(1)</td><td>#198</td></tr>
+      <tr><td>Longest Increasing Subsequence</td><td>Linear 1D</td><td>O(n²)/O(n log n)</td><td>O(n)</td><td>#300</td></tr>
+      <tr><td>0/1 Knapsack</td><td>Knapsack</td><td>O(n·W)</td><td>O(n·W)</td><td>Classic</td></tr>
+      <tr><td>Coin Change</td><td>Unbounded Knapsack</td><td>O(n·amount)</td><td>O(amount)</td><td>#322</td></tr>
+      <tr><td>Partition Equal Subset</td><td>0/1 Knapsack</td><td>O(n·sum)</td><td>O(sum)</td><td>#416</td></tr>
+      <tr><td>Longest Common Subsequence</td><td>Sequence 2D</td><td>O(m·n)</td><td>O(m·n)</td><td>#1143</td></tr>
+      <tr><td>Edit Distance</td><td>Sequence 2D</td><td>O(m·n)</td><td>O(m·n)</td><td>#72</td></tr>
+      <tr><td>Unique Paths</td><td>Grid DP</td><td>O(m·n)</td><td>O(m·n)</td><td>#62</td></tr>
+      <tr><td>Burst Balloons</td><td>Interval DP</td><td>O(n³)</td><td>O(n²)</td><td>#312</td></tr>
+      <tr><td>Palindrome Partitioning II</td><td>Interval DP</td><td>O(n²)</td><td>O(n²)</td><td>#132</td></tr>
+      <tr><td>TSP (Travelling Salesman)</td><td>Bitmask DP</td><td>O(2^n · n²)</td><td>O(2^n · n)</td><td>Classic</td></tr>
+      <tr><td>Max Independent Set on Tree</td><td>Tree DP</td><td>O(n)</td><td>O(n)</td><td>Classic</td></tr>
+    </table>
+  </div>
+</div>
+
+</main>
+
+<script>
+  const pages = ['p0','p1','p2','p3','p4','p5','p6'];
+  const subs  = ['sub0','sub1','sub2','sub3','sub4','sub5'];
+
+  function showPage(id, btn) {
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = i===idx ? 'block' : 'none';
+    });
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = i===0 ? 'block' : 'none';
+  });
+</script>
+</body>
+</html>
