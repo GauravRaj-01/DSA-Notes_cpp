@@ -129,10 +129,119 @@
   ::-webkit-scrollbar{width:5px;height:5px;}
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-  @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:28px 16px 40px;}.grid2,.grid3,.cx-grid{grid-template-columns:1fr;}}
+  
+  /* Mobile Navigation Styles (Premium Drawer UI) */
+  .mobile-header {
+    display: none;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+    background: rgba(22, 27, 39, 0.85); /* Matches --bg2 with transparency */
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    height: 60px;
+  }
+
+  .mobile-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+
+  .menu-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .menu-toggle svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-header {
+      display: flex;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      height: 100vh;
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      box-shadow: none;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 15px 0 45px rgba(0, 0, 0, 0.6);
+    }
+
+    .sidebar.open ~ .sidebar-overlay {
+      display: block;
+      opacity: 1;
+    }
+
+    .main {
+      margin-left: 0;
+      padding: 84px 16px 40px; /* Accounts for the 60px fixed header + 24px space */
+      max-width: 100%;
+    }
+
+    .grid2, .grid3, .cx-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
 </style>
 </head>
+
 <body>
+<div class="mobile-header">
+  <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  </button>
+  <h2>Trees Patterns · Bilingual</h2>
+</div>
+
 
 <!-- SIDEBAR -->
 <nav class="sidebar">
@@ -178,6 +287,8 @@
     </div>
   </div>
 </nav>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
 
 <main class="main">
 
@@ -1104,10 +1215,29 @@ TreeNode* <span class="fn">lcaBST</span>(TreeNode* root, TreeNode* p, TreeNode* 
 </main>
 
 <script>
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (!sidebar || !overlay) return;
+    sidebar.classList.toggle('open');
+    if (sidebar.classList.contains('open')) {
+      overlay.style.display = 'block';
+      setTimeout(() => overlay.style.opacity = '1', 10);
+    } else {
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.style.display = 'none', 350);
+    }
+  }
+
   const pages = ['p1','p2','p3','p4'];
   const subs  = ['sub1','sub2','sub3','sub4'];
 
   function showPage(id, btn) {
+    // Auto-close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
     pages.forEach(p => document.getElementById(p).classList.remove('active'));
     document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -1118,6 +1248,11 @@ TreeNode* <span class="fn">lcaBST</span>(TreeNode* root, TreeNode* p, TreeNode* 
   }
 
   function go(id) {
+    // Auto-close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
   }
