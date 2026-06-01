@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Graphs Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:#2a3245;
+    --text:#e8eaf6;--muted:#8892a4;
+    --teal:#1dd6a0;--teal-bg:#0d2e24;
+    --purple:#a78bfa;--purple-bg:#1e1633;
+    --amber:#fbbf24;--amber-bg:#2a1f0a;
+    --blue:#60a5fa;--blue-bg:#0e1f35;
+    --coral:#fb7185;--coral-bg:#2a0e16;
+    --green:#86efac;--green-bg:#0b2018;
+    --pink:#f472b6;--pink-bg:#2a0e1e;
+    --orange:#fb923c;--orange-bg:#2a1400;
+    --gold:#e2b04a;--gold-bg:#241a05;
+    --code-bg:#0a0d14;
+    --kw:#f9a870;--fn:#79c0ff;--cm:#5a6478;--tp:#f472b6;--str:#a5d6a7;--nm:#ce93d8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px;}
+
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:252px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:100;}
+  .sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+  .sidebar-logo h1{font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;}
+  .sidebar-logo p{font-size:11px;color:var(--muted);margin-top:2px;}
+  .nav-section{padding:0 12px;margin-bottom:8px;}
+  .nav-section-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;}
+  .nav-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .nav-link:hover{background:var(--bg3);color:var(--text);}
+  .nav-link.active{background:var(--bg3);color:var(--gold);font-weight:500;}
+  .nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .sub-links{padding-left:24px;margin-top:2px;}
+  .sub-link{display:block;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;border-radius:6px;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .sub-link:hover{color:var(--text);background:var(--bg3);}
+
+  .main{margin-left:252px;padding:40px 48px;max-width:980px;}
+  .page{display:none;}.page.active{display:block;}
+
+  .page-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .page-header .breadcrumb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .page-header h2{font-size:26px;font-weight:600;margin-bottom:6px;}
+  .page-header p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+  .badge-teal  {background:var(--teal-bg);  color:var(--teal);  border:1px solid #1a5c44;}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid #3d2d6e;}
+  .badge-amber {background:var(--amber-bg); color:var(--amber); border:1px solid #6b4c0f;}
+  .badge-blue  {background:var(--blue-bg);  color:var(--blue);  border:1px solid #1a3a5c;}
+  .badge-coral {background:var(--coral-bg); color:var(--coral); border:1px solid #5c1a27;}
+  .badge-pink  {background:var(--pink-bg);  color:var(--pink);  border:1px solid #5c1a3a;}
+  .badge-green {background:var(--green-bg); color:var(--green); border:1px solid #155a30;}
+  .badge-orange{background:var(--orange-bg);color:var(--orange);border:1px solid #6b3200;}
+  .badge-gold  {background:var(--gold-bg);  color:var(--gold);  border:1px solid #6b4a10;}
+
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;}
+  .card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card-title .icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+  .lang-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 5px;}
+  .en-block{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:var(--text);margin-bottom:8px;}
+  .hi-block{background:var(--purple-bg);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:#c4b5fd;margin-bottom:8px;}
+
+  .code-wrap{position:relative;margin:12px 0;}
+  .code-label{background:var(--bg3);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:7px 14px;font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+  .copy-btn{font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all .15s;}
+  .copy-btn:hover{color:var(--teal);border-color:var(--teal);}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;white-space:pre;}
+  .kw{color:var(--kw);}.fn{color:var(--fn);}.cm{color:var(--cm);font-style:italic;}
+  .tp{color:var(--tp);}.st{color:var(--str);}.nm{color:var(--nm);}
+
+  .dry-run{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0;overflow-x:auto;}
+  .dry-run-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+  .step{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .step-num{font-size:10px;font-weight:600;color:var(--muted);min-width:72px;}
+  .arr-row{display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap;}
+  .a-box{min-width:34px;height:32px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);padding:0 6px;font-family:'JetBrains Mono',monospace;}
+  .a-box.hi   {background:var(--amber-bg); color:var(--amber); border-color:#6b4c0f;}
+  .a-box.found{background:var(--green-bg); color:var(--green); border-color:#155a30;}
+  .a-box.fail {background:var(--coral-bg); color:var(--coral); border-color:#5c1a27;}
+  .a-box.teal {background:var(--teal-bg);  color:var(--teal);  border-color:#1a5c44;}
+  .a-box.blue {background:var(--blue-bg);  color:var(--blue);  border-color:#1a3a5c;}
+  .a-box.pink {background:var(--pink-bg);  color:var(--pink);  border-color:#5c1a3a;}
+  .a-box.gold {background:var(--gold-bg);  color:var(--gold);  border-color:#6b4a10;}
+  .a-box.purp {background:var(--purple-bg);color:var(--purple);border-color:#3d2d6e;}
+
+  .step-info{font-size:12px;color:var(--muted);flex:1;min-width:160px;}
+  .step-result{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+  .sr-hi  {background:var(--coral-bg); color:var(--coral);}
+  .sr-low {background:var(--amber-bg); color:var(--amber);}
+  .sr-eq  {background:var(--green-bg); color:var(--green);}
+  .sr-pink{background:var(--pink-bg);  color:var(--pink);}
+  .sr-gold{background:var(--gold-bg);  color:var(--gold);}
+
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;}
+  .tbl th{background:var(--bg3);color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+  .tbl td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.6;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl tr:hover td{background:var(--bg3);}
+
+  .divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+  .tip {border-left:3px solid var(--teal); background:var(--teal-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#6ee7c0;margin:12px 0;line-height:1.7;}
+  .warn{border-left:3px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#fcd97a;margin:12px 0;line-height:1.7;}
+  .info{border-left:3px solid var(--blue); background:var(--blue-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#93c5fd;margin:12px 0;line-height:1.7;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0;}
+  .mini-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.7;}
+  .mini-card b{font-weight:600;display:block;margin-bottom:4px;}
+  .sub-heading{font-size:14px;font-weight:600;margin:22px 0 10px;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .sub-heading::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--gold);display:block;}
+  code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:4px;color:var(--teal);}
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+  
+  /* Mobile Navigation Styles (Premium Drawer UI) */
+  .mobile-header {
+    display: none;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+    background: rgba(22, 27, 39, 0.85); /* Matches --bg2 with transparency */
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    height: 60px;
+  }
+
+  .mobile-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+
+  .menu-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .menu-toggle svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-header {
+      display: flex;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      height: 100vh;
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      box-shadow: none;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 15px 0 45px rgba(0, 0, 0, 0.6);
+    }
+
+    .sidebar.open ~ .sidebar-overlay {
+      display: block;
+      opacity: 1;
+    }
+
+    .main {
+      margin-left: 0;
+      padding: 84px 16px 40px; /* Accounts for the 60px fixed header + 24px space */
+      max-width: 100%;
+    }
+
+    .grid2, .grid3, .cx-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+</style>
+</head>
+
+<body>
+<div class="mobile-header">
+  <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  </button>
+  <h2>Graphs Patterns</h2>
+</div>
+
+
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Graphs Patterns · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Graph Patterns</div>
+
+    <button class="nav-link active" onclick="showPage('p0',this)">
+      <span class="nav-dot" style="background:#e2b04a"></span>Graph Basics
+    </button>
+    <div class="sub-links" id="sub0">
+      <button class="sub-link" onclick="scrollTo2('g-repr')">Representation</button>
+      <button class="sub-link" onclick="scrollTo2('g-types')">Types of Graphs</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#60a5fa"></span>Traversal
+    </button>
+    <div class="sub-links" id="sub1" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('tr-bfs')">BFS</button>
+      <button class="sub-link" onclick="scrollTo2('tr-dfs')">DFS</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#fb7185"></span>Cycle Detection
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('cy-directed')">Directed Graph</button>
+      <button class="sub-link" onclick="scrollTo2('cy-undirected')">Undirected Graph</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Topological Sort
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('tp-kahn')">Kahn's (BFS in-degree)</button>
+      <button class="sub-link" onclick="scrollTo2('tp-dfs')">DFS-based Topo Sort</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p4',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>Shortest Path
+    </button>
+    <div class="sub-links" id="sub4" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('sp-dijkstra')">Dijkstra</button>
+      <button class="sub-link" onclick="scrollTo2('sp-bellman')">Bellman-Ford</button>
+      <button class="sub-link" onclick="scrollTo2('sp-floyd')">Floyd-Warshall</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p5',this)">
+      <span class="nav-dot" style="background:#1dd6a0"></span>Spanning Tree
+    </button>
+    <div class="sub-links" id="sub5" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('st-kruskal')">Kruskal's</button>
+      <button class="sub-link" onclick="scrollTo2('st-prim')">Prim's</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p6',this)">
+      <span class="nav-dot" style="background:#fb923c"></span>Union-Find (DSU)
+    </button>
+    <div class="sub-links" id="sub6" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('dsu-impl')">DSU Implementation</button>
+      <button class="sub-link" onclick="scrollTo2('dsu-cycle')">Cycle in Undirected</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p7',this)">
+      <span class="nav-dot" style="background:#f472b6"></span>Bipartite / 0-1 BFS
+    </button>
+    <div class="sub-links" id="sub7" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('bi-check')">Bipartite Check</button>
+      <button class="sub-link" onclick="scrollTo2('bi-01bfs')">0-1 BFS</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p8',this)">
+      <span class="nav-dot" style="background:#e2b04a"></span>Comparison Table
+    </button>
+  </div>
+</nav>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+
+<main class="main">
+
+<!-- ══════════ PAGE 0 — BASICS ══════════ -->
+<div class="page active" id="p0">
+  <div class="page-header">
+    <div class="breadcrumb">Graphs · Foundation</div>
+    <h2>🕸️ Graph — Basics</h2>
+    <p>Nodes (vertices) aur Edges ka collection. Real world ka sabse versatile data structure — roads, social networks, dependencies sab graphs hain.</p>
+    <div class="badge-row">
+      <span class="badge badge-gold">V nodes, E edges</span>
+      <span class="badge badge-blue">Adjacency List</span>
+      <span class="badge badge-teal">Directed / Undirected</span>
+    </div>
+  </div>
+
+  <div id="g-repr">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--gold-bg)">🗂️</div>Graph Representation</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>Adjacency List</b> (preferred): <code>vector&lt;vector&lt;int&gt;&gt; adj(V)</code>. Space O(V+E). Fast neighbor traversal.<br>
+      <b>Adjacency Matrix</b>: <code>int mat[V][V]</code>. Space O(V²). Fast edge check O(1) but wastes space for sparse graphs.<br>
+      <b>Edge List</b>: <code>vector&lt;tuple&lt;w,u,v&gt;&gt;</code>. Used in Kruskal's (sort by weight).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Adjacency List</b> (best choice): <code>vector&lt;vector&lt;int&gt;&gt; adj(V)</code>. Space O(V+E). Neighbors jaldi traverse.<br>
+      <b>Adjacency Matrix</b>: Space O(V²) — dense graph ke liye theek, sparse ke liye waste.<br>
+      <b>Edge List</b>: <code>vector&lt;tuple&lt;w,u,v&gt;&gt;</code>. Kruskal's mein weight se sort karne ke liye use hota hai.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Graph Setup</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> V = <span class="nm">5</span>; <span class="cm">// 5 nodes: 0,1,2,3,4</span>
+<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; adj(V);   <span class="cm">// Unweighted adjacency list</span>
+<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;&gt; wadj(V); <span class="cm">// Weighted: {neighbor, weight}</span>
+
+<span class="cm">// Edge add karo (undirected)</span>
+<span class="kw">auto</span> <span class="fn">addEdge</span> = [&amp;](<span class="tp">int</span> u, <span class="tp">int</span> v, <span class="tp">int</span> w = <span class="nm">1</span>) {
+    adj[u].push_back(v);
+    adj[v].push_back(u);    <span class="cm">// directed ke liye yeh line hatao</span>
+    wadj[u].push_back({v, w});
+    wadj[v].push_back({u, w});
+};
+
+<span class="cm">// Input from competitive programming style</span>
+<span class="tp">int</span> E; cin &gt;&gt; E;
+<span class="kw">while</span> (E--) {
+    <span class="tp">int</span> u, v; cin &gt;&gt; u &gt;&gt; v;
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+}</pre>
+    </div>
+  </div>
+  </div>
+
+  <div id="g-types">
+  <div class="sub-heading">Types of Graphs</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">📋</div>Graph Types Cheatsheet</div>
+    <div class="grid2">
+      <div class="mini-card"><b style="color:var(--teal)">Undirected</b>Edge dono taraf. u↔v. Cycle detection, connected components.</div>
+      <div class="mini-card"><b style="color:var(--amber)">Directed (DAG)</b>Edge ek taraf. u→v. Topological sort, dependency resolution.</div>
+      <div class="mini-card"><b style="color:var(--blue)">Weighted</b>Edges pe cost/distance. Shortest path algorithms (Dijkstra, BF).</div>
+      <div class="mini-card"><b style="color:var(--pink)">Bipartite</b>2 groups mein divide. No odd-length cycles. 2-coloring possible.</div>
+    </div>
+    <div class="tip">💡 Interview mein pehle poochho: Directed ya Undirected? Weighted ya Unweighted? Cycles possible? Connected ya disconnected? Yeh decide karta hai kaunsa algorithm use karo!</div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 1 — TRAVERSAL ══════════ -->
+<div class="page" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">Graphs · Pattern 1 of 7</div>
+    <h2>🔍 Traversal — BFS & DFS</h2>
+    <p>Graph ke saare nodes visit karo. BFS = level by level (queue). DFS = depth first (stack/recursion).</p>
+    <div class="badge-row">
+      <span class="badge badge-blue">BFS = Queue</span>
+      <span class="badge badge-purple">DFS = Recursion/Stack</span>
+      <span class="badge badge-teal">O(V+E) both</span>
+    </div>
+  </div>
+
+  <div id="tr-bfs">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🌊</div>BFS — Breadth First Search</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Use a queue. Enqueue start node, mark visited. While queue not empty: dequeue node, process, enqueue unvisited neighbors. Visits all nodes at distance 1, then 2, etc. <b>Guarantees shortest path in unweighted graph.</b></div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Queue use karo. Start node enqueue karo, visited mark karo. Queue khali na ho tab tak: dequeue, process, unvisited neighbors enqueue karo. Pehle distance 1 wale, phir 2 wale. <b>Unweighted graph mein shortest path guarantee!</b></div>
+
+    <div class="dry-run">
+      <div class="dry-run-title">Graph: 0→1,2 | 1→3 | 2→4 — BFS from 0</div>
+      <div class="step"><span class="step-num">Start</span>
+        <div class="arr-row"><div class="a-box teal">Q:[0]</div></div>
+        <div class="step-info">visited={0}</div>
+      </div>
+      <div class="step"><span class="step-num">Pop 0</span>
+        <div class="arr-row"><div class="a-box found">0</div><div class="a-box blue">Q:[1,2]</div></div>
+        <div class="step-info">Process 0. Push neighbors 1,2</div><span class="step-result sr-gold">visit 0</span>
+      </div>
+      <div class="step"><span class="step-num">Pop 1</span>
+        <div class="arr-row"><div class="a-box found">1</div><div class="a-box blue">Q:[2,3]</div></div>
+        <div class="step-info">Process 1. Push neighbor 3</div><span class="step-result sr-gold">visit 1</span>
+      </div>
+      <div class="step"><span class="step-num">Pop 2,3,4</span>
+        <div class="arr-row"><div class="a-box found">2</div><div class="a-box found">3</div><div class="a-box found">4</div></div>
+        <div class="step-info">BFS order: 0,1,2,3,4</div><span class="step-result sr-eq">✅ done</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · BFS Template</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">void</span> <span class="fn">bfs</span>(<span class="tp">int</span> start, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; adj, <span class="tp">int</span> V) {
+    <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt; visited(V, <span class="kw">false</span>);
+    <span class="tp">queue</span>&lt;<span class="tp">int</span>&gt; q;
+    q.push(start); visited[start] = <span class="kw">true</span>;
+
+    <span class="kw">while</span> (!q.empty()) {
+        <span class="tp">int</span> node = q.front(); q.pop();
+        cout &lt;&lt; node &lt;&lt; <span class="st">" "</span>;                 <span class="cm">// process node</span>
+
+        <span class="kw">for</span> (<span class="tp">int</span> nb : adj[node]) {
+            <span class="kw">if</span> (!visited[nb]) {
+                visited[nb] = <span class="kw">true</span>;
+                q.push(nb);
+            }
+        }
+    }
+}
+
+<span class="cm">// Disconnected graph handle karo (multiple components)</span>
+<span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; V; i++)
+    <span class="kw">if</span> (!visited[i]) <span class="fn">bfs</span>(i, adj, V);</pre>
+    </div>
+    <div class="tip">💡 BFS = shortest path in unweighted graph. DFS = connected components, cycle detection, topological sort. Dono O(V+E) hain!</div>
+  </div>
+  </div>
+
+  <div id="tr-dfs">
+  <div class="sub-heading">DFS — Depth First Search</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🌀</div>DFS — Depth First Search</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Use recursion (or explicit stack). Visit a node, mark visited, recurse on all unvisited neighbors. Goes as deep as possible before backtracking. Used for: cycle detection, topological sort, connected components, path finding.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Recursion use karo. Node visit karo, visited mark karo, unvisited neighbors pe recurse karo. Jitna deep ja sako jao, phir backtrack karo. Use: cycle detection, topo sort, connected components, path finding.</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · DFS Template (Recursive + Iterative)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// ══ Recursive DFS ══</span>
+<span class="kw">void</span> <span class="fn">dfs</span>(<span class="tp">int</span> node, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; adj,
+         <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt;&amp; visited) {
+    visited[node] = <span class="kw">true</span>;
+    cout &lt;&lt; node &lt;&lt; <span class="st">" "</span>;
+
+    <span class="kw">for</span> (<span class="tp">int</span> nb : adj[node])
+        <span class="kw">if</span> (!visited[nb])
+            <span class="fn">dfs</span>(nb, adj, visited);
+}
+
+<span class="cm">// ══ Iterative DFS (explicit stack) ══</span>
+<span class="kw">void</span> <span class="fn">dfsIterative</span>(<span class="tp">int</span> start, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; adj, <span class="tp">int</span> V) {
+    <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt; visited(V, <span class="kw">false</span>);
+    <span class="tp">stack</span>&lt;<span class="tp">int</span>&gt; st;
+    st.push(start);
+
+    <span class="kw">while</span> (!st.empty()) {
+        <span class="tp">int</span> node = st.top(); st.pop();
+        <span class="kw">if</span> (visited[node]) <span class="kw">continue</span>;
+        visited[node] = <span class="kw">true</span>;
+        cout &lt;&lt; node &lt;&lt; <span class="st">" "</span>;
+        <span class="kw">for</span> (<span class="tp">int</span> nb : adj[node])
+            <span class="kw">if</span> (!visited[nb]) st.push(nb);
+    }
+}
+<span class="cm">// Connected components: loop over all nodes, call dfs if !visited</span></pre>
+    </div>
+    <div class="grid2">
+      <div class="mini-card"><b style="color:var(--blue)">BFS best for</b>Shortest path (unweighted), level order, min hops, flood fill distance</div>
+      <div class="mini-card"><b style="color:var(--purple)">DFS best for</b>Cycle detection, topo sort, connected components, maze solving, SCC</div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 2 — CYCLE DETECTION ══════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">Graphs · Pattern 2 of 7</div>
+    <h2>🔄 Cycle Detection</h2>
+    <p>Directed aur Undirected graphs mein cycle dhundho — dono ke liye alag approach.</p>
+    <div class="badge-row">
+      <span class="badge badge-coral">Directed: DFS color</span>
+      <span class="badge badge-teal">Undirected: Parent track</span>
+      <span class="badge badge-amber">DSU alternate</span>
+    </div>
+  </div>
+
+  <div id="cy-directed">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">➡️</div>Cycle in Directed Graph (DFS 3-color)</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      Use 3 states: <b>WHITE(0)</b>=unvisited, <b>GRAY(1)</b>=in current DFS path, <b>BLACK(2)</b>=fully processed.<br>
+      If DFS reaches a GRAY node → back edge found → <b>cycle exists!</b><br>
+      If reaches BLACK → already processed, no cycle here.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      3 states: <b>WHITE(0)</b>=nahi dekha, <b>GRAY(1)</b>=current DFS path mein hai, <b>BLACK(2)</b>=poori tarah process ho gaya.<br>
+      DFS mein GRAY node mila → back edge → <b>cycle hai!</b><br>
+      BLACK mila → already done, yahan cycle nahi.
+    </div>
+
+    <div class="dry-run">
+      <div class="dry-run-title">Directed: 0→1→2→0 (cycle!)</div>
+      <div class="step"><span class="step-num">DFS(0)</span>
+        <div class="arr-row"><div class="a-box hi">0=GRAY</div><div class="a-box">1=W</div><div class="a-box">2=W</div></div>
+        <div class="step-info">Mark 0 as GRAY (in path)</div>
+      </div>
+      <div class="step"><span class="step-num">DFS(1)</span>
+        <div class="arr-row"><div class="a-box hi">0=GRAY</div><div class="a-box hi">1=GRAY</div><div class="a-box">2=W</div></div>
+      </div>
+      <div class="step"><span class="step-num">DFS(2)</span>
+        <div class="arr-row"><div class="a-box hi">0=GRAY</div><div class="a-box hi">1=GRAY</div><div class="a-box hi">2=GRAY</div></div>
+        <div class="step-info">2's neighbor = 0. 0 is GRAY! → CYCLE!</div>
+        <span class="step-result sr-hi">CYCLE ✅</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Cycle in Directed Graph</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// 0=WHITE, 1=GRAY (in stack), 2=BLACK (done)</span>
+<span class="tp">bool</span> <span class="fn">dfsCycle</span>(<span class="tp">int</span> node, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; adj,
+              <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; color) {
+    color[node] = <span class="nm">1</span>; <span class="cm">// GRAY — currently in DFS path</span>
+
+    <span class="kw">for</span> (<span class="tp">int</span> nb : adj[node]) {
+        <span class="kw">if</span> (color[nb] == <span class="nm">1</span>) <span class="kw">return true</span>;  <span class="cm">// GRAY → back edge → cycle!</span>
+        <span class="kw">if</span> (color[nb] == <span class="nm">0</span>)              <span class="cm">// WHITE → explore</span>
+            <span class="kw">if</span> (<span class="fn">dfsCycle</span>(nb, adj, color)) <span class="kw">return true</span>;
+    }
+    color[node] = <span class="nm">2</span>; <span class="cm">// BLACK — fully processed</span>
+    <span class="kw">return false</span>;
+}
+
+<span class="tp">bool</span> <span class="fn">hasCycleDirected</span>(<span class="tp">int</span> V, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; adj) {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; color(V, <span class="nm">0</span>); <span class="cm">// all WHITE initially</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; V; i++)
+        <span class="kw">if</span> (color[i] == <span class="nm">0</span>)
+            <span class="kw">if</span> (<span class="fn">dfsCycle</span>(i, adj, color)) <span class="kw">return true</span>;
+    <span class="kw">return false</span>;
+}</pre>
+    </div>
+    <div class="tip">💡 Directed graph mein <b>GRAY = currently on DFS stack</b>. Back edge to GRAY node = cycle. BLACK node pe wapas aana = no cycle (already processed subtree).</div>
+  </div>
+  </div>
+
+  <div id="cy-undirected">
+  <div class="sub-heading">Cycle in Undirected Graph</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">↔️</div>Cycle in Undirected Graph (Parent tracking)</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">DFS with parent tracking. If a visited neighbor is NOT the parent → back edge → cycle! Must track parent to avoid false positives (u→v→u is not a cycle in undirected).</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">DFS mein parent track karo. Agar visited neighbor parent nahi hai → back edge → cycle! Parent track karna zaroori hai — undirected mein u→v→u ko false cycle mat samjho (woh toh same edge hai).</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Cycle in Undirected Graph</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">bool</span> <span class="fn">dfsUndirected</span>(<span class="tp">int</span> node, <span class="tp">int</span> parent,
+                    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; adj,
+                    <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt;&amp; visited) {
+    visited[node] = <span class="kw">true</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> nb : adj[node]) {
+        <span class="kw">if</span> (!visited[nb]) {
+            <span class="kw">if</span> (<span class="fn">dfsUndirected</span>(nb, node, adj, visited))
+                <span class="kw">return true</span>;
+        } <span class="kw">else if</span> (nb != parent) {  <span class="cm">// visited + not parent = cycle!</span>
+            <span class="kw">return true</span>;
+        }
+    }
+    <span class="kw">return false</span>;
+}
+
+<span class="tp">bool</span> <span class="fn">hasCycleUndirected</span>(<span class="tp">int</span> V, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; adj) {
+    <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt; visited(V, <span class="kw">false</span>);
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; V; i++)
+        <span class="kw">if</span> (!visited[i])
+            <span class="kw">if</span> (<span class="fn">dfsUndirected</span>(i, -<span class="nm">1</span>, adj, visited)) <span class="kw">return true</span>;
+    <span class="kw">return false</span>;
+}
+<span class="cm">// Alternative: Use DSU (Union-Find) — add edge u-v,</span>
+<span class="cm">// if find(u)==find(v) before union → cycle!</span></pre>
+    </div>
+    <div class="warn">⚠️ Undirected graph mein visited neighbor = parent hona normal hai (same edge). Sirf non-parent visited neighbor = cycle.</div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 3 — TOPOLOGICAL SORT ══════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">Graphs · Pattern 3 of 7</div>
+    <h2>📋 Topological Sort</h2>
+    <p>DAG (Directed Acyclic Graph) ke nodes ko linear order mein arrange karo — sabse pehle woh node jo kisi pe depend nahi karta.</p>
+    <div class="badge-row">
+      <span class="badge badge-purple">Only for DAG</span>
+      <span class="badge badge-blue">Kahn's = BFS</span>
+      <span class="badge badge-teal">DFS post-order</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">📋</div>Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">Topological order: for every directed edge u→v, u comes before v in the ordering. Only possible in a DAG (no cycles). Used in: course schedule, build order, task dependencies.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Topo order: har directed edge u→v ke liye, u order mein v se pehle aata hai. Sirf DAG mein possible (cycles nahi). Use: course schedule, build order, task dependencies ka sequence.</div>
+  </div>
+
+  <div id="tp-kahn">
+  <div class="sub-heading">Algorithm 1 — Kahn's Algorithm (BFS / In-degree)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🔢</div>Kahn's Algorithm<span class="badge badge-blue">BFS In-degree</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      1. Compute in-degree of all nodes.<br>
+      2. Enqueue all nodes with in-degree 0 (no dependencies).<br>
+      3. BFS: dequeue node, add to result, decrease in-degree of neighbors. If neighbor in-degree → 0, enqueue.<br>
+      4. If result has all V nodes → valid topo order. Else → cycle exists!
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      1. Saare nodes ka in-degree calculate karo.<br>
+      2. In-degree 0 wale nodes queue mein daalo (kisi pe depend nahi).<br>
+      3. BFS: dequeue, result mein add, neighbors ka in-degree ghataao. 0 ho gaya → queue mein daalo.<br>
+      4. Result mein V nodes → valid. Kam hain → cycle hai!
+    </div>
+
+    <div class="dry-run">
+      <div class="dry-run-title">Edges: 5→0, 5→2, 4→0, 4→1, 2→3, 3→1 — Topo Sort</div>
+      <div class="step"><span class="step-num">In-degrees</span>
+        <div class="arr-row">
+          <div class="a-box">0:2</div><div class="a-box">1:2</div><div class="a-box">2:1</div>
+          <div class="a-box">3:1</div><div class="a-box gold">4:0</div><div class="a-box gold">5:0</div>
+        </div>
+        <div class="step-info">Nodes 4,5 have in-degree 0 → enqueue</div>
+      </div>
+      <div class="step"><span class="step-num">Pop 4,5</span>
+        <div class="arr-row"><div class="a-box found">4</div><div class="a-box found">5</div></div>
+        <div class="step-info">Reduce neighbors. 0→in=0, 1→in=1, 2→in=0. Enqueue 0,2</div>
+        <span class="step-result sr-gold">result:[4,5]</span>
+      </div>
+      <div class="step"><span class="step-num">Pop 0,2</span>
+        <div class="arr-row"><div class="a-box found">0</div><div class="a-box found">2</div></div>
+        <div class="step-info">2→neighbor 3 in-degree→0. Enqueue 3</div>
+        <span class="step-result sr-gold">result:[4,5,0,2]</span>
+      </div>
+      <div class="step"><span class="step-num">Pop 3,1</span>
+        <div class="arr-row"><div class="a-box found">3</div><div class="a-box found">1</div></div>
+        <span class="step-result sr-eq">✅ [4,5,0,2,3,1]</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Kahn's Algorithm (BFS Topo Sort)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">topoSortKahn</span>(<span class="tp">int</span> V, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; adj) {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; indegree(V, <span class="nm">0</span>);
+    <span class="kw">for</span> (<span class="tp">int</span> u = <span class="nm">0</span>; u &lt; V; u++)
+        <span class="kw">for</span> (<span class="tp">int</span> v : adj[u]) indegree[v]++;
+
+    <span class="tp">queue</span>&lt;<span class="tp">int</span>&gt; q;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; V; i++)
+        <span class="kw">if</span> (indegree[i] == <span class="nm">0</span>) q.push(i);
+
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; order;
+    <span class="kw">while</span> (!q.empty()) {
+        <span class="tp">int</span> node = q.front(); q.pop();
+        order.push_back(node);
+        <span class="kw">for</span> (<span class="tp">int</span> nb : adj[node])
+            <span class="kw">if</span> (--indegree[nb] == <span class="nm">0</span>) q.push(nb);
+    }
+    <span class="cm">// Cycle check: if order.size() != V → cycle exists</span>
+    <span class="kw">return</span> order.size() == V ? order : <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;{};
+}
+<span class="cm">// LC 207 Course Schedule, LC 210 Course Schedule II</span></pre>
+    </div>
+    <div class="tip">💡 Kahn's algorithm ek saath topo sort + cycle detection karta hai! Agar result mein V se kam nodes hain → cycle hai. Interviews mein yahi preferred approach hai.</div>
+  </div>
+  </div>
+
+  <div id="tp-dfs">
+  <div class="sub-heading">Algorithm 2 — DFS-based Topological Sort</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🌀</div>DFS Topo Sort<span class="badge badge-purple">Post-order Stack</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">DFS on all unvisited nodes. After fully processing a node (all descendants done) → push to a <b>stack</b>. Pop stack at end = topological order. Node pushed last = processed first = no dependencies!</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Saare unvisited nodes pe DFS karo. Node poori tarah process hone ke baad (saare descendants done) → <b>stack</b> mein push karo. Ant mein stack pop karo = topological order. Jo pehle process hua woh stack mein baad mein push hua → pop karne par pehle aayega.</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · DFS Topological Sort</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">void</span> <span class="fn">dfsTopo</span>(<span class="tp">int</span> node, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; adj,
+             <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt;&amp; visited, <span class="tp">stack</span>&lt;<span class="tp">int</span>&gt;&amp; st) {
+    visited[node] = <span class="kw">true</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> nb : adj[node])
+        <span class="kw">if</span> (!visited[nb])
+            <span class="fn">dfsTopo</span>(nb, adj, visited, st);
+    st.push(node);  <span class="cm">// POST-ORDER: saare descendants ke baad push</span>
+}
+
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">topoSortDFS</span>(<span class="tp">int</span> V, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; adj) {
+    <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt; visited(V, <span class="kw">false</span>);
+    <span class="tp">stack</span>&lt;<span class="tp">int</span>&gt; st;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; V; i++)
+        <span class="kw">if</span> (!visited[i]) <span class="fn">dfsTopo</span>(i, adj, visited, st);
+
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; order;
+    <span class="kw">while</span> (!st.empty()) { order.push_back(st.top()); st.pop(); }
+    <span class="kw">return</span> order;
+}</pre>
+    </div>
+    <div class="tip">💡 Kahn's preferred hai — cycle detect bhi karta hai. DFS topo sort use karo jab DFS already chal rahi ho (e.g. SCC algorithms mein).</div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 4 — SHORTEST PATH ══════════ -->
+<div class="page" id="p4">
+  <div class="page-header">
+    <div class="breadcrumb">Graphs · Pattern 4 of 7</div>
+    <h2>📍 Shortest Path</h2>
+    <p>Source se destination tak minimum cost path. Algorithm choice depends on: negative edges? single/all pairs?</p>
+    <div class="badge-row">
+      <span class="badge badge-amber">Dijkstra: no neg edges</span>
+      <span class="badge badge-coral">Bellman-Ford: neg edges</span>
+      <span class="badge badge-blue">Floyd-Warshall: all pairs</span>
+    </div>
+  </div>
+
+  <div id="sp-dijkstra">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🗺️</div>Dijkstra's Algorithm<span class="badge badge-amber">O((V+E) log V)</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Greedy: always expand the node with minimum known distance. Use a <b>min-heap (priority queue)</b>. Initialize dist[source]=0, all others=INF. At each step: pop minimum distance node, relax neighbors. <b>Only works with non-negative edge weights.</b>
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Greedy approach: hamesha minimum known distance wala node expand karo. <b>Min-heap (priority queue)</b> use karo. dist[source]=0, baaki INF. Har step: minimum distance node pop karo, neighbors relax karo. <b>Sirf non-negative weights ke saath!</b>
+    </div>
+
+    <div class="dry-run">
+      <div class="dry-run-title">Graph: 0→1(4), 0→2(1), 2→1(2), 1→3(1) — Shortest from 0</div>
+      <div class="step"><span class="step-num">Init</span>
+        <div class="arr-row">
+          <div class="a-box teal">d[0]=0</div><div class="a-box">d[1]=∞</div>
+          <div class="a-box">d[2]=∞</div><div class="a-box">d[3]=∞</div>
+        </div>
+        <div class="step-info">heap:{(0,0)}</div>
+      </div>
+      <div class="step"><span class="step-num">Pop (0,0)</span>
+        <div class="arr-row">
+          <div class="a-box found">d[0]=0</div><div class="a-box hi">d[1]=4</div>
+          <div class="a-box hi">d[2]=1</div><div class="a-box">d[3]=∞</div>
+        </div>
+        <div class="step-info">Relax 0→1(4), 0→2(1). heap:{(1,2),(4,1)}</div>
+      </div>
+      <div class="step"><span class="step-num">Pop (1,2)</span>
+        <div class="arr-row">
+          <div class="a-box found">d[0]=0</div><div class="a-box hi">d[1]=3</div>
+          <div class="a-box found">d[2]=1</div><div class="a-box">d[3]=∞</div>
+        </div>
+        <div class="step-info">2→1: 1+2=3 &lt; 4 → update d[1]=3</div><span class="step-result sr-gold">relax!</span>
+      </div>
+      <div class="step"><span class="step-num">Pop (3,1)</span>
+        <div class="arr-row">
+          <div class="a-box found">d[0]=0</div><div class="a-box found">d[1]=3</div>
+          <div class="a-box found">d[2]=1</div><div class="a-box found">d[3]=4</div>
+        </div>
+        <span class="step-result sr-eq">✅ [0,4,1,4]→[0,3,1,4]</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Dijkstra's Algorithm</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">dijkstra</span>(<span class="tp">int</span> src, <span class="tp">int</span> V,
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;&gt;&amp; adj) { <span class="cm">// {neighbor, weight}</span>
+
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; dist(V, INT_MAX);
+    dist[src] = <span class="nm">0</span>;
+    <span class="cm">// min-heap: {distance, node}</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;, <span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;,
+                   greater&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;&gt; pq;
+    pq.push({<span class="nm">0</span>, src});
+
+    <span class="kw">while</span> (!pq.empty()) {
+        <span class="kw">auto</span> [d, u] = pq.top(); pq.pop();
+
+        <span class="kw">if</span> (d &gt; dist[u]) <span class="kw">continue</span>; <span class="cm">// stale entry skip karo</span>
+
+        <span class="kw">for</span> (<span class="kw">auto</span> [v, w] : adj[u]) {
+            <span class="kw">if</span> (dist[u] + w &lt; dist[v]) {
+                dist[v] = dist[u] + w;  <span class="cm">// RELAX</span>
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    <span class="kw">return</span> dist;
+}</pre>
+    </div>
+    <div class="tip">💡 <code>if (d &gt; dist[u]) continue</code> — stale entries skip karna important hai! Same node ko multiple baar process hone se bachata hai. O((V+E) log V).</div>
+    <div class="warn">⚠️ Negative weights ke saath Dijkstra WRONG answers deta hai. Negative edges → Bellman-Ford use karo!</div>
+  </div>
+  </div>
+
+  <div id="sp-bellman">
+  <div class="sub-heading">Bellman-Ford — Negative Edges</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">⚡</div>Bellman-Ford<span class="badge badge-coral">O(V·E)</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Relax ALL edges V-1 times. After V-1 relaxations, shortest paths are found (shortest path can have at most V-1 edges). Check for negative cycles: if any edge can still be relaxed after V-1 iterations → negative cycle!
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      V-1 baar saare edges relax karo. V-1 relaxations ke baad shortest paths mil jaate hain (max V-1 edges ho sakti hain path mein). Negative cycle check: agar V-1 ke baad bhi koi edge relax ho sake → negative cycle!
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Bellman-Ford</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">bellmanFord</span>(<span class="tp">int</span> src, <span class="tp">int</span> V,
+    <span class="tp">vector</span>&lt;<span class="tp">tuple</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;&amp; edges) { <span class="cm">// {u, v, weight}</span>
+
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; dist(V, INT_MAX);
+    dist[src] = <span class="nm">0</span>;
+
+    <span class="cm">// V-1 baar saare edges relax karo</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; V - <span class="nm">1</span>; i++) {
+        <span class="kw">for</span> (<span class="kw">auto</span> [u, v, w] : edges) {
+            <span class="kw">if</span> (dist[u] != INT_MAX &amp;&amp; dist[u] + w &lt; dist[v])
+                dist[v] = dist[u] + w;  <span class="cm">// RELAX</span>
+        }
+    }
+
+    <span class="cm">// Negative cycle check — Vth iteration mein bhi relax? → cycle!</span>
+    <span class="kw">for</span> (<span class="kw">auto</span> [u, v, w] : edges) {
+        <span class="kw">if</span> (dist[u] != INT_MAX &amp;&amp; dist[u] + w &lt; dist[v]) {
+            cout &lt;&lt; <span class="st">"Negative cycle exists!"</span>;
+            <span class="kw">return</span> {};
+        }
+    }
+    <span class="kw">return</span> dist;
+}</pre>
+    </div>
+    <div class="grid2">
+      <div class="mini-card"><b style="color:var(--amber)">Dijkstra</b>Non-negative weights. O((V+E)logV). Faster. Priority Queue.</div>
+      <div class="mini-card"><b style="color:var(--coral)">Bellman-Ford</b>Negative weights OK. Detects negative cycles. O(V·E). Slower.</div>
+    </div>
+  </div>
+  </div>
+
+  <div id="sp-floyd">
+  <div class="sub-heading">Floyd-Warshall — All Pairs Shortest Path</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🔲</div>Floyd-Warshall<span class="badge badge-blue">O(V³)</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Find shortest path between <b>every pair</b> of nodes. DP approach: <code>dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])</code> for every intermediate node k. Simple triple nested loop!</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block"><b>Har pair</b> ke beech shortest path nikalo. DP: har intermediate node k ke liye: <code>dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])</code>. Simple triple nested loop! Dense graphs ke liye use karo.</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Floyd-Warshall</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; <span class="fn">floydWarshall</span>(<span class="tp">int</span> V,
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt; dist) { <span class="cm">// dist matrix, INF if no edge</span>
+
+    <span class="cm">// dist[i][i] = 0 (self)</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; V; i++) dist[i][i] = <span class="nm">0</span>;
+
+    <span class="cm">// k = intermediate node</span>
+    <span class="kw">for</span> (<span class="tp">int</span> k = <span class="nm">0</span>; k &lt; V; k++)
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; V; i++)
+            <span class="kw">for</span> (<span class="tp">int</span> j = <span class="nm">0</span>; j &lt; V; j++)
+                <span class="kw">if</span> (dist[i][k] != INF &amp;&amp; dist[k][j] != INF)
+                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+
+    <span class="cm">// Negative cycle: dist[i][i] < 0 → cycle!</span>
+    <span class="kw">return</span> dist;
+}</pre>
+    </div>
+    <div class="tip">💡 Floyd-Warshall O(V³) — small graphs (V≤500) ke liye. Large graphs mein V baar Dijkstra run karo (O(V(V+E)logV)) — better hoga.</div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 5 — SPANNING TREE ══════════ -->
+<div class="page" id="p5">
+  <div class="page-header">
+    <div class="breadcrumb">Graphs · Pattern 5 of 7</div>
+    <h2>🌲 Minimum Spanning Tree</h2>
+    <p>Saare nodes ko connect karo minimum total weight se — exactly V-1 edges, no cycles.</p>
+    <div class="badge-row">
+      <span class="badge badge-teal">Kruskal: sort edges</span>
+      <span class="badge badge-blue">Prim: grow from node</span>
+      <span class="badge badge-amber">Both O(E log E)</span>
+    </div>
+  </div>
+
+  <div id="st-kruskal">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🌿</div>Kruskal's Algorithm<span class="badge badge-teal">Sort + DSU</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Sort all edges by weight. Greedily pick the smallest edge. If it connects two different components (DSU check) → add to MST. If same component → skip (would create cycle). Repeat until V-1 edges picked.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Saare edges weight se sort karo. Greedy: sabse chhota edge lo. Agar dono endpoints alag components mein hain (DSU check) → MST mein add karo. Same component → skip (cycle ban jaata). V-1 edges tak repeat karo.</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Kruskal's MST</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// DSU (Union-Find) — needed for Kruskal</span>
+<span class="kw">struct</span> <span class="tp">DSU</span> {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; parent, rank;
+    <span class="fn">DSU</span>(<span class="tp">int</span> n) : parent(n), rank(n,<span class="nm">0</span>) {
+        iota(parent.begin(), parent.end(), <span class="nm">0</span>); }
+    <span class="tp">int</span> <span class="fn">find</span>(<span class="tp">int</span> x) {
+        <span class="kw">return</span> parent[x]==x ? x : parent[x]=<span class="fn">find</span>(parent[x]); }
+    <span class="tp">bool</span> <span class="fn">unite</span>(<span class="tp">int</span> a, <span class="tp">int</span> b) {
+        a=<span class="fn">find</span>(a); b=<span class="fn">find</span>(b); <span class="kw">if</span>(a==b) <span class="kw">return false</span>;
+        <span class="kw">if</span>(rank[a]&lt;rank[b]) swap(a,b);
+        parent[b]=a; <span class="kw">if</span>(rank[a]==rank[b]) rank[a]++;
+        <span class="kw">return true</span>; }
+};
+
+<span class="tp">int</span> <span class="fn">kruskalMST</span>(<span class="tp">int</span> V, <span class="tp">vector</span>&lt;<span class="tp">tuple</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;&amp; edges) {
+    sort(edges.begin(), edges.end()); <span class="cm">// sort by weight</span>
+    <span class="tp">DSU</span> dsu(V);
+    <span class="tp">int</span> mstWeight = <span class="nm">0</span>, edgeCount = <span class="nm">0</span>;
+
+    <span class="kw">for</span> (<span class="kw">auto</span> [w, u, v] : edges) {
+        <span class="kw">if</span> (dsu.<span class="fn">unite</span>(u, v)) {  <span class="cm">// different components → add!</span>
+            mstWeight += w;
+            <span class="kw">if</span> (++edgeCount == V-<span class="nm">1</span>) <span class="kw">break</span>; <span class="cm">// MST complete</span>
+        }
+    }
+    <span class="kw">return</span> mstWeight;
+}</pre>
+    </div>
+  </div>
+  </div>
+
+  <div id="st-prim">
+  <div class="sub-heading">Prim's Algorithm</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🌱</div>Prim's Algorithm<span class="badge badge-blue">Min-Heap + visited</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Start from any node. Grow the MST one edge at a time — always add the minimum weight edge connecting the current MST to an unvisited node. Use a min-heap to efficiently pick minimum edge. Similar to Dijkstra structure!</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Kisi bhi node se start karo. MST ko ek edge at a time badhao — hamesha current MST ko unvisited node se connect karne wali minimum weight edge lo. Min-heap se efficiently pick karo. Dijkstra jaisi structure!</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Prim's MST</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">primMST</span>(<span class="tp">int</span> V, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;&gt;&amp; adj) {
+    <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt; inMST(V, <span class="kw">false</span>);
+    <span class="tp">priority_queue</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;,
+        <span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;, greater&lt;&gt;&gt; pq; <span class="cm">// {weight, node}</span>
+    pq.push({<span class="nm">0</span>, <span class="nm">0</span>}); <span class="cm">// start from node 0, weight 0</span>
+    <span class="tp">int</span> mstWeight = <span class="nm">0</span>;
+
+    <span class="kw">while</span> (!pq.empty()) {
+        <span class="kw">auto</span> [w, u] = pq.top(); pq.pop();
+        <span class="kw">if</span> (inMST[u]) <span class="kw">continue</span>; <span class="cm">// already in MST → skip</span>
+        inMST[u] = <span class="kw">true</span>;
+        mstWeight += w;
+
+        <span class="kw">for</span> (<span class="kw">auto</span> [v, wt] : adj[u])
+            <span class="kw">if</span> (!inMST[v]) pq.push({wt, v});
+    }
+    <span class="kw">return</span> mstWeight;
+}</pre>
+    </div>
+    <div class="grid2">
+      <div class="mini-card"><b style="color:var(--teal)">Kruskal</b>Edge list sort + DSU. Better for sparse graphs. Simpler code.</div>
+      <div class="mini-card"><b style="color:var(--blue)">Prim's</b>Adjacency list + min-heap. Better for dense graphs. Dijkstra-like.</div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 6 — UNION FIND ══════════ -->
+<div class="page" id="p6">
+  <div class="page-header">
+    <div class="breadcrumb">Graphs · Pattern 6 of 7</div>
+    <h2>🔗 Union-Find (DSU)</h2>
+    <p>Disjoint Set Union — efficiently find which component a node belongs to, and merge components in near O(1).</p>
+    <div class="badge-row">
+      <span class="badge badge-orange">Nearly O(1) ops</span>
+      <span class="badge badge-teal">Path compression</span>
+      <span class="badge badge-blue">Union by rank</span>
+    </div>
+  </div>
+
+  <div id="dsu-impl">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--orange-bg)">🔗</div>DSU Full Implementation</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      Two key optimizations: <b>Path Compression</b> (flatten tree during find → O(1) amortized) and <b>Union by Rank</b> (always attach smaller tree under larger → balanced tree). Together give nearly O(1) = O(α(n)) where α is inverse Ackermann.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Do optimizations: <b>Path Compression</b> (find mein tree flatten karo → O(1) amortized) aur <b>Union by Rank</b> (chhote tree ko bade ke neeche lagao → balanced tree). Dono milake nearly O(1) = O(α(n)).
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · DSU with Path Compression + Union by Rank</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">class</span> <span class="tp">DSU</span> {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; parent, rank_, size_;
+<span class="kw">public</span>:
+    <span class="fn">DSU</span>(<span class="tp">int</span> n) : parent(n), rank_(n,<span class="nm">0</span>), size_(n,<span class="nm">1</span>) {
+        iota(parent.begin(), parent.end(), <span class="nm">0</span>);
+    }
+
+    <span class="cm">// Path compression: parent directly root pe point karo</span>
+    <span class="tp">int</span> <span class="fn">find</span>(<span class="tp">int</span> x) {
+        <span class="kw">if</span> (parent[x] != x)
+            parent[x] = <span class="fn">find</span>(parent[x]); <span class="cm">// path compression!</span>
+        <span class="kw">return</span> parent[x];
+    }
+
+    <span class="cm">// Union by rank: chhota tree bade ke neeche</span>
+    <span class="tp">bool</span> <span class="fn">unite</span>(<span class="tp">int</span> a, <span class="tp">int</span> b) {
+        a = <span class="fn">find</span>(a); b = <span class="fn">find</span>(b);
+        <span class="kw">if</span> (a == b) <span class="kw">return false</span>;  <span class="cm">// same component → cycle!</span>
+        <span class="kw">if</span> (rank_[a] &lt; rank_[b]) swap(a, b);
+        parent[b] = a;
+        size_[a] += size_[b];
+        <span class="kw">if</span> (rank_[a] == rank_[b]) rank_[a]++;
+        <span class="kw">return true</span>;
+    }
+
+    <span class="tp">bool</span> <span class="fn">connected</span>(<span class="tp">int</span> a, <span class="tp">int</span> b) { <span class="kw">return</span> <span class="fn">find</span>(a)==<span class="fn">find</span>(b); }
+    <span class="tp">int</span>  <span class="fn">getSize</span>(<span class="tp">int</span> a) { <span class="kw">return</span> size_[<span class="fn">find</span>(a)]; }
+};</pre>
+    </div>
+  </div>
+  </div>
+
+  <div id="dsu-cycle">
+  <div class="sub-heading">DSU — Cycle Detection in Undirected Graph</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--orange-bg)">🔍</div>Cycle Detection using DSU<span class="badge badge-orange">LeetCode 684, 685</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Process edges one by one. For each edge (u,v): if <code>find(u) == find(v)</code> → both already in same component → adding this edge creates a cycle! Otherwise → unite(u,v).</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Edges ek ek karke process karo. Har edge (u,v) ke liye: agar <code>find(u) == find(v)</code> → dono pehle se same component mein hain → yeh edge add karne se cycle ban jaayega! Warna → unite(u,v).</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Redundant Connection (LC 684)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">findRedundantConnection</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; edges) {
+    <span class="tp">int</span> n = edges.size();
+    <span class="tp">DSU</span> dsu(n + <span class="nm">1</span>); <span class="cm">// 1-indexed</span>
+
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; e : edges) {
+        <span class="kw">if</span> (!dsu.<span class="fn">unite</span>(e[<span class="nm">0</span>], e[<span class="nm">1</span>]))  <span class="cm">// unite returns false = same comp</span>
+            <span class="kw">return</span> e;               <span class="cm">// this edge creates cycle!</span>
+    }
+    <span class="kw">return</span> {};
+}
+<span class="cm">// Number of Connected Components (LC 323):</span>
+<span class="cm">// count unique find() values after all unions</span>
+<span class="tp">int</span> <span class="fn">countComponents</span>(<span class="tp">int</span> n, <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; edges) {
+    <span class="tp">DSU</span> dsu(n);
+    <span class="tp">int</span> components = n;
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; e : edges)
+        <span class="kw">if</span> (dsu.<span class="fn">unite</span>(e[<span class="nm">0</span>], e[<span class="nm">1</span>])) components--;
+    <span class="kw">return</span> components;
+}</pre>
+    </div>
+    <div class="tip">💡 DSU 3 problems solve karta hai elegantly: cycle detection, connected components count, minimum spanning tree (Kruskal). Ek template yaad kar lo!</div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ PAGE 7 — BIPARTITE / 0-1 BFS ══════════ -->
+<div class="page" id="p7">
+  <div class="page-header">
+    <div class="breadcrumb">Graphs · Pattern 7 of 7</div>
+    <h2>🎨 Bipartite / Multi-source / 0-1 BFS</h2>
+    <p>Special BFS variants — 2-coloring check, multiple sources simultaneously, 0/1 weighted edges.</p>
+    <div class="badge-row">
+      <span class="badge badge-pink">2-coloring</span>
+      <span class="badge badge-blue">0-1 BFS = Deque</span>
+      <span class="badge badge-teal">Multi-source BFS</span>
+    </div>
+  </div>
+
+  <div id="bi-check">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🎨</div>Bipartite Check — 2-Coloring</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">A graph is bipartite if nodes can be split into 2 groups such that every edge connects nodes from different groups. Check using BFS: color each node alternately (0 or 1). If a neighbor has the same color → NOT bipartite (odd cycle)!</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Bipartite graph = nodes ko 2 groups mein split kar sako aur har edge alag groups ke beech ho. BFS se check: har node ko alternately color karo (0 ya 1). Neighbor ka same color → bipartite NAHI (odd cycle mila)!</div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Bipartite Check</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">bool</span> <span class="fn">isBipartite</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; graph) {
+    <span class="tp">int</span> n = graph.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; color(n, -<span class="nm">1</span>);
+    <span class="kw">for</span> (<span class="tp">int</span> start = <span class="nm">0</span>; start &lt; n; start++) {
+        <span class="kw">if</span> (color[start] != -<span class="nm">1</span>) <span class="kw">continue</span>;
+        <span class="tp">queue</span>&lt;<span class="tp">int</span>&gt; q;
+        q.push(start); color[start] = <span class="nm">0</span>;
+        <span class="kw">while</span> (!q.empty()) {
+            <span class="tp">int</span> node = q.front(); q.pop();
+            <span class="kw">for</span> (<span class="tp">int</span> nb : graph[node]) {
+                <span class="kw">if</span> (color[nb] == -<span class="nm">1</span>) { color[nb] = <span class="nm">1</span> - color[node]; q.push(nb); }
+                <span class="kw">else if</span> (color[nb] == color[node]) <span class="kw">return false</span>;
+            }
+        }
+    }
+    <span class="kw">return true</span>;
+}</pre>
+    </div>
+    <div class="tip">💡 <code>1 - color[node]</code> opposite color deta hai. Bipartite = no odd cycles. LC 785, 886.</div>
+  </div>
+  </div>
+
+  <div id="bi-01bfs">
+  <div class="sub-heading">0-1 BFS — Deque based Shortest Path</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">0️⃣1️⃣</div>0-1 BFS<span class="badge badge-blue">Deque O(V+E)</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">When edge weights are only 0 or 1: use a <b>deque</b>. Weight=0 → push_front (free move). Weight=1 → push_back (costs 1). O(V+E) instead of Dijkstra's O((V+E)logV)!</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Jab weights sirf 0 ya 1 hoon: <b>deque</b> use karo. Weight=0 → push_front. Weight=1 → push_back. O(V+E) milta hai! LC 1368.</div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · 0-1 BFS</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">zeroOneBFS</span>(<span class="tp">int</span> src, <span class="tp">int</span> V,
+    <span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;&gt;&amp; adj) {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; dist(V, INT_MAX);
+    dist[src] = <span class="nm">0</span>;
+    <span class="tp">deque</span>&lt;<span class="tp">int</span>&gt; dq;
+    dq.push_back(src);
+    <span class="kw">while</span> (!dq.empty()) {
+        <span class="tp">int</span> u = dq.front(); dq.pop_front();
+        <span class="kw">for</span> (<span class="kw">auto</span> [v, w] : adj[u]) {
+            <span class="kw">if</span> (dist[u] + w &lt; dist[v]) {
+                dist[v] = dist[u] + w;
+                <span class="kw">if</span> (w == <span class="nm">0</span>) dq.push_front(v);
+                <span class="kw">else</span>         dq.push_back(v);
+            }
+        }
+    }
+    <span class="kw">return</span> dist;
+}</pre>
+    </div>
+    <div class="tip">💡 0-1 BFS = Dijkstra ka O(V+E) version for 0/1 weights. Deque front = free (weight 0), back = cost 1.</div>
+  </div>
+  </div>
+</div>
+
+<!-- COMPARISON PAGE -->
+<div class="page" id="p8">
+  <div class="page-header">
+    <div class="breadcrumb">Graphs · Quick Reference</div>
+    <h2>📊 Graphs — Master Comparison</h2>
+    <p>Kaunsa algorithm kab use karna hai — ek jagah sab kuch.</p>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--gold-bg)">🗺️</div>Algorithm Decision Guide</div>
+    <table class="tbl">
+      <tr><th>Problem Type</th><th>Algorithm</th><th>Time</th><th>Key condition</th></tr>
+      <tr><td>Traversal</td><td style="color:var(--blue)">BFS / DFS</td><td>O(V+E)</td><td>Any graph</td></tr>
+      <tr><td>Shortest (unweighted)</td><td style="color:var(--blue)">BFS</td><td>O(V+E)</td><td>Unweighted</td></tr>
+      <tr><td>Shortest (weighted)</td><td style="color:var(--amber)">Dijkstra</td><td>O((V+E)logV)</td><td>Non-negative weights</td></tr>
+      <tr><td>Negative weights</td><td style="color:var(--coral)">Bellman-Ford</td><td>O(V·E)</td><td>Negative OK</td></tr>
+      <tr><td>All pairs shortest</td><td style="color:var(--blue)">Floyd-Warshall</td><td>O(V³)</td><td>Small V</td></tr>
+      <tr><td>0/1 edge weights</td><td style="color:var(--pink)">0-1 BFS (Deque)</td><td>O(V+E)</td><td>Only 0 or 1 weights</td></tr>
+      <tr><td>Cycle (directed)</td><td style="color:var(--coral)">DFS 3-color</td><td>O(V+E)</td><td>Directed graph</td></tr>
+      <tr><td>Cycle (undirected)</td><td style="color:var(--teal)">DFS+parent / DSU</td><td>O(V+E)</td><td>Undirected graph</td></tr>
+      <tr><td>Topological order</td><td style="color:var(--purple)">Kahn's BFS</td><td>O(V+E)</td><td>DAG only</td></tr>
+      <tr><td>Minimum spanning tree</td><td style="color:var(--teal)">Kruskal / Prim</td><td>O(E logE)</td><td>Connected undirected</td></tr>
+      <tr><td>Components / merge</td><td style="color:var(--orange)">DSU</td><td>O(α(n))≈O(1)</td><td>Any undirected</td></tr>
+      <tr><td>Bipartite check</td><td style="color:var(--pink)">BFS 2-coloring</td><td>O(V+E)</td><td>Any graph</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🧠</div>Decision — Kab kya use karo</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>"Shortest path, unweighted?"</b> → BFS<br>
+      <b>"Shortest path, weighted, no neg?"</b> → Dijkstra<br>
+      <b>"Negative weights?"</b> → Bellman-Ford<br>
+      <b>"All pairs distance?"</b> → Floyd-Warshall<br>
+      <b>"DAG dependency order?"</b> → Kahn's Topo Sort<br>
+      <b>"Cycle in directed?"</b> → DFS 3-color (GRAY check)<br>
+      <b>"Cycle in undirected?"</b> → DFS parent / DSU<br>
+      <b>"MST?"</b> → Kruskal (sparse) / Prim (dense)<br>
+      <b>"Components / merge?"</b> → DSU<br>
+      <b>"2 groups divide?"</b> → Bipartite BFS coloring<br>
+      <b>"Edge weight 0 or 1?"</b> → 0-1 BFS deque
+    </div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="mini-card"><b style="color:var(--blue)">BFS</b>Queue. Level by level. Shortest path unweighted. Multi-source possible.</div>
+      <div class="mini-card"><b style="color:var(--amber)">Dijkstra</b>Min-heap. Greedy. Non-negative weights. Skip stale entries!</div>
+      <div class="mini-card"><b style="color:var(--orange)">DSU</b>Path compression + rank. Nearly O(1). Cycle, components, MST.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">⚠️</div>Common Mistakes</div>
+    <div class="warn">⚠️ <b>Dijkstra with negative edges:</b> Wrong answers! Negative weights → Bellman-Ford use karo.</div>
+    <div class="warn">⚠️ <b>Directed cycle detection:</b> Simple visited[] nahi — 3-color (GRAY/BLACK) zaroori hai!</div>
+    <div class="warn">⚠️ <b>Undirected cycle:</b> <code>nb != parent</code> check karo — u→v→u ko false cycle mat samjho.</div>
+    <div class="warn">⚠️ <b>Topo sort on cyclic graph:</b> Kahn's result size check karo — V se kam = cycle hai!</div>
+    <div class="warn">⚠️ <b>Floyd-Warshall overflow:</b> INF+INF overflow hoga! Guard condition zaroori hai.</div>
+    <div class="tip">💡 <b>Disconnected graphs:</b> Hamesha outer loop — <code>for(i=0;i&lt;V;i++) if(!visited[i]) bfs/dfs(i)</code>. Warna components miss ho jaate hain!</div>
+  </div>
+</div>
+
+</main>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (!sidebar || !overlay) return;
+    sidebar.classList.toggle('open');
+    if (sidebar.classList.contains('open')) {
+      overlay.style.display = 'block';
+      setTimeout(() => overlay.style.opacity = '1', 10);
+    } else {
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.style.display = 'none', 350);
+    }
+  }
+
+  const pages = ['p0','p1','p2','p3','p4','p5','p6','p7','p8'];
+  const subs  = ['sub0','sub1','sub2','sub3','sub4','sub5','sub6','sub7'];
+
+  function showPage(id, btn) {
+    // Auto-close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = i===idx ? 'block' : 'none';
+    });
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    // Auto-close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = i===0 ? 'block' : 'none';
+  });
+</script>
+</body>
+</html>

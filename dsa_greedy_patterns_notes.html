@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Greedy Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:#2a3245;
+    --text:#e8eaf6;--muted:#8892a4;
+    --teal:#1dd6a0;--teal-bg:#0d2e24;
+    --purple:#a78bfa;--purple-bg:#1e1633;
+    --amber:#fbbf24;--amber-bg:#2a1f0a;
+    --blue:#60a5fa;--blue-bg:#0e1f35;
+    --coral:#fb7185;--coral-bg:#2a0e16;
+    --green:#86efac;--green-bg:#0b2018;
+    --pink:#f472b6;--pink-bg:#2a0e1e;
+    --orange:#fb923c;--orange-bg:#2a1400;
+    --code-bg:#0a0d14;
+    --kw:#f9a870;--fn:#79c0ff;--cm:#5a6478;--tp:#f472b6;--str:#a5d6a7;--nm:#ce93d8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px;}
+
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:252px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:100;}
+  .sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+  .sidebar-logo h1{font-size:13px;font-weight:600;color:var(--orange);letter-spacing:.08em;text-transform:uppercase;}
+  .sidebar-logo p{font-size:11px;color:var(--muted);margin-top:2px;}
+  .nav-section{padding:0 12px;margin-bottom:8px;}
+  .nav-section-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;}
+  .nav-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .nav-link:hover{background:var(--bg3);color:var(--text);}
+  .nav-link.active{background:var(--bg3);color:var(--orange);font-weight:500;}
+  .nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .sub-links{padding-left:24px;margin-top:2px;}
+  .sub-link{display:block;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;border-radius:6px;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .sub-link:hover{color:var(--text);background:var(--bg3);}
+
+  .main{margin-left:252px;padding:40px 48px;max-width:980px;}
+  .page{display:none;} .page.active{display:block;}
+
+  .page-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .page-header .breadcrumb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .page-header h2{font-size:26px;font-weight:600;margin-bottom:6px;}
+  .page-header p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+  .badge-teal  {background:var(--teal-bg);  color:var(--teal);  border:1px solid #1a5c44;}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid #3d2d6e;}
+  .badge-amber {background:var(--amber-bg); color:var(--amber); border:1px solid #6b4c0f;}
+  .badge-blue  {background:var(--blue-bg);  color:var(--blue);  border:1px solid #1a3a5c;}
+  .badge-coral {background:var(--coral-bg); color:var(--coral); border:1px solid #5c1a27;}
+  .badge-pink  {background:var(--pink-bg);  color:var(--pink);  border:1px solid #5c1a3a;}
+  .badge-green {background:var(--green-bg); color:var(--green); border:1px solid #155a30;}
+  .badge-orange{background:var(--orange-bg);color:var(--orange);border:1px solid #6b3200;}
+
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;}
+  .card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card-title .icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+  .lang-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 5px;}
+  .en-block{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:var(--text);margin-bottom:8px;}
+  .hi-block{background:var(--purple-bg);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:#c4b5fd;margin-bottom:8px;}
+
+  .code-wrap{position:relative;margin:12px 0;}
+  .code-label{background:var(--bg3);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:7px 14px;font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+  .copy-btn{font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all .15s;}
+  .copy-btn:hover{color:var(--teal);border-color:var(--teal);}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;white-space:pre;}
+  .kw{color:var(--kw);}.fn{color:var(--fn);}.cm{color:var(--cm);font-style:italic;}
+  .tp{color:var(--tp);}.st{color:var(--str);}.nm{color:var(--nm);}
+
+  .dry-run{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0;overflow-x:auto;}
+  .dry-run-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+  .step{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .step-num{font-size:10px;font-weight:600;color:var(--muted);min-width:82px;}
+  .arr-row{display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap;}
+  .a-box{min-width:36px;height:32px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);padding:0 6px;font-family:'JetBrains Mono',monospace;}
+  .a-box.hi    {background:var(--amber-bg); color:var(--amber); border-color:#6b4c0f;}
+  .a-box.match {background:var(--pink-bg);  color:var(--pink);  border-color:#5c1a3a;}
+  .a-box.found {background:var(--green-bg); color:var(--green); border-color:#155a30;}
+  .a-box.fail  {background:var(--coral-bg); color:var(--coral); border-color:#5c1a27;}
+  .a-box.teal  {background:var(--teal-bg);  color:var(--teal);  border-color:#1a5c44;}
+  .a-box.blue  {background:var(--blue-bg);  color:var(--blue);  border-color:#1a3a5c;}
+  .a-box.orng  {background:var(--orange-bg);color:var(--orange);border-color:#6b3200;}
+  .a-box.purp  {background:var(--purple-bg);color:var(--purple);border-color:#3d2d6e;}
+  .a-box.wide  {min-width:60px;}
+
+  .step-info{font-size:12px;color:var(--muted);flex:1;min-width:160px;}
+  .step-result{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+  .sr-high{background:var(--coral-bg); color:var(--coral);}
+  .sr-low {background:var(--amber-bg); color:var(--amber);}
+  .sr-eq  {background:var(--green-bg); color:var(--green);}
+  .sr-pink{background:var(--pink-bg);  color:var(--pink);}
+  .sr-orng{background:var(--orange-bg);color:var(--orange);}
+  .sr-blue{background:var(--blue-bg);  color:var(--blue);}
+  .sr-teal{background:var(--teal-bg);  color:var(--teal);}
+
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;}
+  .tbl th{background:var(--bg3);color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+  .tbl td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.6;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl tr:hover td{background:var(--bg3);}
+
+  .divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+  .tip {border-left:3px solid var(--teal); background:var(--teal-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#6ee7c0;margin:12px 0;line-height:1.7;}
+  .warn{border-left:3px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#fcd97a;margin:12px 0;line-height:1.7;}
+  .info{border-left:3px solid var(--blue); background:var(--blue-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#93c5fd;margin:12px 0;line-height:1.7;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0;}
+  .mini-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.7;}
+  .mini-card b{font-weight:600;display:block;margin-bottom:4px;}
+  .sub-heading{font-size:14px;font-weight:600;margin:22px 0 10px;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .sub-heading::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--orange);display:block;}
+  code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:4px;color:var(--teal);}
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+  
+  /* Mobile Navigation Styles (Premium Drawer UI) */
+  .mobile-header {
+    display: none;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+    background: rgba(22, 27, 39, 0.85); /* Matches --bg2 with transparency */
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    height: 60px;
+  }
+
+  .mobile-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+
+  .menu-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .menu-toggle svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-header {
+      display: flex;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      height: 100vh;
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      box-shadow: none;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 15px 0 45px rgba(0, 0, 0, 0.6);
+    }
+
+    .sidebar.open ~ .sidebar-overlay {
+      display: block;
+      opacity: 1;
+    }
+
+    .main {
+      margin-left: 0;
+      padding: 84px 16px 40px; /* Accounts for the 60px fixed header + 24px space */
+      max-width: 100%;
+    }
+
+    .grid2, .grid3, .cx-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+
+  /* interval timeline bar */
+  .timeline{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+  .t-row{display:flex;align-items:center;gap:8px;}
+  .t-label{font-size:11px;color:var(--muted);min-width:48px;font-family:'JetBrains Mono',monospace;}
+  .t-bar-wrap{flex:1;height:22px;position:relative;background:var(--bg);border-radius:4px;border:1px solid var(--border);}
+  .t-bar{position:absolute;top:3px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;}
+  .t-sel{background:var(--teal-bg);border:1px solid var(--teal);color:var(--teal);}
+  .t-rej{background:var(--coral-bg);border:1px solid var(--coral);color:var(--coral);opacity:.6;}
+  .t-neu{background:var(--bg3);border:1px solid var(--border);color:var(--muted);}
+
+  /* heap / priority queue vis */
+  .heap-row{display:flex;gap:4px;flex-wrap:wrap;margin:4px 0;}
+</style>
+</head>
+
+<body>
+<div class="mobile-header">
+  <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  </button>
+  <h2>Greedy Patterns</h2>
+</div>
+
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Greedy Patterns · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Greedy Patterns</div>
+
+    <button class="nav-link active" onclick="showPage('p0',this)">
+      <span class="nav-dot" style="background:#fb923c"></span>Greedy Basics
+    </button>
+    <div class="sub-links" id="sub0">
+      <button class="sub-link" onclick="scrollTo2('g-what')">What is Greedy</button>
+      <button class="sub-link" onclick="scrollTo2('g-vs-dp')">Greedy vs DP</button>
+      <button class="sub-link" onclick="scrollTo2('g-template')">General Template</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#1dd6a0"></span>Interval Greedy
+    </button>
+    <div class="sub-links" id="sub1" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('iv-activity')">Activity Selection</button>
+      <button class="sub-link" onclick="scrollTo2('iv-nonoverlap')">Non-overlapping Intervals</button>
+      <button class="sub-link" onclick="scrollTo2('iv-minremove')">Minimum Removals</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>Scheduling Greedy
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('sc-deadline')">Deadline Based Scheduling</button>
+      <button class="sub-link" onclick="scrollTo2('sc-profit')">Profit Based Selection</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#60a5fa"></span>Resource Allocation
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('ra-platforms')">Minimum Platforms / Rooms</button>
+      <button class="sub-link" onclick="scrollTo2('ra-meetingrooms')">Meeting Rooms I & II</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p4',this)">
+      <span class="nav-dot" style="background:#f472b6"></span>Jump Game Pattern
+    </button>
+    <div class="sub-links" id="sub4" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('jg-jump1')">Jump Game I</button>
+      <button class="sub-link" onclick="scrollTo2('jg-jump2')">Jump Game II (Min Jumps)</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p5',this)">
+      <span class="nav-dot" style="background:#86efac"></span>Huffman / Merge Cost
+    </button>
+    <div class="sub-links" id="sub5" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('hm-huffman')">Huffman Encoding</button>
+      <button class="sub-link" onclick="scrollTo2('hm-merge')">Min Cost to Connect Ropes</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p6',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Comparison Table
+    </button>
+  </div>
+</nav>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+
+<main class="main">
+
+<!-- ══════════════ PAGE 0 — BASICS ══════════════ -->
+<div class="page active" id="p0">
+  <div class="page-header">
+    <div class="breadcrumb">Greedy · Foundation</div>
+    <h2>⚡ Greedy — Basics</h2>
+    <p>Greedy = har step pe locally best choice lo, aur hope karo ki globally optimal answer milega. Sorting + one pass magic!</p>
+    <div class="badge-row">
+      <span class="badge badge-orange">Locally Optimal</span>
+      <span class="badge badge-teal">Sort First</span>
+      <span class="badge badge-blue">O(n log n) typical</span>
+      <span class="badge badge-purple">No backtracking</span>
+    </div>
+  </div>
+
+  <div id="g-what">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--orange-bg)">⚡</div>Greedy kya hota hai?</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      A <b>Greedy Algorithm</b> makes the <b>locally optimal choice</b> at each step, without reconsidering past decisions.<br><br>
+      It works when:<br>
+      1. <b>Greedy Choice Property</b> — local best leads to global best.<br>
+      2. <b>Optimal Substructure</b> — optimal solution built from optimal sub-solutions.<br><br>
+      Classic flow: <b>Sort</b> by some criterion → <b>Iterate</b> and greedily pick → <b>Done in O(n log n)</b>.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Greedy Algorithm</b> har step pe <b>jo abhi best lagta hai woh choose karta hai</b> — peeche nahi dekhta, aage ka sochta nahi.<br><br>
+      Kab kaam karta hai:<br>
+      1. <b>Greedy Choice Property</b> — local best = global best.<br>
+      2. <b>Optimal Substructure</b> — bade problem ka best answer chhote problems ke best answers se banta hai.<br><br>
+      Typical flow: <b>Sort</b> karo → <b>Iterate</b> karke greedy pick karo → <b>O(n log n) done</b>!
+    </div>
+    <div class="tip">💡 <b>Greedy proof trick:</b> "Exchange argument" — assume greedy choice galat hai, phir prove karo ki koi bhi swap se answer better nahi ho sakta. Yahi greedy ki correctness prove karta hai.</div>
+  </div>
+  </div>
+
+  <div id="g-vs-dp">
+  <div class="sub-heading">Greedy vs DP — Kab kya use karein?</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">⚖️</div>Greedy vs Dynamic Programming</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>Greedy:</b> One pass, no going back. Each choice is final. Works when greedy choice property holds.<br>
+      <b>DP:</b> Tries all choices, keeps best. Needed when greedy fails (e.g., 0/1 Knapsack).<br><br>
+      Rule of thumb: Try greedy first (O(n log n)). If it fails on edge cases → switch to DP.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Greedy:</b> Ek baar ka decision, wापस nahi. Greedy choice property honi chahiye.<br>
+      <b>DP:</b> Sab choices try karta hai, best rakhta hai. Jab greedy fail ho (jaise 0/1 Knapsack).<br><br>
+      Rule: Pehle greedy try karo (O(n log n)). Edge cases mein fail kare toh DP ki taraf jao.
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="mini-card">
+        <b style="color:var(--teal)">Greedy works ✅</b>
+        Activity Selection, Coin change (canonical coins), Huffman, Fractional Knapsack, MST (Kruskal/Prim)
+      </div>
+      <div class="mini-card">
+        <b style="color:var(--coral)">Greedy fails ❌ → use DP</b>
+        0/1 Knapsack, Longest Path, Coin change (arbitrary coins), Edit Distance, Matrix Chain
+      </div>
+    </div>
+    <div class="warn">⚠️ <b>Classic trap:</b> Coin change with coins=[1,3,4], amount=6 → Greedy gives 3+3=2 coins ✅. But coins=[1,3,4], amount=6 edge: 3+3 vs 4+1+1 — greedy gives 4+1+1=3 coins, DP gives 3+3=2 coins. Always verify with examples!</div>
+  </div>
+  </div>
+
+  <div id="g-template">
+  <div class="sub-heading">General Greedy Template</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📋</div>Greedy Problem Solving Template</div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Greedy General Template</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// ══ GREEDY TEMPLATE ══
+// Step 1: Identify greedy criterion (what to sort by)
+// Step 2: Sort by that criterion
+// Step 3: Iterate and greedily select
+// Step 4: Track result</span>
+
+<span class="cm">// Example: Activity Selection (sort by end time)</span>
+<span class="tp">int</span> <span class="fn">greedyTemplate</span>(<span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;&amp; intervals) {
+    <span class="cm">// Step 1 & 2: Sort by end time</span>
+    <span class="fn">sort</span>(intervals.begin(), intervals.end(),
+         [](<span class="kw">auto</span>&amp; a, <span class="kw">auto</span>&amp; b){ <span class="kw">return</span> a.second &lt; b.second; });
+
+    <span class="tp">int</span> count = <span class="nm">0</span>, lastEnd = INT_MIN;
+    <span class="cm">// Step 3 & 4: Greedily pick non-overlapping</span>
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; [s, e] : intervals) {
+        <span class="kw">if</span> (s &gt;= lastEnd) {      <span class="cm">// doesn't overlap</span>
+            count++;
+            lastEnd = e;          <span class="cm">// update last selected end</span>
+        }
+    }
+    <span class="kw">return</span> count;
+}</pre>
+    </div>
+    <div class="tip">💡 <b>Sort criterion decides everything in Greedy.</b> Wrong sort = wrong answer. Always ask: "Sort by start? End? Duration? Ratio? Deadline?" — the problem tells you if you read carefully.</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 1 — INTERVAL GREEDY ══════════════ -->
+<div class="page" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">Greedy · Pattern 1 of 5</div>
+    <h2>📅 Interval Greedy</h2>
+    <p>Intervals/meetings sort karo by end time → greedy select karo. Activity Selection, Non-overlapping, Minimum Removals — sab same trick!</p>
+    <div class="badge-row">
+      <span class="badge badge-teal">Sort by End Time</span>
+      <span class="badge badge-amber">Non-overlapping</span>
+      <span class="badge badge-blue">O(n log n)</span>
+    </div>
+  </div>
+
+  <div id="iv-activity">
+  <div class="sub-heading">Problem 1 — Activity Selection</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🎯</div>Activity Selection Problem<span class="badge badge-teal">Classic</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Given n activities with [start, end] times. Select max number of non-overlapping activities.<br>
+      <b>Greedy insight:</b> Always pick the activity that ends earliest — it leaves max time for future activities.<br>
+      <b>Algorithm:</b><br>
+      1. Sort by end time.<br>
+      2. Pick activity if its start ≥ last selected end.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      n activities hain [start, end] times ke saath. Max non-overlapping activities select karo.<br>
+      <b>Greedy insight:</b> Hamesha woh activity lo jo sabse pehle khatam hoti hai — future ke liye zyada time bachega.<br>
+      <b>Algorithm:</b><br>
+      1. End time se sort karo.<br>
+      2. Activity lo agar uska start ≥ last selected activity ka end.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Activity Selection</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">activitySelection</span>(<span class="tp">vector</span>&lt;<span class="tp">pair</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt;&gt;&amp; acts) {
+    <span class="cm">// Sort by end time — KEY greedy decision</span>
+    <span class="fn">sort</span>(acts.begin(), acts.end(),
+         [](<span class="kw">auto</span>&amp; a, <span class="kw">auto</span>&amp; b){ <span class="kw">return</span> a.second &lt; b.second; });
+
+    <span class="tp">int</span> count = <span class="nm">1</span>, lastEnd = acts[<span class="nm">0</span>].second;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt; acts.size(); i++) {
+        <span class="kw">if</span> (acts[i].first &gt;= lastEnd) {  <span class="cm">// no overlap</span>
+            count++;
+            lastEnd = acts[i].second;
+        }
+    }
+    <span class="kw">return</span> count;
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">acts=[[1,4],[3,5],[0,6],[5,7],[3,9],[5,9],[6,10],[8,11],[8,12],[2,14],[12,16]] → Max = 4</div>
+      <div style="margin:8px 0 4px;font-size:11px;color:var(--muted)">After sort by end: [1,4] [3,5] [0,6] [5,7] [3,9] [5,9] [6,10] [8,11] [8,12] [2,14] [12,16]</div>
+      <div class="timeline">
+        <div class="t-row"><span class="t-label">[1,4]</span><div class="t-bar-wrap"><div class="t-bar t-sel" style="left:6.25%;width:18.75%">✓ pick</div></div></div>
+        <div class="t-row"><span class="t-label">[3,5]</span><div class="t-bar-wrap"><div class="t-bar t-rej" style="left:18.75%;width:12.5%">✗ overlap</div></div></div>
+        <div class="t-row"><span class="t-label">[0,6]</span><div class="t-bar-wrap"><div class="t-bar t-rej" style="left:0%;width:37.5%">✗ overlap</div></div></div>
+        <div class="t-row"><span class="t-label">[5,7]</span><div class="t-bar-wrap"><div class="t-bar t-sel" style="left:31.25%;width:12.5%">✓ pick</div></div></div>
+        <div class="t-row"><span class="t-label">[8,11]</span><div class="t-bar-wrap"><div class="t-bar t-sel" style="left:50%;width:18.75%">✓ pick</div></div></div>
+        <div class="t-row"><span class="t-label">[12,16]</span><div class="t-bar-wrap"><div class="t-bar t-sel" style="left:75%;width:25%">✓ pick</div></div></div>
+      </div>
+      <div class="step" style="margin-top:8px">
+        <span class="step-num">selected</span>
+        <div class="arr-row">
+          <div class="a-box teal wide">[1,4]</div>
+          <div class="a-box teal wide">[5,7]</div>
+          <div class="a-box teal wide">[8,11]</div>
+          <div class="a-box teal wide">[12,16]</div>
+        </div>
+        <span class="step-result sr-teal">count = 4</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="iv-nonoverlap">
+  <div class="sub-heading">Problem 2 — Non-overlapping Intervals</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">✂️</div>Non-overlapping Intervals<span class="badge badge-amber">LeetCode 435</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Find minimum number of intervals to <b>remove</b> so remaining are non-overlapping.<br>
+      <b>Insight:</b> Max intervals we can KEEP = Activity Selection answer.<br>
+      So: <b>min removals = n − max non-overlapping</b>.<br>
+      Sort by end time, greedily keep, count removals.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Minimum intervals remove karo taki bache hue non-overlapping hon.<br>
+      <b>Insight:</b> Max intervals jo RAKH sakte hain = Activity Selection answer.<br>
+      Toh: <b>min removals = n − max non-overlapping</b>.<br>
+      End time se sort karo, greedily rakhte jao, removal count karo.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Erase Overlap Intervals (LC 435)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">eraseOverlapIntervals</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; intervals) {
+    <span class="fn">sort</span>(intervals.begin(), intervals.end(),
+         [](<span class="kw">auto</span>&amp; a, <span class="kw">auto</span>&amp; b){ <span class="kw">return</span> a[<span class="nm">1</span>] &lt; b[<span class="nm">1</span>]; }); <span class="cm">// sort by END</span>
+
+    <span class="tp">int</span> kept = <span class="nm">1</span>, lastEnd = intervals[<span class="nm">0</span>][<span class="nm">1</span>];
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt; intervals.size(); i++) {
+        <span class="kw">if</span> (intervals[i][<span class="nm">0</span>] &gt;= lastEnd) {  <span class="cm">// can keep</span>
+            kept++;
+            lastEnd = intervals[i][<span class="nm">1</span>];
+        }
+        <span class="cm">// else: overlap → remove this one (don't update lastEnd)</span>
+    }
+    <span class="kw">return</span> intervals.size() - kept;  <span class="cm">// total - kept = removed</span>
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">intervals=[[1,2],[2,3],[3,4],[1,3]] → Expected: 1</div>
+      <div class="step"><span class="step-num">sorted</span>
+        <div class="arr-row">
+          <div class="a-box teal wide">[1,2]</div>
+          <div class="a-box wide">[2,3]</div>
+          <div class="a-box wide">[1,3]</div>
+          <div class="a-box wide">[3,4]</div>
+        </div>
+      </div>
+      <div class="step"><span class="step-num">[1,2]</span>
+        <div class="arr-row"><div class="a-box teal">keep</div></div>
+        <div class="step-info">lastEnd=2, kept=1</div>
+      </div>
+      <div class="step"><span class="step-num">[2,3]</span>
+        <div class="arr-row"><div class="a-box teal">keep</div></div>
+        <div class="step-info">start(2)≥end(2) → keep, lastEnd=3, kept=2</div>
+      </div>
+      <div class="step"><span class="step-num">[1,3]</span>
+        <div class="arr-row"><div class="a-box fail">remove</div></div>
+        <div class="step-info">start(1)&lt;end(3) → overlap, REMOVE</div>
+        <span class="step-result sr-high">removed!</span>
+      </div>
+      <div class="step"><span class="step-num">[3,4]</span>
+        <div class="arr-row"><div class="a-box teal">keep</div></div>
+        <div class="step-info">start(3)≥end(3) → keep, kept=3</div>
+      </div>
+      <div class="step"><span class="step-num">answer</span>
+        <div class="step-info">n=4, kept=3 → removed = 4-3 = 1</div>
+        <span class="step-result sr-teal">ans = 1</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="iv-minremove">
+  <div class="sub-heading">Problem 3 — Minimum Arrow Shots (Minimum Removals variant)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">🏹</div>Minimum Arrow Shots to Burst Balloons<span class="badge badge-coral">LeetCode 452</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Balloons on x-axis as intervals. Each arrow shot at x bursts all balloons covering x. Min arrows to burst all?<br>
+      <b>Insight:</b> Sort by end. Greedily shoot at the end of first balloon — bursts all overlapping.<br>
+      Count = number of "groups" = Activity Selection count on same data.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      X-axis par balloons as intervals. Ek arrow x par shoot karo — sab balloons jo x cover karte hain burst ho jaayenge. Min arrows?<br>
+      <b>Insight:</b> End se sort karo. Pehle balloon ke end par arrow maaro — sab overlapping burst ho jaayenge.<br>
+      Count = "groups" ki sankhya = same data par Activity Selection count.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Minimum Arrows (LC 452)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">findMinArrowShots</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; points) {
+    <span class="fn">sort</span>(points.begin(), points.end(),
+         [](<span class="kw">auto</span>&amp; a, <span class="kw">auto</span>&amp; b){ <span class="kw">return</span> a[<span class="nm">1</span>] &lt; b[<span class="nm">1</span>]; });
+    <span class="tp">int</span> arrows = <span class="nm">1</span>;
+    <span class="tp">int</span> shootAt = points[<span class="nm">0</span>][<span class="nm">1</span>];  <span class="cm">// shoot at end of first</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt; points.size(); i++) {
+        <span class="kw">if</span> (points[i][<span class="nm">0</span>] &gt; shootAt) { <span class="cm">// new group needed</span>
+            arrows++;
+            shootAt = points[i][<span class="nm">1</span>];
+        }
+    }
+    <span class="kw">return</span> arrows;
+}</pre>
+    </div>
+    <div class="tip">💡 <b>Interval Greedy Golden Rule:</b> Jab bhi intervals mein "max select" ya "min remove" ho → <b>Sort by END time + greedy</b>. Yeh ek hi trick hai teen problems mein!</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 2 — SCHEDULING GREEDY ══════════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">Greedy · Pattern 2 of 5</div>
+    <h2>🗓️ Scheduling Greedy</h2>
+    <p>Jobs/tasks ko deadline aur profit ke basis par schedule karo. EDF (Earliest Deadline First) + Profit sort.</p>
+    <div class="badge-row">
+      <span class="badge badge-amber">Sort by Deadline</span>
+      <span class="badge badge-pink">Sort by Profit</span>
+      <span class="badge badge-teal">O(n log n)</span>
+      <span class="badge badge-blue">Max Profit</span>
+    </div>
+  </div>
+
+  <div id="sc-deadline">
+  <div class="sub-heading">Problem 1 — Job Sequencing with Deadlines</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">📋</div>Job Sequencing with Deadlines<span class="badge badge-amber">Classic / GFG</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      n jobs, each with deadline[i] and profit[i]. Each job takes 1 unit time. Max profit by scheduling within deadlines?<br>
+      <b>Greedy:</b> Sort jobs by profit (descending). For each job, assign to latest available slot ≤ deadline.<br>
+      Use a boolean array of time slots. Greedily fill from right side of deadline.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      n jobs hain, har job ka deadline[i] aur profit[i] hai. Har job 1 unit time leti hai. Max profit?<br>
+      <b>Greedy:</b> Jobs ko profit ke hisaab se sort karo (descending). Har job ke liye deadline ke andar latest available slot dhundho.<br>
+      Boolean array of time slots rakho. Deadline ke right se fill karo.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Job Sequencing with Deadlines</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">struct</span> Job { <span class="tp">int</span> id, deadline, profit; };
+
+<span class="tp">int</span> <span class="fn">jobSequencing</span>(<span class="tp">vector</span>&lt;Job&gt;&amp; jobs) {
+    <span class="cm">// Sort by profit descending</span>
+    <span class="fn">sort</span>(jobs.begin(), jobs.end(),
+         [](<span class="kw">auto</span>&amp; a, <span class="kw">auto</span>&amp; b){ <span class="kw">return</span> a.profit &gt; b.profit; });
+
+    <span class="tp">int</span> maxD = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; j : jobs) maxD = max(maxD, j.deadline);
+    <span class="tp">vector</span>&lt;<span class="tp">bool</span>&gt; slot(maxD+<span class="nm">1</span>, <span class="kw">false</span>);
+    <span class="tp">int</span> totalProfit = <span class="nm">0</span>, count = <span class="nm">0</span>;
+
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; j : jobs) {
+        <span class="cm">// Try latest slot from deadline down to 1</span>
+        <span class="kw">for</span> (<span class="tp">int</span> t = j.deadline; t &gt;= <span class="nm">1</span>; t--) {
+            <span class="kw">if</span> (!slot[t]) {
+                slot[t] = <span class="kw">true</span>;
+                totalProfit += j.profit;
+                count++;
+                <span class="kw">break</span>;
+            }
+        }
+    }
+    <span class="kw">return</span> totalProfit; <span class="cm">// count = jobs done</span>
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">jobs=[(A,d=4,p=20),(B,d=1,p=10),(C,d=1,p=40),(D,d=1,p=30)] → Expected profit: 60</div>
+      <div class="step"><span class="step-num">sort profit↓</span>
+        <div class="arr-row">
+          <div class="a-box found">C,40</div>
+          <div class="a-box hi">D,30</div>
+          <div class="a-box teal">A,20</div>
+          <div class="a-box">B,10</div>
+        </div>
+      </div>
+      <div class="step"><span class="step-num">job C d=1</span>
+        <div class="arr-row"><div class="a-box found">slot[1]=C</div><div class="a-box">slot[2]</div><div class="a-box">slot[3]</div><div class="a-box">slot[4]</div></div>
+        <div class="step-info">slot 1 free → assign</div><span class="step-result sr-teal">+40</span>
+      </div>
+      <div class="step"><span class="step-num">job D d=1</span>
+        <div class="arr-row"><div class="a-box found">C</div><div class="a-box">slot[2]</div><div class="a-box">slot[3]</div><div class="a-box">slot[4]</div></div>
+        <div class="step-info">slot 1 busy → no slot ≤ 1 → skip</div><span class="step-result sr-high">skip</span>
+      </div>
+      <div class="step"><span class="step-num">job A d=4</span>
+        <div class="arr-row"><div class="a-box found">C</div><div class="a-box">s2</div><div class="a-box">s3</div><div class="a-box teal">slot[4]=A</div></div>
+        <div class="step-info">slot 4 free → assign</div><span class="step-result sr-teal">+20</span>
+      </div>
+      <div class="step"><span class="step-num">total</span>
+        <div class="step-info">C(40) + A(20) = 60</div>
+        <span class="step-result sr-teal">profit = 60</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="sc-profit">
+  <div class="sub-heading">Problem 2 — Task Scheduler (Profit Based)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">⏱️</div>Task Scheduler<span class="badge badge-pink">LeetCode 621</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      CPU tasks with cooldown n between same tasks. Min time to finish all.<br>
+      <b>Greedy:</b> Always execute the most frequent remaining task. Use a max-heap + cooldown queue.<br>
+      <b>Formula shortcut:</b> Let f = max frequency, k = count of tasks with max frequency.<br>
+      Answer = max(tasks.size(), (f-1)*(n+1) + k).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      CPU tasks hain, same task ke beech n cooldown chahiye. Minimum time mein sab khatam karo.<br>
+      <b>Greedy:</b> Hamesha sabse zyada baaki wala task execute karo. Max-heap + cooldown queue use karo.<br>
+      <b>Formula shortcut:</b> f = max frequency, k = f wale tasks ki count.<br>
+      Answer = max(tasks.size(), (f-1)*(n+1) + k).
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Task Scheduler (Formula)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">leastInterval</span>(<span class="tp">vector</span>&lt;<span class="tp">char</span>&gt;&amp; tasks, <span class="tp">int</span> n) {
+    <span class="tp">int</span> freq[<span class="nm">26</span>] = {};
+    <span class="kw">for</span> (<span class="tp">char</span> c : tasks) freq[c-<span class="st">'A'</span>]++;
+    <span class="tp">int</span> maxF = *max_element(freq, freq+<span class="nm">26</span>);
+    <span class="tp">int</span> k = count(freq, freq+<span class="nm">26</span>, maxF); <span class="cm">// tasks with max freq</span>
+    <span class="kw">return</span> max((<span class="tp">int</span>)tasks.size(), (maxF-<span class="nm">1</span>)*(n+<span class="nm">1</span>) + k);
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">tasks=[A,A,A,B,B,B], n=2 → Expected: 8</div>
+      <div class="step"><span class="step-num">freq</span>
+        <div class="arr-row"><div class="a-box hi">A=3</div><div class="a-box hi">B=3</div></div>
+        <div class="step-info">maxF=3, k=2</div>
+      </div>
+      <div class="step"><span class="step-num">formula</span>
+        <div class="step-info">(3-1)*(2+1)+2 = 2*3+2 = 8</div>
+        <span class="step-result sr-teal">ans = 8</span>
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:var(--muted)">Schedule: A→B→idle→A→B→idle→A→B</div>
+      <div class="arr-row" style="margin-top:6px">
+        <div class="a-box teal">A</div><div class="a-box orng">B</div><div class="a-box fail">idle</div>
+        <div class="a-box teal">A</div><div class="a-box orng">B</div><div class="a-box fail">idle</div>
+        <div class="a-box teal">A</div><div class="a-box orng">B</div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 3 — RESOURCE ALLOCATION ══════════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">Greedy · Pattern 3 of 5</div>
+    <h2>🏛️ Resource Allocation</h2>
+    <p>Kitne resources (platforms/rooms) chahiye — events/meetings sort karo by start, min-heap se current usage track karo.</p>
+    <div class="badge-row">
+      <span class="badge badge-blue">Sort by Start</span>
+      <span class="badge badge-teal">Min-Heap (priority_queue)</span>
+      <span class="badge badge-amber">O(n log n)</span>
+    </div>
+  </div>
+
+  <div id="ra-platforms">
+  <div class="sub-heading">Problem 1 — Minimum Platforms (Train Station)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🚉</div>Minimum Platforms Required<span class="badge badge-blue">Classic / GFG</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Trains arrive at arr[i] and depart at dep[i]. Min platforms so no train waits?<br>
+      <b>Two-pointer greedy:</b><br>
+      1. Sort arrivals and departures separately.<br>
+      2. Use two pointers: if next arrival &lt; next departure → need new platform.<br>
+      3. If arrival ≥ departure → a train left, reuse platform.<br>
+      Track max platforms needed at any time.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Trains arr[i] par aati hain, dep[i] par jaati hain. Min platforms chahiye?<br>
+      <b>Two-pointer greedy:</b><br>
+      1. Arrivals aur departures alag sort karo.<br>
+      2. Do pointer: agar next arrival &lt; next departure → nayi platform chahiye.<br>
+      3. Agar arrival ≥ departure → train chali gayi, platform free.<br>
+      Har waqt max platforms track karo.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Minimum Platforms</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">minPlatforms</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; dep) {
+    <span class="fn">sort</span>(arr.begin(), arr.end());
+    <span class="fn">sort</span>(dep.begin(), dep.end());
+    <span class="tp">int</span> n = arr.size(), platforms = <span class="nm">1</span>, maxP = <span class="nm">1</span>;
+    <span class="tp">int</span> i = <span class="nm">1</span>, j = <span class="nm">0</span>;
+    <span class="kw">while</span> (i &lt; n &amp;&amp; j &lt; n) {
+        <span class="kw">if</span> (arr[i] &lt;= dep[j]) { <span class="cm">// new train arrives before one departs</span>
+            platforms++;
+            i++;
+        } <span class="kw">else</span> {               <span class="cm">// a train departed, free platform</span>
+            platforms--;
+            j++;
+        }
+        maxP = max(maxP, platforms);
+    }
+    <span class="kw">return</span> maxP;
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">arr=[900,940,950,1100,1500,1800], dep=[910,1200,1120,1130,1900,2000]</div>
+      <div class="step"><span class="step-num">sorted arr</span>
+        <div class="arr-row"><div class="a-box">900</div><div class="a-box">940</div><div class="a-box">950</div><div class="a-box">1100</div><div class="a-box">1500</div><div class="a-box">1800</div></div>
+      </div>
+      <div class="step"><span class="step-num">sorted dep</span>
+        <div class="arr-row"><div class="a-box">910</div><div class="a-box">1120</div><div class="a-box">1130</div><div class="a-box">1200</div><div class="a-box">1900</div><div class="a-box">2000</div></div>
+      </div>
+      <div class="step"><span class="step-num">940≤910?</span>
+        <div class="arr-row"><div class="a-box teal">+1→2</div></div>
+        <div class="step-info">940 arrives before 910 departs → need +1 platform</div>
+        <span class="step-result sr-teal">plat=2</span>
+      </div>
+      <div class="step"><span class="step-num">950≤910?</span>
+        <div class="arr-row"><div class="a-box teal">+1→3</div></div>
+        <div class="step-info">950 arrives before 910 departs</div>
+        <span class="step-result sr-high">plat=3 ← max!</span>
+      </div>
+      <div class="step"><span class="step-num">answer</span>
+        <div class="step-info">Max platforms needed = 3</div>
+        <span class="step-result sr-teal">ans = 3</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="ra-meetingrooms">
+  <div class="sub-heading">Problem 2 — Meeting Rooms II</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🏢</div>Meeting Rooms II<span class="badge badge-teal">LeetCode 253</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Meetings [start, end]. Min rooms so all meetings run simultaneously?<br>
+      <b>Min-Heap approach:</b><br>
+      1. Sort by start time.<br>
+      2. Min-heap stores end times of ongoing meetings.<br>
+      3. For each meeting: if heap top (earliest ending) ≤ current start → reuse room (pop + push). Else allocate new room (just push).<br>
+      Heap size = current rooms in use. Track max.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Meetings [start, end] hain. Min rooms chahiye?<br>
+      <b>Min-Heap approach:</b><br>
+      1. Start time se sort karo.<br>
+      2. Min-heap mein ongoing meetings ke end times rakho.<br>
+      3. Har meeting ke liye: agar heap top (sabse pehle khatam hone wali meeting) ≤ current start → room reuse karo (pop + push). Warna new room (sirf push).<br>
+      Heap size = abhi use ho rahe rooms. Max track karo.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Meeting Rooms II (Min-Heap)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">minMeetingRooms</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&gt;&amp; meetings) {
+    <span class="fn">sort</span>(meetings.begin(), meetings.end()); <span class="cm">// sort by start</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">int</span>, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;, greater&lt;<span class="tp">int</span>&gt;&gt; minHeap; <span class="cm">// min-heap of end times</span>
+    <span class="kw">for</span> (<span class="kw">auto</span>&amp; m : meetings) {
+        <span class="kw">if</span> (!minHeap.empty() &amp;&amp; minHeap.top() &lt;= m[<span class="nm">0</span>])
+            minHeap.pop();  <span class="cm">// room freed: earliest meeting ended</span>
+        minHeap.push(m[<span class="nm">1</span>]);  <span class="cm">// allocate room, track end time</span>
+    }
+    <span class="kw">return</span> minHeap.size();  <span class="cm">// rooms in use = answer</span>
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">meetings=[[0,30],[5,10],[15,20]] → Expected: 2</div>
+      <div class="step"><span class="step-num">[0,30]</span>
+        <div class="arr-row"><div class="a-box orng">heap:[30]</div></div>
+        <div class="step-info">heap empty → new room</div><span class="step-result sr-orng">rooms=1</span>
+      </div>
+      <div class="step"><span class="step-num">[5,10]</span>
+        <div class="arr-row"><div class="a-box orng">heap:[10,30]</div></div>
+        <div class="step-info">top=30 &gt; 5 → new room needed</div><span class="step-result sr-high">rooms=2</span>
+      </div>
+      <div class="step"><span class="step-num">[15,20]</span>
+        <div class="arr-row"><div class="a-box teal">heap:[20,30]</div></div>
+        <div class="step-info">top=10 ≤ 15 → pop 10, push 20 (reuse room)</div><span class="step-result sr-teal">rooms=2</span>
+      </div>
+      <div class="step"><span class="step-num">answer</span>
+        <div class="step-info">heap size = 2</div><span class="step-result sr-teal">ans = 2</span>
+      </div>
+    </div>
+    <div class="tip">💡 <b>Platforms vs Meeting Rooms:</b> Dono same problem hain, alag approach:<br>
+    Platforms → Two-pointer on sorted arr[] & dep[] — O(n log n), clean.<br>
+    Meeting Rooms II → Min-Heap of end times — O(n log n), more intuitive.</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 4 — JUMP GAME ══════════════ -->
+<div class="page" id="p4">
+  <div class="page-header">
+    <div class="breadcrumb">Greedy · Pattern 4 of 5</div>
+    <h2>🦘 Jump Game Pattern</h2>
+    <p>Array mein har index pe max jump range di hai. Greedy se farthest reach track karo. Can reach end? Min jumps?</p>
+    <div class="badge-row">
+      <span class="badge badge-pink">Track maxReach</span>
+      <span class="badge badge-teal">O(n) Single Pass</span>
+      <span class="badge badge-amber">No sorting needed</span>
+    </div>
+  </div>
+
+  <div id="jg-jump1">
+  <div class="sub-heading">Problem 1 — Jump Game I (Can Reach?)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🦘</div>Jump Game I<span class="badge badge-pink">LeetCode 55</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      nums[i] = max jump from index i. Can you reach last index?<br>
+      <b>Greedy:</b> Track <code>maxReach</code> = farthest index reachable so far.<br>
+      At each index i, if i &gt; maxReach → stuck, return false.<br>
+      Update maxReach = max(maxReach, i + nums[i]).<br>
+      If maxReach ≥ n-1 at any point → return true.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      nums[i] = index i se max jump. Kya last index tak pahunch sakte hain?<br>
+      <b>Greedy:</b> <code>maxReach</code> track karo = ab tak sabse door pahunch sakte hain.<br>
+      Har index i par, agar i &gt; maxReach → stuck, false return karo.<br>
+      maxReach = max(maxReach, i + nums[i]) update karte raho.<br>
+      Agar kabhī maxReach ≥ n-1 → true return karo.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Jump Game I</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">bool</span> <span class="fn">canJump</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> maxReach = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; nums.size(); i++) {
+        <span class="kw">if</span> (i &gt; maxReach) <span class="kw">return false</span>; <span class="cm">// stuck!</span>
+        maxReach = max(maxReach, i + nums[i]);
+        <span class="kw">if</span> (maxReach &gt;= (<span class="tp">int</span>)nums.size()-<span class="nm">1</span>) <span class="kw">return true</span>;
+    }
+    <span class="kw">return true</span>;
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">nums=[2,3,1,1,4] → Expected: true</div>
+      <div class="step"><span class="step-num">nums</span>
+        <div class="arr-row"><div class="a-box">2</div><div class="a-box">3</div><div class="a-box">1</div><div class="a-box">1</div><div class="a-box">4</div></div>
+      </div>
+      <div class="step"><span class="step-num">i=0</span>
+        <div class="arr-row"><div class="a-box hi">2</div></div>
+        <div class="step-info">maxReach=max(0,0+2)=2</div><span class="step-result sr-teal">reach=2</span>
+      </div>
+      <div class="step"><span class="step-num">i=1</span>
+        <div class="arr-row"><div class="a-box hi">3</div></div>
+        <div class="step-info">1≤2 ok. maxReach=max(2,1+3)=4</div><span class="step-result sr-teal">reach=4≥4!</span>
+      </div>
+      <div class="step"><span class="step-num">answer</span>
+        <div class="step-info">maxReach ≥ n-1=4</div><span class="step-result sr-teal">true ✅</span>
+      </div>
+    </div>
+    <div class="dry-run" style="margin-top:10px">
+      <div class="dry-run-title">nums=[3,2,1,0,4] → Expected: false</div>
+      <div class="step"><span class="step-num">i=0,1,2,3</span>
+        <div class="arr-row"><div class="a-box">3</div><div class="a-box">2</div><div class="a-box">1</div><div class="a-box fail">0</div><div class="a-box">4</div></div>
+        <div class="step-info">maxReach stuck at 3. At i=4: 4&gt;3 → STUCK</div>
+        <span class="step-result sr-high">false ❌</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="jg-jump2">
+  <div class="sub-heading">Problem 2 — Jump Game II (Minimum Jumps)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🚀</div>Jump Game II — Min Jumps<span class="badge badge-teal">LeetCode 45</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Minimum jumps to reach last index (always reachable).<br>
+      <b>Greedy BFS-like:</b> Think of jumps as "levels". From current level [curStart, curEnd], find the farthest you can reach (nextEnd). When you exhaust current level → jump (jumps++).<br>
+      Variables: <code>jumps</code>, <code>curEnd</code> (end of current jump's reach), <code>farthest</code>.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Last index tak minimum jumps mein pahuncho.<br>
+      <b>Greedy BFS-style:</b> Jumps ko "levels" ki tarah socho. Current level [curStart, curEnd] se maximum door tak pahunch sako (nextEnd). Jab current level khatam ho → jump karo (jumps++).<br>
+      Variables: <code>jumps</code>, <code>curEnd</code> (current jump ki range ka end), <code>farthest</code>.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Jump Game II</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">jump</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> jumps = <span class="nm">0</span>, curEnd = <span class="nm">0</span>, farthest = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; (<span class="tp">int</span>)nums.size()-<span class="nm">1</span>; i++) {
+        farthest = max(farthest, i + nums[i]); <span class="cm">// best reach from this level</span>
+        <span class="kw">if</span> (i == curEnd) {  <span class="cm">// exhausted current jump's range</span>
+            jumps++;
+            curEnd = farthest; <span class="cm">// jump to farthest reachable</span>
+        }
+    }
+    <span class="kw">return</span> jumps;
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">nums=[2,3,1,1,4] → Expected: 2</div>
+      <div class="step"><span class="step-num">nums</span>
+        <div class="arr-row"><div class="a-box">2</div><div class="a-box">3</div><div class="a-box">1</div><div class="a-box">1</div><div class="a-box">4</div></div>
+      </div>
+      <div class="step"><span class="step-num">i=0</span>
+        <div class="step-info">farthest=max(0,0+2)=2. i==curEnd(0) → jumps=1, curEnd=2</div>
+        <span class="step-result sr-orng">jump#1</span>
+      </div>
+      <div class="step"><span class="step-num">i=1</span>
+        <div class="step-info">farthest=max(2,1+3)=4</div>
+      </div>
+      <div class="step"><span class="step-num">i=2</span>
+        <div class="step-info">farthest=max(4,2+1)=4. i==curEnd(2) → jumps=2, curEnd=4</div>
+        <span class="step-result sr-teal">jump#2</span>
+      </div>
+      <div class="step"><span class="step-num">answer</span>
+        <div class="step-info">Loop ends (i&lt;n-1=4). curEnd=4≥last index</div>
+        <span class="step-result sr-teal">jumps = 2</span>
+      </div>
+    </div>
+    <div class="tip">💡 <b>Jump Game pattern summary:</b><br>
+    Can reach? → track <code>maxReach</code>, return false if stuck. O(n).<br>
+    Min jumps? → BFS levels with <code>curEnd</code> + <code>farthest</code>. O(n).<br>
+    Both are O(n) greedy — no DP needed!</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 5 — HUFFMAN / MERGE COST ══════════════ -->
+<div class="page" id="p5">
+  <div class="page-header">
+    <div class="breadcrumb">Greedy · Pattern 5 of 5</div>
+    <h2>🌳 Huffman / Merge Cost</h2>
+    <p>Min-Heap se sab karo! Har baar do smallest elements lo, combine karo, wapas daalo. Greedy + Priority Queue.</p>
+    <div class="badge-row">
+      <span class="badge badge-green">Min-Heap</span>
+      <span class="badge badge-amber">Combine Smallest</span>
+      <span class="badge badge-teal">O(n log n)</span>
+      <span class="badge badge-blue">Optimal Prefix Code</span>
+    </div>
+  </div>
+
+  <div id="hm-huffman">
+  <div class="sub-heading">Huffman Encoding — Greedy Tree Building</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--green-bg)">🌳</div>Huffman Encoding</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Given character frequencies, build optimal prefix-free encoding (variable length codes).<br>
+      <b>Greedy:</b> Always merge two least frequent characters. This minimizes total encoding length.<br>
+      <b>Algorithm:</b><br>
+      1. Put all chars in min-heap by frequency.<br>
+      2. Pop two minimums, merge (cost = sum of their freqs), push merged node back.<br>
+      3. Repeat until 1 node left = root of Huffman tree.<br>
+      4. Assign 0/1 along edges to get codes.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Characters ki frequencies di hain, optimal prefix-free encoding banao (chhoti codes zyada frequent chars ke liye).<br>
+      <b>Greedy:</b> Hamesha do sabse kam frequent chars ko merge karo. Total encoding length minimize hoti hai.<br>
+      <b>Algorithm:</b><br>
+      1. Sab chars ko min-heap mein daalo frequency ke hisaab se.<br>
+      2. Do minimum pop karo, merge karo (cost = unki frequencies ka sum), wapas heap mein daalo.<br>
+      3. Jab tak ek node na bache — woh Huffman tree ka root hai.<br>
+      4. Edges par 0/1 assign karo → codes milenge.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Min Cost of Huffman / Rope Merging</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">minCostHuffman</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; freqs) {
+    <span class="cm">// min-heap (priority_queue with greater = min on top)</span>
+    <span class="tp">priority_queue</span>&lt;<span class="tp">int</span>, <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;, greater&lt;<span class="tp">int</span>&gt;&gt; minH(freqs.begin(), freqs.end());
+    <span class="tp">int</span> totalCost = <span class="nm">0</span>;
+    <span class="kw">while</span> (minH.size() &gt; <span class="nm">1</span>) {
+        <span class="tp">int</span> a = minH.top(); minH.pop();  <span class="cm">// smallest</span>
+        <span class="tp">int</span> b = minH.top(); minH.pop();  <span class="cm">// 2nd smallest</span>
+        <span class="tp">int</span> merged = a + b;
+        totalCost += merged;              <span class="cm">// cost to merge</span>
+        minH.push(merged);                <span class="cm">// new node back in heap</span>
+    }
+    <span class="kw">return</span> totalCost;
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">freqs=[5,9,12,13,16,45] → Expected total cost: 224</div>
+      <div class="step"><span class="step-num">initial heap</span>
+        <div class="arr-row"><div class="a-box hi">5</div><div class="a-box hi">9</div><div class="a-box">12</div><div class="a-box">13</div><div class="a-box">16</div><div class="a-box orng">45</div></div>
+      </div>
+      <div class="step"><span class="step-num">merge 5+9</span>
+        <div class="arr-row"><div class="a-box teal">14</div><div class="a-box">12</div><div class="a-box">13</div><div class="a-box">16</div><div class="a-box orng">45</div></div>
+        <div class="step-info">cost += 14</div><span class="step-result sr-teal">total=14</span>
+      </div>
+      <div class="step"><span class="step-num">merge 12+13</span>
+        <div class="arr-row"><div class="a-box teal">14</div><div class="a-box teal">25</div><div class="a-box">16</div><div class="a-box orng">45</div></div>
+        <div class="step-info">cost += 25</div><span class="step-result sr-teal">total=39</span>
+      </div>
+      <div class="step"><span class="step-num">merge 14+16</span>
+        <div class="arr-row"><div class="a-box teal">30</div><div class="a-box">25</div><div class="a-box orng">45</div></div>
+        <div class="step-info">cost += 30</div><span class="step-result sr-teal">total=69</span>
+      </div>
+      <div class="step"><span class="step-num">merge 25+30</span>
+        <div class="arr-row"><div class="a-box teal">55</div><div class="a-box orng">45</div></div>
+        <div class="step-info">cost += 55</div><span class="step-result sr-teal">total=124</span>
+      </div>
+      <div class="step"><span class="step-num">merge 45+55</span>
+        <div class="arr-row"><div class="a-box found">100</div></div>
+        <div class="step-info">cost += 100</div><span class="step-result sr-teal">total=224</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="hm-merge">
+  <div class="sub-heading">Min Cost to Connect Ropes</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🪢</div>Min Cost to Connect Ropes<span class="badge badge-amber">Classic / Amazon</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      Given rope lengths, connect all into one. Cost = sum of two lengths connected each time. Minimize total cost.<br>
+      <b>Identical to Huffman!</b> Always merge two shortest ropes first. Use min-heap.<br>
+      If you merge big ropes early, their cost is added multiple times — so merge small first.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Ropes di hain, sab ko ek mein jodo. Cost = har baar do ropes ki lengths ka sum. Min total cost chahiye.<br>
+      <b>Bilkul Huffman jaisa hai!</b> Hamesha do sabse chhoti ropes pehle jodo. Min-heap use karo.<br>
+      Badi ropes pehle join karne par unka cost baar baar add hoga — isliye chhoti pehle!
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Connect Ropes (same as Huffman)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">long long</span> <span class="fn">connectRopes</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; ropes) {
+    <span class="tp">priority_queue</span>&lt;<span class="tp">long long</span>, <span class="tp">vector</span>&lt;<span class="tp">long long</span>&gt;, greater&lt;<span class="tp">long long</span>&gt;&gt; minH(
+        ropes.begin(), ropes.end());
+    <span class="tp">long long</span> cost = <span class="nm">0</span>;
+    <span class="kw">while</span> (minH.size() &gt; <span class="nm">1</span>) {
+        <span class="tp">long long</span> a = minH.top(); minH.pop();
+        <span class="tp">long long</span> b = minH.top(); minH.pop();
+        cost += a + b;
+        minH.push(a + b);
+    }
+    <span class="kw">return</span> cost;
+}
+<span class="cm">// ropes=[4,3,2,6] → merge 2+3=5(cost 5),
+//   then 4+5=9(cost 9), then 6+9=15(cost 15) → total=29</span></pre>
+    </div>
+    <div class="tip">💡 <b>Min-Heap Greedy pattern:</b> "Merge smallest two repeatedly" = always use min-heap. Problems: Connect ropes, Huffman encoding, Stone merging, K-way merge, Kth largest. Template identical — only what you compute changes!</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 6 — COMPARISON TABLE ══════════════ -->
+<div class="page" id="p6">
+  <div class="page-header">
+    <div class="breadcrumb">Greedy · Master Reference</div>
+    <h2>📊 Greedy Patterns — Comparison Table</h2>
+    <p>Sab patterns ek jagah — quick reference aur decision guide. Interview mein greedy dekhte hi pattern identify karo!</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">📋</div>All Greedy Patterns Summary</div>
+    <table class="tbl">
+      <tr><th>Pattern</th><th>Data Structure</th><th>Sort By</th><th>Typical Problems</th></tr>
+      <tr>
+        <td><span style="color:var(--teal);font-weight:600">Interval Greedy</span></td>
+        <td>Array</td>
+        <td>End time</td>
+        <td>Activity Selection, Non-overlapping intervals, Min arrow shots</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--amber);font-weight:600">Scheduling</span></td>
+        <td>Boolean slot array</td>
+        <td>Profit ↓, then fit by deadline</td>
+        <td>Job sequencing with deadlines, Task Scheduler</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--blue);font-weight:600">Resource Allocation</span></td>
+        <td>Min-Heap or Two-pointer</td>
+        <td>Start time</td>
+        <td>Min platforms, Meeting Rooms II, Car Pooling</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--pink);font-weight:600">Jump Game</span></td>
+        <td>Single variable (maxReach)</td>
+        <td>No sort (left→right)</td>
+        <td>Jump Game I/II, Video Stitching, Minimum # of taps</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--green);font-weight:600">Huffman / Merge</span></td>
+        <td>Min-Heap (priority_queue)</td>
+        <td>Heap handles it</td>
+        <td>Huffman encoding, Connect ropes, Stone merging</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🧠</div>Kab kya use karo — Decision Guide</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>"Max activities/intervals select karne hain, no overlap?"</b> → Sort by END + greedy pick<br>
+      <b>"Min intervals remove karne hain?"</b> → n − max_non_overlapping (same trick)<br>
+      <b>"Jobs ko deadlines ke andar profit maximize karna hai?"</b> → Sort profit↓, slot array<br>
+      <b>"Kitne resources (rooms/platforms) chahiye?"</b> → Sort by start + min-heap of end times<br>
+      <b>"Array mein jump karna hai, reach/min jumps?"</b> → maxReach greedy, O(n)<br>
+      <b>"Do smallest repeatedly merge karo?"</b> → Min-heap, Huffman pattern
+    </div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>"Max non-overlapping intervals?"</b> → Sort by end time + greedy pick<br>
+      <b>"Min intervals to remove?"</b> → n − max_non_overlapping (same trick!)<br>
+      <b>"Maximize profit within deadlines?"</b> → Sort profit↓, try slots from deadline down<br>
+      <b>"Min rooms/platforms?"</b> → Sort by start + min-heap of end times<br>
+      <b>"Can reach end / min jumps in array?"</b> → Track maxReach / BFS-level greedy, O(n)<br>
+      <b>"Repeatedly merge two smallest?"</b> → Min-heap, Huffman/connect-ropes pattern
+    </div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="mini-card"><b style="color:var(--teal)">Interval</b>Sort by END. greedy = pick if start ≥ lastEnd. Non-overlap count = total − kept.</div>
+      <div class="mini-card"><b style="color:var(--blue)">Resources</b>Sort by START. Min-heap stores end times. Heap size = current rooms. Max = answer.</div>
+      <div class="mini-card"><b style="color:var(--green)">Merge/Huffman</b>Min-heap. Pop 2 smallest, merge, push back. Total cost accumulated. O(n log n).</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">⚠️</div>Common Greedy Mistakes</div>
+    <div class="warn">⚠️ <b>Wrong sort criterion:</b> Interval problems mein start time se sort karna common mistake hai. <b>End time se sort karo</b> for max non-overlapping / min removals. Start time sort → for resource allocation (rooms/platforms).</div>
+    <div class="warn">⚠️ <b>Greedy vs DP confusion:</b> Coin change with arbitrary coins → Greedy FAILS, DP needed. Fractional knapsack → Greedy works. 0/1 Knapsack → Greedy FAILS. Pehle counterexample check karo!</div>
+    <div class="warn">⚠️ <b>Meeting Rooms I vs II:</b> Meeting Rooms I = kya sab meetings ek room mein ho sakti hain? → Check any overlap (sort + adjacent check). Meeting Rooms II = min rooms? → min-heap approach. Dono alag problems hain!</div>
+    <div class="warn">⚠️ <b>Job Sequencing:</b> Slot assignment mein latest available slot &lt;= deadline se shuru karo (right to left). Left to right karne se suboptimal assignment ho sakta hai.</div>
+    <div class="tip">💡 <b>Greedy verification checklist:</b><br>
+    1. Kya sort criterion clearly defined hai?<br>
+    2. Kya local choice globally optimal hai? (Exchange argument)<br>
+    3. Ek counterexample banao — greedy fail karta hai kya?<br>
+    4. Agar fail karta hai → DP ya backtracking use karo.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📝</div>LeetCode Problems — Quick Reference</div>
+    <table class="tbl">
+      <tr><th>Problem</th><th>Pattern</th><th>Time</th><th>Space</th><th>LC #</th></tr>
+      <tr><td>Non-overlapping Intervals</td><td>Interval Greedy</td><td>O(n log n)</td><td>O(1)</td><td>#435</td></tr>
+      <tr><td>Merge Intervals</td><td>Interval Greedy</td><td>O(n log n)</td><td>O(n)</td><td>#56</td></tr>
+      <tr><td>Min Arrows to Burst Balloons</td><td>Interval Greedy</td><td>O(n log n)</td><td>O(1)</td><td>#452</td></tr>
+      <tr><td>Insert Interval</td><td>Interval Greedy</td><td>O(n)</td><td>O(n)</td><td>#57</td></tr>
+      <tr><td>Task Scheduler</td><td>Scheduling</td><td>O(n)</td><td>O(1)</td><td>#621</td></tr>
+      <tr><td>Job Sequencing</td><td>Scheduling</td><td>O(n²) / O(n log n)</td><td>O(n)</td><td>Classic</td></tr>
+      <tr><td>Meeting Rooms II</td><td>Resource Allocation</td><td>O(n log n)</td><td>O(n)</td><td>#253</td></tr>
+      <tr><td>Car Pooling</td><td>Resource Allocation</td><td>O(n log n)</td><td>O(n)</td><td>#1094</td></tr>
+      <tr><td>Jump Game</td><td>Jump Game</td><td>O(n)</td><td>O(1)</td><td>#55</td></tr>
+      <tr><td>Jump Game II</td><td>Jump Game</td><td>O(n)</td><td>O(1)</td><td>#45</td></tr>
+      <tr><td>Video Stitching</td><td>Jump Game</td><td>O(n log n)</td><td>O(1)</td><td>#1024</td></tr>
+      <tr><td>Connect Ropes / Min Cost</td><td>Huffman/Merge</td><td>O(n log n)</td><td>O(n)</td><td>Classic</td></tr>
+      <tr><td>Last Stone Weight</td><td>Merge (Max-Heap)</td><td>O(n log n)</td><td>O(n)</td><td>#1046</td></tr>
+    </table>
+  </div>
+</div>
+
+</main>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (!sidebar || !overlay) return;
+    sidebar.classList.toggle('open');
+    if (sidebar.classList.contains('open')) {
+      overlay.style.display = 'block';
+      setTimeout(() => overlay.style.opacity = '1', 10);
+    } else {
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.style.display = 'none', 350);
+    }
+  }
+
+  const pages = ['p0','p1','p2','p3','p4','p5','p6'];
+  const subs  = ['sub0','sub1','sub2','sub3','sub4','sub5'];
+
+  function showPage(id, btn) {
+    // Auto-close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = i===idx ? 'block' : 'none';
+    });
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    // Auto-close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = i===0 ? 'block' : 'none';
+  });
+</script>
+</body>
+</html>

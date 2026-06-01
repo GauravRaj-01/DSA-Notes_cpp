@@ -16,8 +16,13 @@ ordered_files = [
     {"filename": "dsa_trees_patterns_notes.html", "title": "Tree Patterns", "vol": "Volume 7", "icon": "trees"},
     {"filename": "dsa_recursion_patterns_notes.html", "title": "Recursion Patterns", "vol": "Volume 8", "icon": "recursion"},
     {"filename": "dsa_heap_patterns_notes.html", "title": "Heap Patterns", "vol": "Volume 9", "icon": "heap"},
-    {"filename": "dsa_dp_patterns_notes2.html", "title": "Dynamic Programming", "vol": "Volume 10", "icon": "dp"},
-    {"filename": "sorting_algorithms_notes.html", "title": "Sorting Algorithms", "vol": "Volume 11", "icon": "sorting"}
+    {"filename": "dsa_trie_patterns_notes.html", "title": "Trie Patterns", "vol": "Volume 10", "icon": "trie"},
+    {"filename": "dsa_greedy_patterns_notes.html", "title": "Greedy Patterns", "vol": "Volume 11", "icon": "greedy"},
+    {"filename": "dsa_graphs_patterns_notes.html", "title": "Graph Patterns", "vol": "Volume 12", "icon": "graphs"},
+    {"filename": "dsa_dp_patterns_notes2.html", "title": "Dynamic Programming", "vol": "Volume 13", "icon": "dp"},
+    {"filename": "dsa_range_structures_notes.html", "title": "Range Structures", "vol": "Volume 14", "icon": "range"},
+    {"filename": "dsa_bit_manipulation_notes.html", "title": "Bit Manipulation", "vol": "Volume 15", "icon": "bitmanip"},
+    {"filename": "sorting_algorithms_notes.html", "title": "Sorting Algorithms", "vol": "Volume 16", "icon": "sorting"}
 ]
 
 # SVG Icons Map for extreme premium visual fidelity
@@ -31,7 +36,12 @@ svg_icons = {
     "trees": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-6 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm12 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zM12 8l-4 4m8 0l-4-4m0 10v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>',
     "recursion": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 1 10 10c0 4-3 7-7 7s-6.5-2.5-6.5-5.5S11 8.5 13.5 8.5s3.5 1.5 3.5 3.5S15 15 13.5 15s-1.5-1-1.5-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>',
     "heap": '<svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3" fill="currentColor"/><circle cx="6" cy="13" r="3" fill="currentColor" opacity="0.4"/><circle cx="18" cy="13" r="3" fill="currentColor" opacity="0.4"/><path d="M10 7.5L7.5 11M14 7.5l2.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    "trie": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 3L5 9v3m14-6l-7-6m7 6v6m0 0l-4 4m4-4l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="12" cy="3" r="2" fill="currentColor"/><circle cx="5" cy="9" r="2" fill="currentColor"/><circle cx="19" cy="9" r="2" fill="currentColor"/></svg>',
+    "greedy": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5v14M22 8v8M7 8v8M2 11v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    "graphs": '<svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="5" cy="15" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="19" cy="15" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 7.5L7 12.5M14 7.5l3 5M8 15h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
     "dp": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 6h-4v2h4v2h-4v2h4v2H9V7h6v2z" fill="currentColor"/></svg>',
+    "range": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 6h18v4H3V6zm0 8h8v6H3v-6zm10 0h8v6h-8v-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+    "bitmanip": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4 12h4M16 12h4m-1.7-6.3l-2.8 2.8M6.3 17.7l2.8-2.8m0-11.4l2.8 2.8m5.6 5.6l2.8-2.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
     "sorting": '<svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" fill="currentColor"/></svg>'
 }
 
@@ -671,11 +681,11 @@ master_html += """  </div>
       
       <div class="stats-row">
         <div class="stat-box">
-          <div class="stat-val">11</div>
+          <div class="stat-val">16</div>
           <div class="stat-lbl">Core Volumes</div>
         </div>
         <div class="stat-box">
-          <div class="stat-val">70+</div>
+          <div class="stat-val">100+</div>
           <div class="stat-lbl">DSA Patterns</div>
         </div>
         <div class="stat-box">

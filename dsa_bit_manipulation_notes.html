@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Bit Manipulation Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:#2a3245;
+    --text:#e8eaf6;--muted:#8892a4;
+    --teal:#1dd6a0;--teal-bg:#0d2e24;
+    --purple:#a78bfa;--purple-bg:#1e1633;
+    --amber:#fbbf24;--amber-bg:#2a1f0a;
+    --blue:#60a5fa;--blue-bg:#0e1f35;
+    --coral:#fb7185;--coral-bg:#2a0e16;
+    --green:#86efac;--green-bg:#0b2018;
+    --pink:#f472b6;--pink-bg:#2a0e1e;
+    --orange:#fb923c;--orange-bg:#2a1400;
+    --code-bg:#0a0d14;
+    --kw:#f9a870;--fn:#79c0ff;--cm:#5a6478;--tp:#f472b6;--str:#a5d6a7;--nm:#ce93d8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px;}
+
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:252px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:100;}
+  .sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+  .sidebar-logo h1{font-size:13px;font-weight:600;color:var(--orange);letter-spacing:.08em;text-transform:uppercase;}
+  .sidebar-logo p{font-size:11px;color:var(--muted);margin-top:2px;}
+  .nav-section{padding:0 12px;margin-bottom:8px;}
+  .nav-section-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;}
+  .nav-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .nav-link:hover{background:var(--bg3);color:var(--text);}
+  .nav-link.active{background:var(--bg3);color:var(--orange);font-weight:500;}
+  .nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .sub-links{padding-left:24px;margin-top:2px;}
+  .sub-link{display:block;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;border-radius:6px;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .sub-link:hover{color:var(--text);background:var(--bg3);}
+
+  .main{margin-left:252px;padding:40px 48px;max-width:980px;}
+  .page{display:none;} .page.active{display:block;}
+
+  .page-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .page-header .breadcrumb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .page-header h2{font-size:26px;font-weight:600;margin-bottom:6px;}
+  .page-header p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+  .badge-teal  {background:var(--teal-bg);  color:var(--teal);  border:1px solid #1a5c44;}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid #3d2d6e;}
+  .badge-amber {background:var(--amber-bg); color:var(--amber); border:1px solid #6b4c0f;}
+  .badge-blue  {background:var(--blue-bg);  color:var(--blue);  border:1px solid #1a3a5c;}
+  .badge-coral {background:var(--coral-bg); color:var(--coral); border:1px solid #5c1a27;}
+  .badge-pink  {background:var(--pink-bg);  color:var(--pink);  border:1px solid #5c1a3a;}
+  .badge-green {background:var(--green-bg); color:var(--green); border:1px solid #155a30;}
+  .badge-orange{background:var(--orange-bg);color:var(--orange);border:1px solid #6b3200;}
+
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;}
+  .card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card-title .icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+  .lang-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 5px;}
+  .en-block{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:var(--text);margin-bottom:8px;}
+  .hi-block{background:var(--purple-bg);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:#c4b5fd;margin-bottom:8px;}
+
+  .code-wrap{position:relative;margin:12px 0;}
+  .code-label{background:var(--bg3);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:7px 14px;font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+  .copy-btn{font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all .15s;}
+  .copy-btn:hover{color:var(--teal);border-color:var(--teal);}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;white-space:pre;}
+  .kw{color:var(--kw);}.fn{color:var(--fn);}.cm{color:var(--cm);font-style:italic;}
+  .tp{color:var(--tp);}.st{color:var(--str);}.nm{color:var(--nm);}
+
+  .dry-run{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0;overflow-x:auto;}
+  .dry-run-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+  .step{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .step-num{font-size:10px;font-weight:600;color:var(--muted);min-width:88px;}
+  .arr-row{display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap;}
+  .a-box{min-width:36px;height:32px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);padding:0 6px;font-family:'JetBrains Mono',monospace;}
+  .a-box.hi    {background:var(--amber-bg); color:var(--amber); border-color:#6b4c0f;}
+  .a-box.match {background:var(--pink-bg);  color:var(--pink);  border-color:#5c1a3a;}
+  .a-box.found {background:var(--green-bg); color:var(--green); border-color:#155a30;}
+  .a-box.fail  {background:var(--coral-bg); color:var(--coral); border-color:#5c1a27;}
+  .a-box.teal  {background:var(--teal-bg);  color:var(--teal);  border-color:#1a5c44;}
+  .a-box.blue  {background:var(--blue-bg);  color:var(--blue);  border-color:#1a3a5c;}
+  .a-box.orng  {background:var(--orange-bg);color:var(--orange);border-color:#6b3200;}
+  .a-box.purp  {background:var(--purple-bg);color:var(--purple);border-color:#3d2d6e;}
+  .a-box.wide  {min-width:80px;}
+  .a-box.sm    {min-width:26px;height:26px;font-size:11px;}
+
+  .step-info{font-size:12px;color:var(--muted);flex:1;min-width:140px;}
+  .step-result{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+  .sr-high{background:var(--coral-bg);color:var(--coral);}
+  .sr-low {background:var(--amber-bg);color:var(--amber);}
+  .sr-eq  {background:var(--green-bg);color:var(--green);}
+  .sr-pink{background:var(--pink-bg); color:var(--pink);}
+  .sr-orng{background:var(--orange-bg);color:var(--orange);}
+  .sr-blue{background:var(--blue-bg); color:var(--blue);}
+  .sr-teal{background:var(--teal-bg); color:var(--teal);}
+  .sr-purp{background:var(--purple-bg);color:var(--purple);}
+
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;}
+  .tbl th{background:var(--bg3);color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+  .tbl td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.6;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl tr:hover td{background:var(--bg3);}
+
+  .tip {border-left:3px solid var(--teal); background:var(--teal-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#6ee7c0;margin:12px 0;line-height:1.7;}
+  .warn{border-left:3px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#fcd97a;margin:12px 0;line-height:1.7;}
+  .info{border-left:3px solid var(--blue); background:var(--blue-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#93c5fd;margin:12px 0;line-height:1.7;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0;}
+  .mini-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.7;}
+  .mini-card b{font-weight:600;display:block;margin-bottom:4px;}
+  .sub-heading{font-size:14px;font-weight:600;margin:22px 0 10px;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .sub-heading::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--orange);display:block;}
+  code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:4px;color:var(--teal);}
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+  
+  /* Mobile Navigation Styles (Premium Drawer UI) */
+  .mobile-header {
+    display: none;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+    background: rgba(22, 27, 39, 0.85); /* Matches --bg2 with transparency */
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    height: 60px;
+  }
+
+  .mobile-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+
+  .menu-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .menu-toggle svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-header {
+      display: flex;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      height: 100vh;
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      box-shadow: none;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 15px 0 45px rgba(0, 0, 0, 0.6);
+    }
+
+    .sidebar.open ~ .sidebar-overlay {
+      display: block;
+      opacity: 1;
+    }
+
+    .main {
+      margin-left: 0;
+      padding: 84px 16px 40px; /* Accounts for the 60px fixed header + 24px space */
+      max-width: 100%;
+    }
+
+    .grid2, .grid3, .cx-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+
+  /* bit grid */
+  .bit-row{display:flex;gap:3px;align-items:flex-end;flex-wrap:wrap;margin:6px 0;}
+  .bit-box{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border:1px solid var(--border);}
+  .bit-0{background:var(--bg3);color:var(--muted);}
+  .bit-1{background:var(--blue-bg);color:var(--blue);border-color:#1a3a5c;}
+  .bit-h{background:var(--amber-bg);color:var(--amber);border-color:#6b4c0f;}
+  .bit-r{background:var(--teal-bg);color:var(--teal);border-color:#1a5c44;}
+  .bit-x{background:var(--pink-bg);color:var(--pink);border-color:#5c1a3a;}
+  .bit-g{background:var(--green-bg);color:var(--green);border-color:#155a30;}
+  .bit-label{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;min-width:52px;font-weight:600;}
+
+  /* op table */
+  .op-tbl{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:13px;margin:8px 0;}
+  .op-tbl td,.op-tbl th{border:1px solid var(--border);padding:7px 14px;text-align:center;}
+  .op-tbl th{background:var(--bg3);color:var(--muted);font-size:11px;}
+  .op-tbl td{background:var(--bg2);color:var(--text);}
+  .op-tbl td.hi{background:var(--amber-bg);color:var(--amber);}
+  .op-tbl td.tl{background:var(--teal-bg);color:var(--teal);}
+  .op-tbl td.pk{background:var(--pink-bg);color:var(--pink);}
+</style>
+</head>
+
+<body>
+<div class="mobile-header">
+  <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  </button>
+  <h2>Bit Manipulation</h2>
+</div>
+
+
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Bit Manipulation · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Bit Manipulation</div>
+
+    <button class="nav-link active" onclick="showPage('p0',this)">
+      <span class="nav-dot" style="background:#fb923c"></span>Basics & Operators
+    </button>
+    <div class="sub-links" id="sub0">
+      <button class="sub-link" onclick="scrollTo2('b-what')">Binary Basics</button>
+      <button class="sub-link" onclick="scrollTo2('b-ops')">All Operators</button>
+      <button class="sub-link" onclick="scrollTo2('b-tricks')">Essential Tricks</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#60a5fa"></span>XOR Pattern
+    </button>
+    <div class="sub-links" id="sub1" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('xor-props')">XOR Properties</button>
+      <button class="sub-link" onclick="scrollTo2('xor-single')">Single Number</button>
+      <button class="sub-link" onclick="scrollTo2('xor-two')">Two Missing / Two Unique</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#fbbf24"></span>Bit Masking
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('bm-setclear')">Set / Clear / Toggle</button>
+      <button class="sub-link" onclick="scrollTo2('bm-count')">Count Set Bits</button>
+      <button class="sub-link" onclick="scrollTo2('bm-power')">Power of 2 Checks</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#1dd6a0"></span>Subset via Bits
+    </button>
+    <div class="sub-links" id="sub3" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('sb-enumerate')">Enumerate All Subsets</button>
+      <button class="sub-link" onclick="scrollTo2('sb-submask')">Iterate Submasks</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p4',this)">
+      <span class="nav-dot" style="background:#f472b6"></span>Bit Checks
+    </button>
+    <div class="sub-links" id="sub4" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('bc-checks')">Common Bit Checks</button>
+      <button class="sub-link" onclick="scrollTo2('bc-swap')">Swap / Abs without branch</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p5',this)">
+      <span class="nav-dot" style="background:#86efac"></span>Prefix XOR
+    </button>
+    <div class="sub-links" id="sub5" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('px-concept')">Prefix XOR Concept</button>
+      <button class="sub-link" onclick="scrollTo2('px-subarray')">XOR Subarray Problems</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p6',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Cheatsheet & LC List
+    </button>
+  </div>
+</nav>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+
+<main class="main">
+
+<!-- ══════════════ PAGE 0 — BASICS ══════════════ -->
+<div class="page active" id="p0">
+  <div class="page-header">
+    <div class="breadcrumb">Bit Manipulation · Foundation</div>
+    <h2>🔢 Bit Manipulation — Basics</h2>
+    <p>Binary mein sochna seekho! Har number bits ka collection hai — AND, OR, XOR, shift se O(1) mein magic hoti hai.</p>
+    <div class="badge-row">
+      <span class="badge badge-blue">AND &amp;</span>
+      <span class="badge badge-teal">OR |</span>
+      <span class="badge badge-pink">XOR ^</span>
+      <span class="badge badge-amber">Shift &lt;&lt; &gt;&gt;</span>
+      <span class="badge badge-orange">NOT ~</span>
+    </div>
+  </div>
+
+  <div id="b-what">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--orange-bg)">🔢</div>Binary Number System — Basics</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      Computers store everything in <b>binary (base 2)</b> — only 0s and 1s.<br>
+      Each digit is called a <b>bit</b>. An <b>int</b> is 32 bits.<br>
+      Example: <b>13</b> in binary = <code>0000 1101</code><br>
+      Reading right to left: bit 0 (LSB) → bit 31 (MSB).<br>
+      Value = Σ bit[i] × 2^i
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Computer sab kuch <b>binary (base 2)</b> mein store karta hai — sirf 0 aur 1.<br>
+      Har digit ko <b>bit</b> kehte hain. Ek <b>int</b> = 32 bits.<br>
+      Example: <b>13</b> binary mein = <code>0000 1101</code><br>
+      Right se left padho: bit 0 (LSB, sabse chhota) → bit 31 (MSB, sabse bada).<br>
+      Value = Σ bit[i] × 2^i
+    </div>
+
+    <div style="margin:14px 0 6px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">13 = 8+4+1 → binary</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;font-family:'JetBrains Mono',monospace">bit pos: 7  6  5  4  3  2  1  0</div>
+        <div class="bit-row">
+          <div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div>
+          <div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div>
+          <div class="bit-box bit-h">1</div><div class="bit-box bit-h">1</div>
+          <div class="bit-box bit-0">0</div><div class="bit-box bit-h">1</div>
+        </div>
+        <div style="font-size:11px;color:var(--amber);margin-top:4px;font-family:'JetBrains Mono',monospace">= 8 + 4 + 1 = 13</div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="b-ops">
+  <div class="sub-heading">All Bitwise Operators</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">⚙️</div>Bitwise Operators — Truth Tables & Examples</div>
+    <div class="grid2">
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:8px">AND ( &amp; ) — both must be 1</div>
+        <table class="op-tbl">
+          <tr><th>A</th><th>B</th><th>A &amp; B</th></tr>
+          <tr><td>0</td><td>0</td><td class="tl">0</td></tr>
+          <tr><td>0</td><td>1</td><td class="tl">0</td></tr>
+          <tr><td>1</td><td>0</td><td class="tl">0</td></tr>
+          <tr><td>1</td><td>1</td><td class="tl">1</td></tr>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:8px">OR ( | ) — at least one 1</div>
+        <table class="op-tbl">
+          <tr><th>A</th><th>B</th><th>A | B</th></tr>
+          <tr><td>0</td><td>0</td><td class="tl">0</td></tr>
+          <tr><td>0</td><td>1</td><td class="tl">1</td></tr>
+          <tr><td>1</td><td>0</td><td class="tl">1</td></tr>
+          <tr><td>1</td><td>1</td><td class="tl">1</td></tr>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--pink);margin-bottom:8px">XOR ( ^ ) — different → 1</div>
+        <table class="op-tbl">
+          <tr><th>A</th><th>B</th><th>A ^ B</th></tr>
+          <tr><td>0</td><td>0</td><td class="tl">0</td></tr>
+          <tr><td>0</td><td>1</td><td class="tl">1</td></tr>
+          <tr><td>1</td><td>0</td><td class="tl">1</td></tr>
+          <tr><td>1</td><td>1</td><td class="tl">0</td></tr>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--orange);margin-bottom:8px">NOT ( ~ ) — flip all bits</div>
+        <table class="op-tbl">
+          <tr><th>A</th><th>~A</th></tr>
+          <tr><td>0</td><td class="tl">1</td></tr>
+          <tr><td>1</td><td class="tl">0</td></tr>
+        </table>
+        <div style="margin-top:10px;font-size:12px;font-weight:600;color:var(--amber)">Shifts</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;line-height:1.8">
+          <code>n &lt;&lt; k</code> = n × 2^k<br>
+          <code>n &gt;&gt; k</code> = n ÷ 2^k (floor)
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">5 &amp; 3, 5 | 3, 5 ^ 3 visualized</div>
+    <div class="dry-run">
+      <div class="step">
+        <span class="step-num">5 = </span>
+        <div class="bit-row"><div class="bit-box bit-0">0</div><div class="bit-box bit-0">1</div><div class="bit-box bit-h">0</div><div class="bit-box bit-h">1</div></div>
+      </div>
+      <div class="step">
+        <span class="step-num">3 = </span>
+        <div class="bit-row"><div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div><div class="bit-box bit-h">1</div><div class="bit-box bit-h">1</div></div>
+      </div>
+      <div style="border-top:1px solid var(--border);margin:8px 0"></div>
+      <div class="step">
+        <span class="step-num">5 &amp; 3 =</span>
+        <div class="bit-row"><div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div><div class="bit-box bit-r">1</div></div>
+        <span class="step-result sr-teal">= 1</span>
+      </div>
+      <div class="step">
+        <span class="step-num">5 | 3 =</span>
+        <div class="bit-row"><div class="bit-box bit-0">0</div><div class="bit-box bit-r">1</div><div class="bit-box bit-r">1</div><div class="bit-box bit-r">1</div></div>
+        <span class="step-result sr-teal">= 7</span>
+      </div>
+      <div class="step">
+        <span class="step-num">5 ^ 3 =</span>
+        <div class="bit-row"><div class="bit-box bit-0">0</div><div class="bit-box bit-x">1</div><div class="bit-box bit-x">1</div><div class="bit-box bit-0">0</div></div>
+        <span class="step-result sr-pink">= 6</span>
+      </div>
+    </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="b-tricks">
+  <div class="sub-heading">Must-Know Bit Tricks</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">⚡</div>Essential Bit Tricks — O(1) Operations</div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · All Essential Bit Operations</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> n = <span class="nm">13</span>;  <span class="cm">// 1101 in binary</span>
+<span class="tp">int</span> i = <span class="nm">1</span>;   <span class="cm">// bit position (0-indexed from right)</span>
+
+<span class="cm">// ── SET bit i (make it 1) ──────────────────────</span>
+<span class="tp">int</span> set   = n | (<span class="nm">1</span> &lt;&lt; i);        <span class="cm">// 1101 | 0010 = 1111 = 15</span>
+
+<span class="cm">// ── CLEAR bit i (make it 0) ───────────────────</span>
+<span class="tp">int</span> clear = n &amp; ~(<span class="nm">1</span> &lt;&lt; i);       <span class="cm">// 1101 & 1101 = 1101 = 13 (bit 1 was 0)</span>
+
+<span class="cm">// ── TOGGLE bit i (flip it) ────────────────────</span>
+<span class="tp">int</span> tog   = n ^ (<span class="nm">1</span> &lt;&lt; i);        <span class="cm">// 1101 ^ 0010 = 1111 = 15</span>
+
+<span class="cm">// ── CHECK if bit i is set ─────────────────────</span>
+<span class="tp">bool</span> isSet = (n &gt;&gt; i) &amp; <span class="nm">1</span>;       <span class="cm">// shift right by i, check LSB</span>
+<span class="cm">// OR: bool isSet2 = n & (1 << i);</span>
+
+<span class="cm">// ── CLEAR lowest set bit ──────────────────────</span>
+<span class="tp">int</span> clrLow = n &amp; (n - <span class="nm">1</span>);        <span class="cm">// 1101 & 1100 = 1100 = 12  ← Brian Kernighan!</span>
+
+<span class="cm">// ── GET lowest set bit ────────────────────────</span>
+<span class="tp">int</span> lowBit = n &amp; (-n);            <span class="cm">// 1101 & 0011 = 0001 = 1  (rightmost 1)</span>
+
+<span class="cm">// ── CHECK power of 2 ──────────────────────────</span>
+<span class="tp">bool</span> isPow2 = n &gt; <span class="nm">0</span> &amp;&amp; (n &amp; (n-<span class="nm">1</span>)) == <span class="nm">0</span>; <span class="cm">// true if exactly one bit set</span>
+
+<span class="cm">// ── COUNT set bits (popcount) ─────────────────</span>
+<span class="tp">int</span> cnt = __builtin_popcount(n);  <span class="cm">// GCC built-in, O(1)</span>
+
+<span class="cm">// ── MULTIPLY / DIVIDE by 2 ────────────────────</span>
+<span class="tp">int</span> mul2 = n &lt;&lt; <span class="nm">1</span>;               <span class="cm">// n * 2</span>
+<span class="tp">int</span> div2 = n &gt;&gt; <span class="nm">1</span>;               <span class="cm">// n / 2 (floor)</span>
+
+<span class="cm">// ── CHECK if ODD ──────────────────────────────</span>
+<span class="tp">bool</span> isOdd = n &amp; <span class="nm">1</span>;              <span class="cm">// LSB = 1 means odd</span></pre>
+    </div>
+    <div class="tip">💡 <b>n &amp; (n-1)</b> — ye trick sabse important hai! Iska use karke: count set bits (Brian Kernighan), check power of 2, remove lowest set bit. Yaad rakh lo!</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 1 — XOR PATTERN ══════════════ -->
+<div class="page" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">Bit Manipulation · Core Pattern 1</div>
+    <h2>⚡ XOR Pattern</h2>
+    <p>XOR ka jaadu — same number XOR karoge toh 0 milega. Isse missing/unique numbers O(n) time, O(1) space mein dhundo!</p>
+    <div class="badge-row">
+      <span class="badge badge-pink">a^a = 0</span>
+      <span class="badge badge-teal">a^0 = a</span>
+      <span class="badge badge-blue">Commutative</span>
+      <span class="badge badge-amber">O(1) Space</span>
+    </div>
+  </div>
+
+  <div id="xor-props">
+  <div class="sub-heading">XOR Properties — The Magic Rules</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🔮</div>XOR ke 4 Magic Properties</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      1. <b>a ^ a = 0</b> — any number XOR itself = 0 (self-cancellation)<br>
+      2. <b>a ^ 0 = a</b> — any number XOR 0 = itself (identity)<br>
+      3. <b>Commutative:</b> a ^ b = b ^ a<br>
+      4. <b>Associative:</b> (a ^ b) ^ c = a ^ (b ^ c)<br><br>
+      Together: XOR all numbers → duplicates cancel out, unique remains!
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      1. <b>a ^ a = 0</b> — koi bhi number khud se XOR karo = 0 (cancel ho jaata hai)<br>
+      2. <b>a ^ 0 = a</b> — koi bhi number 0 se XOR karo = wahi number<br>
+      3. <b>Commutative:</b> a ^ b = b ^ a (order matter nahi karta)<br>
+      4. <b>Associative:</b> grouping matter nahi karti<br><br>
+      Matlab: sab numbers ka XOR karo → duplicates cancel, unique bacha rehta hai!
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">XOR all of [1,2,1,3,2] → only 3 remains</div>
+      <div class="step">
+        <span class="step-num">1^2^1^3^2</span>
+        <div class="step-info">= (1^1) ^ (2^2) ^ 3 = 0 ^ 0 ^ 3</div>
+        <span class="step-result sr-pink">= 3 ✅</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="xor-single">
+  <div class="sub-heading">Problem 1 — Single Number</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">1️⃣</div>Single Number — Every element twice except one<span class="badge badge-pink">LeetCode 136</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Every element appears twice except one. Find it in O(n) time, O(1) space.<br>
+      <b>XOR all elements.</b> Pairs cancel (a^a=0), lone number survives (x^0=x).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Har element do baar aata hai except ek. O(n) time, O(1) space mein dhundo.<br>
+      <b>Sab elements ka XOR karo.</b> Pairs cancel ho jaate hain, akela bacha rehta hai.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Single Number I, II, III</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// LC 136 — Single Number (every element twice except one)</span>
+<span class="tp">int</span> <span class="fn">singleNumber</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> res = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums) res ^= x;  <span class="cm">// pairs cancel out</span>
+    <span class="kw">return</span> res;
+}
+
+<span class="cm">// LC 137 — Single Number II (every element 3x except one)</span>
+<span class="tp">int</span> <span class="fn">singleNumberII</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> ones = <span class="nm">0</span>, twos = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums) {
+        ones = (ones ^ x) &amp; ~twos;
+        twos = (twos ^ x) &amp; ~ones;
+    }
+    <span class="kw">return</span> ones;
+}
+
+<span class="cm">// LC 260 — Single Number III (two unique numbers)</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">singleNumberIII</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> xorAll = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums) xorAll ^= x;  <span class="cm">// = a ^ b</span>
+    <span class="tp">int</span> diff = xorAll &amp; (-xorAll);    <span class="cm">// rightmost differing bit</span>
+    <span class="tp">int</span> a = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums)
+        <span class="kw">if</span> (x &amp; diff) a ^= x;          <span class="cm">// split into two groups</span>
+    <span class="kw">return</span> {a, xorAll ^ a};
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">LC 136: nums=[4,1,2,1,2] → Expected: 4</div>
+      <div class="step"><span class="step-num">XOR all</span>
+        <div class="step-info">4^1^2^1^2 = 4^(1^1)^(2^2) = 4^0^0</div>
+        <span class="step-result sr-pink">= 4 ✅</span>
+      </div>
+    </div>
+    <div class="dry-run" style="margin-top:10px">
+      <div class="dry-run-title">LC 260: nums=[1,2,1,3,2,5] → Expected: [3,5]</div>
+      <div class="step"><span class="step-num">xorAll</span>
+        <div class="step-info">1^2^1^3^2^5 = 3^5 = 011^101 = 110 = 6</div>
+        <span class="step-result sr-pink">xorAll=6</span>
+      </div>
+      <div class="step"><span class="step-num">diff</span>
+        <div class="step-info">6&(-6) = 110&010 = 010 = 2 (rightmost diff bit)</div>
+        <span class="step-result sr-blue">diff=2</span>
+      </div>
+      <div class="step"><span class="step-num">group A</span>
+        <div class="step-info">nums with bit1 set: [2,2] → XOR=0? No: [3] bit1=1 → a=3</div>
+        <div class="step-info">group B: xorAll^a = 6^3 = 5</div>
+        <span class="step-result sr-teal">[3,5] ✅</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="xor-two">
+  <div class="sub-heading">Problem 2 — Missing Number / XOR tricks</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🔍</div>Missing Number & Find Duplicate<span class="badge badge-teal">LeetCode 268 / 287</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      <b>Missing Number (LC 268):</b> Array [0..n] with one missing. XOR array with [0..n] — duplicates cancel, missing remains.<br><br>
+      <b>Find Duplicate (LC 287):</b> XOR or use Floyd's cycle detection. XOR approach: XOR [1..n] with array — duplicate stands out.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Missing Number (LC 268):</b> Array mein [0..n] mein ek number missing. Array aur [0..n] dono ka XOR karo — jo pair nahi bana, woh missing number hai.<br><br>
+      <b>Find Duplicate (LC 287):</b> XOR approach: [1..n] aur array ka XOR — jo duplicate hai woh cancel nahi hoga.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Missing Number (XOR approach)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// LC 268 — Missing Number</span>
+<span class="tp">int</span> <span class="fn">missingNumber</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">int</span> res = nums.size(); <span class="cm">// start with n</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; nums.size(); i++)
+        res ^= i ^ nums[i]; <span class="cm">// XOR index and value together</span>
+    <span class="kw">return</span> res;
+    <span class="cm">// [0..n] indices ^ array values → pairs cancel, missing remains</span>
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">nums=[3,0,1] → Expected: 2</div>
+      <div class="step"><span class="step-num">res=3</span>
+        <div class="step-info">start with n=3</div>
+      </div>
+      <div class="step"><span class="step-num">i=0</span>
+        <div class="step-info">res = 3^0^3 = 0</div>
+      </div>
+      <div class="step"><span class="step-num">i=1</span>
+        <div class="step-info">res = 0^1^0 = 1</div>
+      </div>
+      <div class="step"><span class="step-num">i=2</span>
+        <div class="step-info">res = 1^2^1 = 2</div>
+        <span class="step-result sr-teal">= 2 ✅</span>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 2 — BIT MASKING ══════════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">Bit Manipulation · Core Pattern 2</div>
+    <h2>🎭 Bit Masking</h2>
+    <p>Mask = ek number jise aur number ke saath AND/OR/XOR karke specific bits manipulate karo. Set, Clear, Toggle, Count!</p>
+    <div class="badge-row">
+      <span class="badge badge-teal">1 &lt;&lt; i (mask)</span>
+      <span class="badge badge-amber">n &amp; (n-1)</span>
+      <span class="badge badge-blue">__builtin_popcount</span>
+      <span class="badge badge-pink">O(1) or O(log n)</span>
+    </div>
+  </div>
+
+  <div id="bm-setclear">
+  <div class="sub-heading">Set / Clear / Toggle / Read a Bit</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🎭</div>Bit Masking Operations on i-th Bit</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>Mask = 1 &lt;&lt; i</b> — a number with only bit i set.<br>
+      Set bit i: <code>n | mask</code> (force bit i to 1)<br>
+      Clear bit i: <code>n &amp; ~mask</code> (force bit i to 0)<br>
+      Toggle bit i: <code>n ^ mask</code> (flip bit i)<br>
+      Check bit i: <code>(n &gt;&gt; i) &amp; 1</code> (0 or 1)
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Mask = 1 &lt;&lt; i</b> — sirf bit i set hai aisa number.<br>
+      Bit i set karo: <code>n | mask</code> (bit i ko 1 banao)<br>
+      Bit i clear karo: <code>n &amp; ~mask</code> (bit i ko 0 banao)<br>
+      Bit i toggle karo: <code>n ^ mask</code> (bit i ulta karo)<br>
+      Bit i check karo: <code>(n &gt;&gt; i) &amp; 1</code> (0 hai ya 1?)
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">n=10 (1010), Set bit 2, Clear bit 3, Toggle bit 0</div>
+      <div class="step">
+        <span class="step-num">n=10</span>
+        <div class="bit-row">
+          <div class="bit-box bit-h">1</div><div class="bit-box bit-0">0</div>
+          <div class="bit-box bit-h">1</div><div class="bit-box bit-0">0</div>
+        </div>
+        <div class="step-info">bits 3,1 are set</div>
+      </div>
+      <div class="step">
+        <span class="step-num">SET bit 2</span>
+        <div class="bit-row">
+          <div class="bit-box bit-h">1</div><div class="bit-box bit-r">1</div>
+          <div class="bit-box bit-h">1</div><div class="bit-box bit-0">0</div>
+        </div>
+        <div class="step-info">n | (1&lt;&lt;2) = 1010 | 0100 = 1110 = 14</div>
+        <span class="step-result sr-teal">14</span>
+      </div>
+      <div class="step">
+        <span class="step-num">CLEAR bit 3</span>
+        <div class="bit-row">
+          <div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div>
+          <div class="bit-box bit-h">1</div><div class="bit-box bit-0">0</div>
+        </div>
+        <div class="step-info">n &amp; ~(1&lt;&lt;3) = 1010 &amp; 0111 = 0010 = 2</div>
+        <span class="step-result sr-blue">2</span>
+      </div>
+      <div class="step">
+        <span class="step-num">TOGGLE bit 0</span>
+        <div class="bit-row">
+          <div class="bit-box bit-h">1</div><div class="bit-box bit-0">0</div>
+          <div class="bit-box bit-h">1</div><div class="bit-box bit-x">1</div>
+        </div>
+        <div class="step-info">n ^ (1&lt;&lt;0) = 1010 ^ 0001 = 1011 = 11</div>
+        <span class="step-result sr-pink">11</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="bm-count">
+  <div class="sub-heading">Count Set Bits — Brian Kernighan's Algorithm</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🔢</div>Count Set Bits (Popcount)<span class="badge badge-teal">LeetCode 191</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Count how many 1-bits are in n.<br>
+      <b>Naive:</b> Loop 32 times, check each bit — O(32).<br>
+      <b>Brian Kernighan:</b> <code>n = n &amp; (n-1)</code> removes lowest set bit each time. Loop runs only as many times as set bits — O(set bits count).<br>
+      <b>Built-in:</b> <code>__builtin_popcount(n)</code> — O(1) in GCC.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      n mein kitne 1-bits hain count karo.<br>
+      <b>Naive:</b> 32 baar loop, har bit check karo — O(32).<br>
+      <b>Brian Kernighan:</b> <code>n = n &amp; (n-1)</code> — har baar sabse chhota set bit remove hota hai. Loop sirf utni baar chalta hai jitne set bits hain.<br>
+      <b>Built-in:</b> <code>__builtin_popcount(n)</code> — GCC mein O(1).
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Count Bits — 3 Ways</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// 1. Naive — O(32)</span>
+<span class="tp">int</span> <span class="fn">countBitsNaive</span>(<span class="tp">int</span> n) {
+    <span class="tp">int</span> cnt = <span class="nm">0</span>;
+    <span class="kw">while</span> (n) { cnt += n &amp; <span class="nm">1</span>; n &gt;&gt;= <span class="nm">1</span>; }
+    <span class="kw">return</span> cnt;
+}
+
+<span class="cm">// 2. Brian Kernighan — O(set bits) ← BEST</span>
+<span class="tp">int</span> <span class="fn">countBitsKernighan</span>(<span class="tp">int</span> n) {
+    <span class="tp">int</span> cnt = <span class="nm">0</span>;
+    <span class="kw">while</span> (n) { n &amp;= (n - <span class="nm">1</span>); cnt++; }  <span class="cm">// clears lowest set bit</span>
+    <span class="kw">return</span> cnt;
+}
+
+<span class="cm">// 3. GCC Built-in — O(1)</span>
+<span class="tp">int</span> cnt = __builtin_popcount(n);
+
+<span class="cm">// LC 338 — Counting Bits (DP + bit trick)</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">countBits</span>(<span class="tp">int</span> n) {
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; dp(n+<span class="nm">1</span>);
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt;= n; i++)
+        dp[i] = dp[i &gt;&gt; <span class="nm">1</span>] + (i &amp; <span class="nm">1</span>); <span class="cm">// dp[i] = dp[i/2] + LSB of i</span>
+    <span class="kw">return</span> dp;
+}</pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">n=13 (1101) — Brian Kernighan steps</div>
+      <div class="step"><span class="step-num">n=13=1101</span>
+        <div class="bit-row"><div class="bit-box bit-h">1</div><div class="bit-box bit-h">1</div><div class="bit-box bit-0">0</div><div class="bit-box bit-h">1</div></div>
+        <div class="step-info">n&(n-1) = 1101&1100 = 1100=12</div>
+        <span class="step-result sr-orng">cnt=1</span>
+      </div>
+      <div class="step"><span class="step-num">n=12=1100</span>
+        <div class="bit-row"><div class="bit-box bit-h">1</div><div class="bit-box bit-h">1</div><div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div></div>
+        <div class="step-info">n&(n-1) = 1100&1011 = 1000=8</div>
+        <span class="step-result sr-orng">cnt=2</span>
+      </div>
+      <div class="step"><span class="step-num">n=8=1000</span>
+        <div class="bit-row"><div class="bit-box bit-h">1</div><div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div></div>
+        <div class="step-info">n&(n-1) = 1000&0111 = 0000=0</div>
+        <span class="step-result sr-teal">cnt=3 ✅</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="bm-power">
+  <div class="sub-heading">Power of 2 Checks & More</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">2️⃣</div>Power of 2, Reverse Bits, Hamming Distance</div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Power of 2 / Reverse Bits / Hamming Distance</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// LC 231 — Power of Two</span>
+<span class="tp">bool</span> <span class="fn">isPowerOfTwo</span>(<span class="tp">int</span> n) {
+    <span class="kw">return</span> n &gt; <span class="nm">0</span> &amp;&amp; (n &amp; (n-<span class="nm">1</span>)) == <span class="nm">0</span>;
+    <span class="cm">// Power of 2 has exactly 1 set bit → n&(n-1) clears it → 0</span>
+}
+
+<span class="cm">// LC 190 — Reverse Bits</span>
+<span class="tp">uint32_t</span> <span class="fn">reverseBits</span>(<span class="tp">uint32_t</span> n) {
+    <span class="tp">uint32_t</span> res = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; <span class="nm">32</span>; i++) {
+        res = (res &lt;&lt; <span class="nm">1</span>) | (n &amp; <span class="nm">1</span>); <span class="cm">// shift res left, add LSB of n</span>
+        n &gt;&gt;= <span class="nm">1</span>;
+    }
+    <span class="kw">return</span> res;
+}
+
+<span class="cm">// LC 461 — Hamming Distance</span>
+<span class="tp">int</span> <span class="fn">hammingDistance</span>(<span class="tp">int</span> x, <span class="tp">int</span> y) {
+    <span class="kw">return</span> __builtin_popcount(x ^ y); <span class="cm">// XOR → differing bits → count them</span>
+}
+<span class="cm">// Why XOR? Bits that differ become 1 in x^y. popcount counts those 1s.</span></pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">Hamming Distance: x=1(001), y=4(100) → Expected: 2</div>
+      <div class="step"><span class="step-num">x=001</span>
+        <div class="bit-row"><div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div><div class="bit-box bit-h">1</div></div>
+      </div>
+      <div class="step"><span class="step-num">y=100</span>
+        <div class="bit-row"><div class="bit-box bit-h">1</div><div class="bit-box bit-0">0</div><div class="bit-box bit-0">0</div></div>
+      </div>
+      <div class="step"><span class="step-num">x^y=101</span>
+        <div class="bit-row"><div class="bit-box bit-x">1</div><div class="bit-box bit-0">0</div><div class="bit-box bit-x">1</div></div>
+        <div class="step-info">popcount(101) = 2</div>
+        <span class="step-result sr-pink">= 2 ✅</span>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 3 — SUBSET VIA BITS ══════════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">Bit Manipulation · Usage Pattern 1</div>
+    <h2>🗂️ Subset via Bits</h2>
+    <p>n elements ka har possible subset ek bitmask se represent hota hai. 0 to (2^n - 1) tak loop karo — sab subsets cover!</p>
+    <div class="badge-row">
+      <span class="badge badge-teal">2^n subsets</span>
+      <span class="badge badge-amber">mask bit = element included</span>
+      <span class="badge badge-blue">n ≤ 20 for feasibility</span>
+      <span class="badge badge-pink">Bitmask DP base</span>
+    </div>
+  </div>
+
+  <div id="sb-enumerate">
+  <div class="sub-heading">Enumerate All Subsets of a Set</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🗂️</div>All Subsets using Bitmask</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      For n elements, there are <b>2^n subsets</b>. Each subset maps to a bitmask from 0 to 2^n - 1.<br>
+      Bit i in mask = 1 → element i is included in this subset.<br>
+      Loop mask from 0 to (1&lt;&lt;n)-1. For each mask, check which bits are set.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      n elements ke liye <b>2^n subsets</b> hote hain. Har subset ek bitmask se represent hota hai (0 se 2^n-1 tak).<br>
+      Mask mein bit i = 1 → element i us subset mein hai.<br>
+      Mask 0 se (1&lt;&lt;n)-1 tak loop karo. Har mask mein set bits check karo.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Print All Subsets</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">void</span> <span class="fn">printAllSubsets</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr) {
+    <span class="tp">int</span> n = arr.size();
+    <span class="kw">for</span> (<span class="tp">int</span> mask = <span class="nm">0</span>; mask &lt; (<span class="nm">1</span> &lt;&lt; n); mask++) {
+        cout &lt;&lt; <span class="st">"{ "</span>;
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+            <span class="kw">if</span> (mask &gt;&gt; i &amp; <span class="nm">1</span>)      <span class="cm">// is bit i set in mask?</span>
+                cout &lt;&lt; arr[i] &lt;&lt; <span class="st">" "</span>;
+        }
+        cout &lt;&lt; <span class="st">"}\n"</span>;
+    }
+}
+<span class="cm">// arr=[a,b,c], n=3 → 2^3=8 subsets:
+// {} {a} {b} {a,b} {c} {a,c} {b,c} {a,b,c}
+// mask=0→000, mask=1→001 (a), mask=2→010 (b), ...mask=7→111 (a,b,c)</span></pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">arr=[1,2,3], n=3 — mask to subset mapping</div>
+      <div class="step"><span class="step-num">mask=000</span><div class="arr-row"><div class="a-box fail">{ }</div></div><div class="step-info">empty subset</div></div>
+      <div class="step"><span class="step-num">mask=001</span><div class="arr-row"><div class="a-box teal">{1}</div></div><div class="step-info">bit 0 set → elem[0]=1</div></div>
+      <div class="step"><span class="step-num">mask=010</span><div class="arr-row"><div class="a-box blue">{2}</div></div><div class="step-info">bit 1 set → elem[1]=2</div></div>
+      <div class="step"><span class="step-num">mask=011</span><div class="arr-row"><div class="a-box hi">{1,2}</div></div><div class="step-info">bits 0,1 set</div></div>
+      <div class="step"><span class="step-num">mask=100</span><div class="arr-row"><div class="a-box match">{3}</div></div><div class="step-info">bit 2 set → elem[2]=3</div></div>
+      <div class="step"><span class="step-num">mask=111</span><div class="arr-row"><div class="a-box found">{1,2,3}</div></div><div class="step-info">all bits set = full set</div></div>
+    </div>
+    <div class="tip">💡 <b>Subset sum using bitmask:</b> Har mask ke liye bits check karo, selected elements ka sum nikalo — kya sum = target? O(2^n × n). n ≤ 20 ke liye feasible.</div>
+  </div>
+  </div>
+
+  <div id="sb-submask">
+  <div class="sub-heading">Iterate Submasks of a Mask</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🔽</div>Submask Enumeration — All subsets of a bitmask</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Given a mask, iterate all its submasks (subsets of set bits).<br>
+      <b>Trick:</b> Start with sub=mask. Each step: sub = (sub-1) &amp; mask. Stop when sub=0.<br>
+      Total iterations across all masks = 3^n (each element: in mask but not sub, in sub, not in mask).<br>
+      Used in <b>Bitmask DP</b> problems (SOS DP, TSP).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Ek mask ke sare submasks iterate karo (sirf woh bits jo mask mein hain).<br>
+      <b>Trick:</b> sub=mask se shuru. Har step: sub = (sub-1) &amp; mask. sub=0 par stop.<br>
+      Sab masks ke total iterations = 3^n (har element teen options: mask mein but sub mein nahi, sub mein, mask mein hi nahi).<br>
+      <b>Bitmask DP</b> mein use hota hai (SOS DP, TSP).
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Enumerate All Submasks</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// All submasks of 'mask'</span>
+<span class="kw">for</span> (<span class="tp">int</span> sub = mask; sub &gt; <span class="nm">0</span>; sub = (sub-<span class="nm">1</span>) &amp; mask) {
+    <span class="cm">// process sub (submask of mask)</span>
+    <span class="cm">// the loop also excludes empty mask; add 0 separately if needed</span>
+}
+
+<span class="cm">// All masks and all their submasks — O(3^n) total</span>
+<span class="kw">for</span> (<span class="tp">int</span> mask = <span class="nm">0</span>; mask &lt; (<span class="nm">1</span>&lt;&lt;n); mask++) {
+    <span class="kw">for</span> (<span class="tp">int</span> sub = mask; sub &gt; <span class="nm">0</span>; sub = (sub-<span class="nm">1</span>) &amp; mask) {
+        <span class="cm">// process (mask, sub) pair</span>
+    }
+}
+
+<span class="cm">// SOS DP (Sum over Subsets) — prefix sum over bitmask</span>
+<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; dp(<span class="nm">1</span>&lt;&lt;n);
+<span class="cm">// init dp[mask] = value of mask</span>
+<span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; n; i++)
+    <span class="kw">for</span> (<span class="tp">int</span> mask = <span class="nm">0</span>; mask &lt; (<span class="nm">1</span>&lt;&lt;n); mask++)
+        <span class="kw">if</span> (mask &gt;&gt; i &amp; <span class="nm">1</span>)
+            dp[mask] += dp[mask ^ (<span class="nm">1</span>&lt;&lt;i)]; <span class="cm">// O(n × 2^n)</span></pre>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 4 — BIT CHECKS ══════════════ -->
+<div class="page" id="p4">
+  <div class="page-header">
+    <div class="breadcrumb">Bit Manipulation · Usage Pattern 2</div>
+    <h2>✅ Bit Checks</h2>
+    <p>Number ki properties bits se check karo — odd/even, sign, two's complement, swap without temp, abs without branch!</p>
+    <div class="badge-row">
+      <span class="badge badge-teal">n &amp; 1 (odd/even)</span>
+      <span class="badge badge-pink">n &gt;&gt; 31 (sign)</span>
+      <span class="badge badge-amber">XOR swap</span>
+      <span class="badge badge-blue">O(1) always</span>
+    </div>
+  </div>
+
+  <div id="bc-checks">
+  <div class="sub-heading">Common Bit Checks</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">✅</div>Bit Check Tricks — All in One</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      These are O(1) tricks that replace branches and division in competitive programming.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Ye O(1) tricks hain jo conditions aur division ko replace karti hain — competitive programming mein bahut kaam aate hain.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · All Bit Check Tricks</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> n = -<span class="nm">7</span>;
+
+<span class="cm">// ── ODD / EVEN ─────────────────────────────────</span>
+<span class="tp">bool</span> isOdd  = n &amp; <span class="nm">1</span>;           <span class="cm">// LSB=1 → odd</span>
+<span class="tp">bool</span> isEven = !(n &amp; <span class="nm">1</span>);
+
+<span class="cm">// ── SIGN CHECK ────────────────────────────────</span>
+<span class="tp">bool</span> isNeg  = n &gt;&gt; <span class="nm">31</span>;         <span class="cm">// MSB=1 → negative (signed right shift)</span>
+<span class="tp">bool</span> isPos  = !(n &gt;&gt; <span class="nm">31</span>) &amp;&amp; n; <span class="cm">// MSB=0 and not 0</span>
+
+<span class="cm">// ── SAME SIGN CHECK ───────────────────────────</span>
+<span class="tp">bool</span> sameSign = !((n ^ m) &gt;&gt; <span class="nm">31</span>); <span class="cm">// XOR MSBs; if same sign → MSB=0</span>
+
+<span class="cm">// ── ABSOLUTE VALUE (no branch) ────────────────</span>
+<span class="tp">int</span> mask2 = n &gt;&gt; <span class="nm">31</span>;           <span class="cm">// all 0s if positive, all 1s if negative</span>
+<span class="tp">int</span> absVal = (n + mask2) ^ mask2; <span class="cm">// branchless abs</span>
+
+<span class="cm">// ── MIN / MAX (no branch) ─────────────────────</span>
+<span class="tp">int</span> a = <span class="nm">5</span>, b = <span class="nm">3</span>;
+<span class="tp">int</span> minVal = b + ((a-b) &amp; ((a-b) &gt;&gt; <span class="nm">31</span>));
+<span class="tp">int</span> maxVal = a - ((a-b) &amp; ((a-b) &gt;&gt; <span class="nm">31</span>));
+
+<span class="cm">// ── MULTIPLY / DIVIDE by 2^k ──────────────────</span>
+<span class="tp">int</span> mul = n &lt;&lt; <span class="nm">3</span>;             <span class="cm">// n * 8  (2^3)</span>
+<span class="tp">int</span> div_ = n &gt;&gt; <span class="nm">2</span>;            <span class="cm">// n / 4  (2^2)</span>
+
+<span class="cm">// ── CHECK if n-th bit is set ──────────────────</span>
+<span class="tp">bool</span> nthBit = (n &gt;&gt; k) &amp; <span class="nm">1</span>;
+
+<span class="cm">// ── NEXT POWER OF 2 (≥ n) ────────────────────</span>
+<span class="tp">int</span> nextPow2(<span class="tp">int</span> n) {
+    n--;
+    n |= n &gt;&gt; <span class="nm">1</span>; n |= n &gt;&gt; <span class="nm">2</span>;
+    n |= n &gt;&gt; <span class="nm">4</span>; n |= n &gt;&gt; <span class="nm">8</span>;
+    n |= n &gt;&gt; <span class="nm">16</span>;
+    <span class="kw">return</span> n + <span class="nm">1</span>;
+}</pre>
+    </div>
+  </div>
+  </div>
+
+  <div id="bc-swap">
+  <div class="sub-heading">XOR Swap — No temp variable</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🔄</div>XOR Swap + Two's Complement</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>XOR Swap:</b> Swap two variables without a temp using XOR properties.<br>
+      a = a^b, b = a^b (= (a^b)^b = a), a = a^b (= (a^b)^a = b).<br><br>
+      <b>Two's Complement:</b> ~n + 1 = -n. So -n = ~n + 1 and ~n = -n - 1.<br>
+      This is how negative numbers are stored in binary.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>XOR Swap:</b> Temp variable ke bina do variables swap karo XOR use karke.<br>
+      a = a^b, b = a^b (ab b = original a hai), a = a^b (ab a = original b hai).<br><br>
+      <b>Two's Complement:</b> ~n + 1 = -n. Negative numbers aise hi binary mein store hote hain.
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · XOR Swap & Two's Complement</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm">// XOR Swap (no temp) — works only when a != b address!</span>
+<span class="kw">void</span> <span class="fn">xorSwap</span>(<span class="tp">int</span>&amp; a, <span class="tp">int</span>&amp; b) {
+    <span class="kw">if</span> (&amp;a == &amp;b) <span class="kw">return</span>;  <span class="cm">// same variable? skip!</span>
+    a ^= b;  <span class="cm">// a = a^b</span>
+    b ^= a;  <span class="cm">// b = (a^b)^b = a</span>
+    a ^= b;  <span class="cm">// a = (a^b)^a = b</span>
+}
+
+<span class="cm">// Two's complement: -n = ~n + 1</span>
+<span class="tp">int</span> n = <span class="nm">5</span>;
+<span class="tp">int</span> neg = ~n + <span class="nm">1</span>;   <span class="cm">// = -5</span>
+<span class="cm">// 5  = 0101</span>
+<span class="cm">// ~5 = 1010  (flip all bits)</span>
+<span class="cm">// +1 = 1011  = -5 in two's complement ✅</span></pre>
+    </div>
+    <div class="warn">⚠️ <b>XOR Swap kabhi bhi same variable par mat karo!</b> a=5; xorSwap(a,a) → a becomes 0 (a^a=0). Isliye &amp;a==&amp;b check zaruri hai.</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 5 — PREFIX XOR ══════════════ -->
+<div class="page" id="p5">
+  <div class="page-header">
+    <div class="breadcrumb">Bit Manipulation · Usage Pattern 3</div>
+    <h2>🔗 Prefix XOR</h2>
+    <p>Prefix sum ki tarah — prefix XOR array banao, phir kisi bhi subarray ka XOR O(1) mein nikalo. Range queries ke liye!</p>
+    <div class="badge-row">
+      <span class="badge badge-green">pre[i] = arr[0]^...^arr[i]</span>
+      <span class="badge badge-teal">XOR[l,r] = pre[r]^pre[l-1]</span>
+      <span class="badge badge-amber">O(n) build O(1) query</span>
+    </div>
+  </div>
+
+  <div id="px-concept">
+  <div class="sub-heading">Prefix XOR — Concept</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--green-bg)">🔗</div>Prefix XOR Array</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>Prefix XOR:</b> pre[i] = arr[0] ^ arr[1] ^ ... ^ arr[i].<br>
+      XOR of subarray [l, r] = pre[r] ^ pre[l-1].<br>
+      <b>Why?</b> pre[r] = arr[0]^...^arr[r]. pre[l-1] = arr[0]^...^arr[l-1].<br>
+      XORing them: arr[0..l-1] cancels out (same XOR twice = 0) → arr[l..r] remains!<br>
+      Same idea as prefix sums but with XOR.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Prefix XOR:</b> pre[i] = arr[0] ^ arr[1] ^ ... ^ arr[i].<br>
+      Subarray [l, r] ka XOR = pre[r] ^ pre[l-1].<br>
+      <b>Kyun?</b> pre[r] mein arr[0..r] sab hain. pre[l-1] mein arr[0..l-1] hain.<br>
+      Dono XOR karo: arr[0..l-1] cancel ho jaata hai (a^a=0) → sirf arr[l..r] bachta hai!<br>
+      Bilkul prefix sum jaisi trick hai — bas + ki jagah ^ hai.
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">arr=[3,10,5,25,2,4] — prefix XOR array</div>
+      <div class="step"><span class="step-num">arr[]</span>
+        <div class="arr-row"><div class="a-box">3</div><div class="a-box">10</div><div class="a-box">5</div><div class="a-box">25</div><div class="a-box">2</div><div class="a-box">4</div></div>
+      </div>
+      <div class="step"><span class="step-num">pre[]</span>
+        <div class="arr-row">
+          <div class="a-box teal">3</div>
+          <div class="a-box hi">9</div>
+          <div class="a-box hi">12</div>
+          <div class="a-box hi">21</div>
+          <div class="a-box hi">23</div>
+          <div class="a-box found">27</div>
+        </div>
+        <div class="step-info">pre[i] = pre[i-1]^arr[i]</div>
+      </div>
+      <div class="step"><span class="step-num">XOR[2,4]</span>
+        <div class="step-info">= pre[4]^pre[1] = 23^9 = 30</div>
+        <span class="step-result sr-teal">= 5^25^2 = 30 ✅</span>
+      </div>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Prefix XOR Build & Query</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; <span class="fn">buildPrefixXOR</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr) {
+    <span class="tp">int</span> n = arr.size();
+    <span class="tp">vector</span>&lt;<span class="tp">int</span>&gt; pre(n+<span class="nm">1</span>, <span class="nm">0</span>);  <span class="cm">// pre[0]=0 (empty prefix)</span>
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">1</span>; i &lt;= n; i++)
+        pre[i] = pre[i-<span class="nm">1</span>] ^ arr[i-<span class="nm">1</span>];
+    <span class="kw">return</span> pre;
+}
+
+<span class="tp">int</span> <span class="fn">queryXOR</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; pre, <span class="tp">int</span> l, <span class="tp">int</span> r) {
+    <span class="kw">return</span> pre[r+<span class="nm">1</span>] ^ pre[l];   <span class="cm">// 0-indexed l, r</span>
+}</pre>
+    </div>
+  </div>
+  </div>
+
+  <div id="px-subarray">
+  <div class="sub-heading">Subarray XOR Problems</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🎯</div>Count Subarrays with XOR = k<span class="badge badge-amber">LeetCode 1442 / Classic</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Count subarrays whose XOR equals k.<br>
+      XOR[l,r] = pre[r] ^ pre[l-1] = k → pre[l-1] = pre[r] ^ k.<br>
+      <b>Algorithm:</b> Keep a frequency map of prefix XOR values seen so far.<br>
+      For each r, count how many prev prefix XORs equal (current_prefix ^ k).<br>
+      Exactly like "subarray sum = k" but with XOR and map!
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Jinke XOR = k hon aise subarrays count karo.<br>
+      XOR[l,r] = pre[r] ^ pre[l-1] = k → pre[l-1] = pre[r] ^ k.<br>
+      <b>Algorithm:</b> Prefix XOR values ka frequency map rakho.<br>
+      Har r ke liye count karo kitne pehle ke prefix XOR = (current_prefix ^ k) hain.<br>
+      Bilkul "subarray sum = k" jaisi trick hai — bas + ki jagah ^!
+    </div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Count Subarrays with XOR = k</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">countSubarraysXOR</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; arr, <span class="tp">int</span> k) {
+    <span class="tp">unordered_map</span>&lt;<span class="tp">int</span>,<span class="tp">int</span>&gt; freq;
+    freq[<span class="nm">0</span>] = <span class="nm">1</span>;  <span class="cm">// empty prefix XOR = 0</span>
+    <span class="tp">int</span> prefXOR = <span class="nm">0</span>, count = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> x : arr) {
+        prefXOR ^= x;
+        count += freq[prefXOR ^ k]; <span class="cm">// need pre[l-1] = prefXOR^k</span>
+        freq[prefXOR]++;
+    }
+    <span class="kw">return</span> count;
+}
+<span class="cm">// Time: O(n), Space: O(n)</span>
+<span class="cm">// Same trick works for "longest subarray with XOR=k" using index map</span></pre>
+    </div>
+    <div class="dry-run">
+      <div class="dry-run-title">arr=[4,2,2,6,4], k=6 → Expected: 4</div>
+      <div class="step"><span class="step-num">start</span><div class="step-info">freq={0:1}, prefXOR=0, count=0</div></div>
+      <div class="step"><span class="step-num">x=4</span><div class="step-info">prefXOR=4, need 4^6=2, freq[2]=0 → count=0, freq={0:1,4:1}</div></div>
+      <div class="step"><span class="step-num">x=2</span><div class="step-info">prefXOR=6, need 6^6=0, freq[0]=1 → count=1, freq={0:1,4:1,6:1}</div></div>
+      <div class="step"><span class="step-num">x=2</span><div class="step-info">prefXOR=4, need 4^6=2, freq[2]=0 → count=1, freq={0:1,4:2,6:1}</div></div>
+      <div class="step"><span class="step-num">x=6</span><div class="step-info">prefXOR=2, need 2^6=4, freq[4]=2 → count=3, freq={...,2:1}</div></div>
+      <div class="step"><span class="step-num">x=4</span><div class="step-info">prefXOR=6, need 6^6=0, freq[0]=1 → count=4</div>
+        <span class="step-result sr-teal">= 4 ✅</span>
+      </div>
+    </div>
+    <div class="tip">💡 <b>Prefix XOR = Prefix Sum's XOR cousin.</b> Jab bhi "subarray XOR = k" ya "XOR queries on range" ho → prefix XOR + hashmap. O(n) solution guaranteed!</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 6 — CHEATSHEET ══════════════ -->
+<div class="page" id="p6">
+  <div class="page-header">
+    <div class="breadcrumb">Bit Manipulation · Master Reference</div>
+    <h2>📊 Bit Manipulation — Cheatsheet</h2>
+    <p>Sab operations, patterns, aur LeetCode problems ek jagah. Interview prep ke liye ultimate reference!</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--orange-bg)">⚡</div>All Bit Operations — Quick Reference</div>
+    <table class="tbl">
+      <tr><th>Operation</th><th>Code</th><th>Example (n=13=1101)</th></tr>
+      <tr><td>Set bit i</td><td><code>n | (1 &lt;&lt; i)</code></td><td>Set bit 1 → 1111 = 15</td></tr>
+      <tr><td>Clear bit i</td><td><code>n &amp; ~(1 &lt;&lt; i)</code></td><td>Clear bit 3 → 0101 = 5</td></tr>
+      <tr><td>Toggle bit i</td><td><code>n ^ (1 &lt;&lt; i)</code></td><td>Toggle bit 2 → 1001 = 9</td></tr>
+      <tr><td>Check bit i</td><td><code>(n &gt;&gt; i) &amp; 1</code></td><td>Check bit 2 → 1</td></tr>
+      <tr><td>Clear lowest set bit</td><td><code>n &amp; (n-1)</code></td><td>1101 &amp; 1100 = 1100 = 12</td></tr>
+      <tr><td>Get lowest set bit</td><td><code>n &amp; (-n)</code></td><td>1101 &amp; 0011 = 0001 = 1</td></tr>
+      <tr><td>Check power of 2</td><td><code>n &gt; 0 &amp;&amp; !(n &amp; (n-1))</code></td><td>8=1000 → true</td></tr>
+      <tr><td>Count set bits</td><td><code>__builtin_popcount(n)</code></td><td>popcount(13) = 3</td></tr>
+      <tr><td>Multiply by 2^k</td><td><code>n &lt;&lt; k</code></td><td>13 &lt;&lt; 1 = 26</td></tr>
+      <tr><td>Divide by 2^k</td><td><code>n &gt;&gt; k</code></td><td>13 &gt;&gt; 1 = 6</td></tr>
+      <tr><td>XOR swap</td><td><code>a^=b; b^=a; a^=b;</code></td><td>No temp needed</td></tr>
+      <tr><td>Check odd</td><td><code>n &amp; 1</code></td><td>13 &amp; 1 = 1 (odd)</td></tr>
+      <tr><td>Subsets of mask</td><td><code>sub=(sub-1)&amp;mask</code></td><td>Iterate all submasks</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🧠</div>Pattern Decision Guide</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>"Array mein ek element akela hai, baaki sab do baar?"</b> → XOR sab karo (a^a=0)<br>
+      <b>"Subarray ka XOR = k count karo?"</b> → Prefix XOR + hashmap (subarray sum trick!)<br>
+      <b>"Specific bit set/clear/check karna hai?"</b> → Mask = 1&lt;&lt;i, phir AND/OR/XOR<br>
+      <b>"Set bits count karna hai?"</b> → n&(n-1) loop (Kernighan) ya __builtin_popcount<br>
+      <b>"Power of 2 check karna hai?"</b> → n&gt;0 &amp;&amp; !(n&(n-1))<br>
+      <b>"Sab subsets enumerate karna hai (n≤20)?"</b> → 0 to (1&lt;&lt;n)-1 loop<br>
+      <b>"Ek mask ke sab submasks?"</b> → sub=(sub-1)&mask trick<br>
+      <b>"Two unique numbers find karo, baaki sab do baar?"</b> → XOR all → split by rightmost diff bit
+    </div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>"One element unique, all others appear twice?"</b> → XOR all (a^a=0 cancels pairs)<br>
+      <b>"Count subarrays with XOR = k?"</b> → Prefix XOR + hashmap<br>
+      <b>"Set/clear/toggle/check a specific bit?"</b> → Mask = 1&lt;&lt;i, then AND/OR/XOR<br>
+      <b>"Count set bits?"</b> → n&(n-1) loop or __builtin_popcount<br>
+      <b>"Power of 2 check?"</b> → n&gt;0 &amp;&amp; !(n&(n-1))<br>
+      <b>"Enumerate all subsets (n≤20)?"</b> → Loop 0 to (1&lt;&lt;n)-1<br>
+      <b>"All submasks of a mask?"</b> → sub=(sub-1)&mask<br>
+      <b>"Find two unique numbers among duplicates?"</b> → XOR all → split on rightmost diff bit
+    </div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="mini-card"><b style="color:var(--pink)">XOR Pattern</b>Pairs cancel. Find unique/missing. O(n) time O(1) space. Prefix XOR for range queries.</div>
+      <div class="mini-card"><b style="color:var(--amber)">Bit Masking</b>1&lt;&lt;i is your mask. n&(n-1) clears lowest bit. Power of 2 = exactly 1 set bit.</div>
+      <div class="mini-card"><b style="color:var(--teal)">Subset Enumeration</b>0 to 2^n-1 = all subsets. bit i set = element i included. n≤20 for feasibility.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">📝</div>LeetCode Problems — Complete List</div>
+    <table class="tbl">
+      <tr><th>Problem</th><th>Pattern</th><th>Key Trick</th><th>LC #</th></tr>
+      <tr><td>Single Number I</td><td>XOR</td><td>XOR all → pairs cancel</td><td>#136</td></tr>
+      <tr><td>Single Number II</td><td>XOR / Bit Count</td><td>ones & twos state machine</td><td>#137</td></tr>
+      <tr><td>Single Number III</td><td>XOR</td><td>XOR all → split by diff bit</td><td>#260</td></tr>
+      <tr><td>Missing Number</td><td>XOR</td><td>XOR [0..n] ^ array</td><td>#268</td></tr>
+      <tr><td>Number of 1 Bits</td><td>Bit Masking</td><td>n &amp; (n-1) Kernighan</td><td>#191</td></tr>
+      <tr><td>Counting Bits</td><td>Bit Masking + DP</td><td>dp[i] = dp[i&gt;&gt;1] + (i&amp;1)</td><td>#338</td></tr>
+      <tr><td>Power of Two</td><td>Bit Masking</td><td>n &amp; (n-1) == 0</td><td>#231</td></tr>
+      <tr><td>Reverse Bits</td><td>Bit Masking</td><td>LSB extraction + shift</td><td>#190</td></tr>
+      <tr><td>Hamming Distance</td><td>XOR + popcount</td><td>popcount(x^y)</td><td>#461</td></tr>
+      <tr><td>Sum of Two Integers</td><td>Bit Masking</td><td>a^b + carry=(a&amp;b)&lt;&lt;1</td><td>#371</td></tr>
+      <tr><td>Subsets</td><td>Subset via Bits</td><td>Loop 0 to 2^n-1</td><td>#78</td></tr>
+      <tr><td>Subsets II (duplicates)</td><td>Subset via Bits</td><td>Sort + check prev mask</td><td>#90</td></tr>
+      <tr><td>XOR Queries of Subarray</td><td>Prefix XOR</td><td>pre[r]^pre[l-1]</td><td>#1310</td></tr>
+      <tr><td>Count Triplets (XOR)</td><td>Prefix XOR</td><td>pre[i]==pre[j] → gap=j-i</td><td>#1442</td></tr>
+      <tr><td>Maximum XOR of Two Numbers</td><td>Trie / Bit Greedy</td><td>Build bit trie, greedy pick</td><td>#421</td></tr>
+      <tr><td>Find XOR Beauty of Array</td><td>XOR math</td><td>Answer = XOR of all elements</td><td>#2527</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">⚠️</div>Common Bit Manipulation Mistakes</div>
+    <div class="warn">⚠️ <b>Operator precedence trap!</b> <code>n &amp; 1 == 0</code> → WRONG! <code>==</code> has higher priority than <code>&amp;</code>. Write <code>(n &amp; 1) == 0</code> with parentheses. Always!</div>
+    <div class="warn">⚠️ <b>Left shift overflow!</b> <code>1 &lt;&lt; 31</code> on int is undefined behavior. Use <code>1LL &lt;&lt; 31</code> or <code>1u &lt;&lt; 31</code> for large bit positions.</div>
+    <div class="warn">⚠️ <b>Signed right shift!</b> <code>n &gt;&gt; k</code> on negative numbers is implementation-defined in C (arithmetic shift on most compilers, but not guaranteed). Use unsigned or be careful.</div>
+    <div class="warn">⚠️ <b>XOR swap on same variable!</b> <code>xorSwap(a, a)</code> → a becomes 0. Always check &amp;a != &amp;b before XOR swapping.</div>
+    <div class="tip">💡 <b>GCC Built-ins for competitive programming:</b><br>
+    <code>__builtin_popcount(n)</code> — count set bits<br>
+    <code>__builtin_clz(n)</code> — count leading zeros<br>
+    <code>__builtin_ctz(n)</code> — count trailing zeros<br>
+    <code>__builtin_parity(n)</code> — parity (1 if odd set bits)
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (!sidebar || !overlay) return;
+    sidebar.classList.toggle('open');
+    if (sidebar.classList.contains('open')) {
+      overlay.style.display = 'block';
+      setTimeout(() => overlay.style.opacity = '1', 10);
+    } else {
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.style.display = 'none', 350);
+    }
+  }
+
+  const pages = ['p0','p1','p2','p3','p4','p5','p6'];
+  const subs  = ['sub0','sub1','sub2','sub3','sub4','sub5'];
+
+  function showPage(id, btn) {
+    // Auto-close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = i===idx ? 'block' : 'none';
+    });
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    // Auto-close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = i===0 ? 'block' : 'none';
+  });
+</script>
+</body>
+</html>

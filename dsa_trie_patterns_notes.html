@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Trie Patterns — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:#2a3245;
+    --text:#e8eaf6;--muted:#8892a4;
+    --teal:#1dd6a0;--teal-bg:#0d2e24;
+    --purple:#a78bfa;--purple-bg:#1e1633;
+    --amber:#fbbf24;--amber-bg:#2a1f0a;
+    --blue:#60a5fa;--blue-bg:#0e1f35;
+    --coral:#fb7185;--coral-bg:#2a0e16;
+    --green:#86efac;--green-bg:#0b2018;
+    --pink:#f472b6;--pink-bg:#2a0e1e;
+    --cyan:#22d3ee;--cyan-bg:#042f3a;
+    --code-bg:#0a0d14;
+    --kw:#f9a870;--fn:#79c0ff;--cm:#5a6478;--tp:#f472b6;--str:#a5d6a7;--nm:#ce93d8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px;}
+
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:248px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:100;}
+  .sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+  .sidebar-logo h1{font-size:13px;font-weight:600;color:var(--cyan);letter-spacing:.08em;text-transform:uppercase;}
+  .sidebar-logo p{font-size:11px;color:var(--muted);margin-top:2px;}
+  .nav-section{padding:0 12px;margin-bottom:8px;}
+  .nav-section-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px;}
+  .nav-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .nav-link:hover{background:var(--bg3);color:var(--text);}
+  .nav-link.active{background:var(--bg3);color:var(--cyan);font-weight:500;}
+  .nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .sub-links{padding-left:24px;margin-top:2px;}
+  .sub-link{display:block;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;border-radius:6px;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+  .sub-link:hover{color:var(--text);background:var(--bg3);}
+
+  .main{margin-left:248px;padding:40px 48px;max-width:980px;}
+  .page{display:none;}.page.active{display:block;}
+
+  .page-header{margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .page-header .breadcrumb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .page-header h2{font-size:26px;font-weight:600;margin-bottom:6px;}
+  .page-header p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+  .badge-teal  {background:var(--teal-bg);  color:var(--teal);  border:1px solid #1a5c44;}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid #3d2d6e;}
+  .badge-amber {background:var(--amber-bg); color:var(--amber); border:1px solid #6b4c0f;}
+  .badge-blue  {background:var(--blue-bg);  color:var(--blue);  border:1px solid #1a3a5c;}
+  .badge-coral {background:var(--coral-bg); color:var(--coral); border:1px solid #5c1a27;}
+  .badge-pink  {background:var(--pink-bg);  color:var(--pink);  border:1px solid #5c1a3a;}
+  .badge-green {background:var(--green-bg); color:var(--green); border:1px solid #155a30;}
+  .badge-cyan  {background:var(--cyan-bg);  color:var(--cyan);  border:1px solid #0a5a70;}
+
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;}
+  .card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card-title .icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+  .lang-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:12px 0 5px;}
+  .en-block{background:var(--bg3);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:var(--text);margin-bottom:8px;}
+  .hi-block{background:var(--purple-bg);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13.5px;line-height:1.8;color:#c4b5fd;margin-bottom:8px;}
+
+  .code-wrap{position:relative;margin:12px 0;}
+  .code-label{background:var(--bg3);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:7px 14px;font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+  .copy-btn{font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all .15s;}
+  .copy-btn:hover{color:var(--teal);border-color:var(--teal);}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;white-space:pre;}
+  .kw{color:var(--kw);}.fn{color:var(--fn);}.cm{color:var(--cm);font-style:italic;}
+  .tp{color:var(--tp);}.st{color:var(--str);}.nm{color:var(--nm);}
+
+  .dry-run{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0;overflow-x:auto;}
+  .dry-run-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+  .step{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .step-num{font-size:10px;font-weight:600;color:var(--muted);min-width:72px;}
+  .a-box{min-width:34px;height:32px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);padding:0 6px;font-family:'JetBrains Mono',monospace;}
+  .a-box.hi   {background:var(--amber-bg); color:var(--amber); border-color:#6b4c0f;}
+  .a-box.found{background:var(--green-bg); color:var(--green); border-color:#155a30;}
+  .a-box.fail {background:var(--coral-bg); color:var(--coral); border-color:#5c1a27;}
+  .a-box.teal {background:var(--teal-bg);  color:var(--teal);  border-color:#1a5c44;}
+  .a-box.blue {background:var(--blue-bg);  color:var(--blue);  border-color:#1a3a5c;}
+  .a-box.pink {background:var(--pink-bg);  color:var(--pink);  border-color:#5c1a3a;}
+  .a-box.cyan {background:var(--cyan-bg);  color:var(--cyan);  border-color:#0a5a70;}
+  .a-box.purp {background:var(--purple-bg);color:var(--purple);border-color:#3d2d6e;}
+  .arr-row{display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap;}
+
+  /* Trie visual */
+  .trie-tree{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2.2;color:var(--muted);}
+  .trie-node{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:30px;border-radius:50%;font-size:12px;font-weight:600;padding:0 6px;border:1px solid;}
+  .tn-root{background:var(--cyan-bg);  color:var(--cyan);  border-color:#0a5a70;}
+  .tn-char{background:var(--blue-bg);  color:var(--blue);  border-color:#1a3a5c;}
+  .tn-end {background:var(--green-bg); color:var(--green); border-color:#155a30;}
+  .tn-hi  {background:var(--amber-bg); color:var(--amber); border-color:#6b4c0f;}
+  .tn-bit {background:var(--purple-bg);color:var(--purple);border-color:#3d2d6e;}
+  .tree-line{display:flex;align-items:center;gap:6px;margin:3px 0;flex-wrap:wrap;}
+  .tree-indent{padding-left:20px;border-left:1px dashed var(--border);margin-left:8px;}
+
+  .step-info{font-size:12px;color:var(--muted);flex:1;min-width:160px;}
+  .step-result{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+  .sr-hi  {background:var(--coral-bg); color:var(--coral);}
+  .sr-low {background:var(--amber-bg); color:var(--amber);}
+  .sr-eq  {background:var(--green-bg); color:var(--green);}
+  .sr-pink{background:var(--pink-bg);  color:var(--pink);}
+  .sr-cyan{background:var(--cyan-bg);  color:var(--cyan);}
+
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;}
+  .tbl th{background:var(--bg3);color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+  .tbl td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.6;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl tr:hover td{background:var(--bg3);}
+
+  .divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+  .tip {border-left:3px solid var(--teal); background:var(--teal-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#6ee7c0;margin:12px 0;line-height:1.7;}
+  .warn{border-left:3px solid var(--amber);background:var(--amber-bg);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#fcd97a;margin:12px 0;line-height:1.7;}
+  .info{border-left:3px solid var(--cyan); background:var(--cyan-bg); border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#67e8f9;margin:12px 0;line-height:1.7;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0;}
+  .mini-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.7;}
+  .mini-card b{font-weight:600;display:block;margin-bottom:4px;}
+  .sub-heading{font-size:14px;font-weight:600;margin:22px 0 10px;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .sub-heading::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--cyan);display:block;}
+  code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:4px;color:var(--teal);}
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+  
+  /* Mobile Navigation Styles (Premium Drawer UI) */
+  .mobile-header {
+    display: none;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+    background: rgba(22, 27, 39, 0.85); /* Matches --bg2 with transparency */
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    height: 60px;
+  }
+
+  .mobile-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+
+  .menu-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .menu-toggle svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-header {
+      display: flex;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      height: 100vh;
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      box-shadow: none;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 15px 0 45px rgba(0, 0, 0, 0.6);
+    }
+
+    .sidebar.open ~ .sidebar-overlay {
+      display: block;
+      opacity: 1;
+    }
+
+    .main {
+      margin-left: 0;
+      padding: 84px 16px 40px; /* Accounts for the 60px fixed header + 24px space */
+      max-width: 100%;
+    }
+
+    .grid2, .grid3, .cx-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+</style>
+</head>
+
+<body>
+<div class="mobile-header">
+  <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  </button>
+  <h2>Trie Patterns</h2>
+</div>
+
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>DSA Notes</h1>
+    <p>Trie Patterns · Gaurav</p>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Trie Patterns</div>
+
+    <button class="nav-link active" onclick="showPage('p0',this)">
+      <span class="nav-dot" style="background:#22d3ee"></span>Trie Basics
+    </button>
+    <div class="sub-links" id="sub0">
+      <button class="sub-link" onclick="scrollTo2('t-what')">What is Trie</button>
+      <button class="sub-link" onclick="scrollTo2('t-struct')">Node Structure</button>
+      <button class="sub-link" onclick="scrollTo2('t-complexity')">Complexity</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p1',this)">
+      <span class="nav-dot" style="background:#60a5fa"></span>Prefix Based
+    </button>
+    <div class="sub-links" id="sub1" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('pb-insert')">Insert & Search</button>
+      <button class="sub-link" onclick="scrollTo2('pb-prefix')">Prefix Match</button>
+      <button class="sub-link" onclick="scrollTo2('pb-autocomplete')">Autocomplete</button>
+      <button class="sub-link" onclick="scrollTo2('pb-wordsearch')">Word Search II</button>
+      <button class="sub-link" onclick="scrollTo2('pb-replace')">Replace Words</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p2',this)">
+      <span class="nav-dot" style="background:#a78bfa"></span>Bitwise Trie
+    </button>
+    <div class="sub-links" id="sub2" style="display:none">
+      <button class="sub-link" onclick="scrollTo2('bt-concept')">Concept (XOR)</button>
+      <button class="sub-link" onclick="scrollTo2('bt-maxXOR')">Maximum XOR</button>
+      <button class="sub-link" onclick="scrollTo2('bt-minXOR')">Min XOR Pair</button>
+    </div>
+
+    <button class="nav-link" onclick="showPage('p3',this)">
+      <span class="nav-dot" style="background:#1dd6a0"></span>Comparison Table
+    </button>
+  </div>
+</nav>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+
+<main class="main">
+
+<!-- ══════════ PAGE 0 — BASICS ══════════ -->
+<div class="page active" id="p0">
+  <div class="page-header">
+    <div class="breadcrumb">Trie Patterns · Foundation</div>
+    <h2>🌳 Trie — Basics</h2>
+    <p>Prefix Tree — ek tree jahan har node ek character store karta hai. String problems ke liye O(L) insert/search, jahan L = word length.</p>
+    <div class="badge-row">
+      <span class="badge badge-cyan">O(L) insert/search</span>
+      <span class="badge badge-blue">Prefix sharing</span>
+      <span class="badge badge-teal">26 children per node</span>
+    </div>
+  </div>
+
+  <div id="t-what">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--cyan-bg)">🌳</div>Trie kya hai?</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      A <b>Trie</b> (Prefix Tree) is a tree where each node represents a character. Words sharing a common prefix share the same path from root. Each node has up to 26 children (for lowercase letters). A <code>isEnd</code> flag marks where a complete word ends.<br><br>
+      Key advantage: <b>O(L) search/insert</b> regardless of how many words are stored — far faster than O(L × N) with brute force string comparison.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Trie</b> (Prefix Tree) ek tree hai jahan har node ek character represent karta hai. Common prefix wale words ek hi path share karte hain root se. Har node mein 26 children (lowercase letters ke liye). <code>isEnd</code> flag batata hai kahan word khatam hota hai.<br><br>
+      Key advantage: <b>O(L) search/insert</b> — chahe kitne bhi words stored ho. Brute force O(L×N) se bahut fast!
+    </div>
+
+    <div class="divider"></div>
+    <div class="dry-run">
+      <div class="dry-run-title">Words: "cat", "car", "card", "care", "dog" — Trie Structure</div>
+      <div class="trie-tree">
+        <div class="tree-line"><span class="trie-node tn-root">ROOT</span></div>
+        <div class="tree-indent">
+          <div class="tree-line"><span class="trie-node tn-char">c</span><span style="color:var(--muted);font-size:11px;margin-left:8px">← 'cat','car','card','care' share this</span></div>
+          <div class="tree-indent">
+            <div class="tree-line"><span class="trie-node tn-char">a</span></div>
+            <div class="tree-indent">
+              <div class="tree-line">
+                <span class="trie-node tn-end">t*</span>
+                <span style="color:var(--muted);font-size:11px;margin:0 12px">←"cat" ends</span>
+                <span class="trie-node tn-char">r</span>
+                <span style="color:var(--muted);font-size:11px;margin-left:8px">← 'car','card','care' share this</span>
+              </div>
+              <div class="tree-indent" style="margin-left:60px">
+                <div class="tree-line">
+                  <span class="trie-node tn-end">∅*</span>
+                  <span style="color:var(--muted);font-size:11px;margin:0 8px">"car"</span>
+                  <span class="trie-node tn-char">d</span>
+                  <span style="color:var(--muted);font-size:11px;margin:0 8px">"card"→</span>
+                  <span class="trie-node tn-end">*</span>
+                  <span style="color:var(--muted);font-size:11px;margin-left:8px"></span>
+                  <span class="trie-node tn-char">e</span>
+                  <span style="color:var(--muted);font-size:11px;margin:0 8px">"care"→</span>
+                  <span class="trie-node tn-end">*</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tree-line" style="margin-top:6px"><span class="trie-node tn-char">d</span><span style="color:var(--muted);font-size:11px;margin-left:8px">← 'dog'</span></div>
+          <div class="tree-indent">
+            <div class="tree-line"><span class="trie-node tn-char">o</span></div>
+            <div class="tree-indent">
+              <div class="tree-line"><span class="trie-node tn-end">g*</span><span style="color:var(--muted);font-size:11px;margin-left:8px">"dog" ends</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:12px">
+        <span class="a-box found" style="margin-right:8px">* = isEnd</span>
+        <span style="color:var(--muted)">Green = word ends here. "car","cat","card","care" share path c→a→r</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="t-struct">
+  <div class="sub-heading">Trie Node Structure</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🧱</div>TrieNode — C++ Implementation</div>
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Trie Node & Class</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">struct</span> <span class="tp">TrieNode</span> {
+    <span class="tp">TrieNode</span>* children[<span class="nm">26</span>];  <span class="cm">// a-z ke liye</span>
+    <span class="tp">bool</span> isEnd;              <span class="cm">// yahan koi word khatam hota hai?</span>
+    <span class="tp">int</span>  count;             <span class="cm">// optional: kitne words yahan se guzre</span>
+
+    <span class="fn">TrieNode</span>() : isEnd(<span class="kw">false</span>), count(<span class="nm">0</span>) {
+        fill(children, children + <span class="nm">26</span>, <span class="kw">nullptr</span>);
+    }
+};
+
+<span class="kw">class</span> <span class="tp">Trie</span> {
+    <span class="tp">TrieNode</span>* root;
+<span class="kw">public</span>:
+    <span class="fn">Trie</span>() { root = <span class="kw">new</span> <span class="tp">TrieNode</span>(); }
+
+    <span class="cm">// INSERT: O(L) — L = word length</span>
+    <span class="kw">void</span> <span class="fn">insert</span>(<span class="tp">string</span> word) {
+        <span class="tp">TrieNode</span>* cur = root;
+        <span class="kw">for</span> (<span class="tp">char</span> c : word) {
+            <span class="tp">int</span> idx = c - <span class="st">'a'</span>;
+            <span class="kw">if</span> (!cur->children[idx])
+                cur->children[idx] = <span class="kw">new</span> <span class="tp">TrieNode</span>();
+            cur = cur->children[idx];
+            cur->count++;   <span class="cm">// prefix count badhao</span>
+        }
+        cur->isEnd = <span class="kw">true</span>;  <span class="cm">// word khatam yahan</span>
+    }
+
+    <span class="cm">// SEARCH: O(L) — exact word match</span>
+    <span class="tp">bool</span> <span class="fn">search</span>(<span class="tp">string</span> word) {
+        <span class="tp">TrieNode</span>* cur = root;
+        <span class="kw">for</span> (<span class="tp">char</span> c : word) {
+            <span class="tp">int</span> idx = c - <span class="st">'a'</span>;
+            <span class="kw">if</span> (!cur->children[idx]) <span class="kw">return false</span>;
+            cur = cur->children[idx];
+        }
+        <span class="kw">return</span> cur->isEnd;  <span class="cm">// word exist karta hai?</span>
+    }
+
+    <span class="cm">// STARTS WITH: O(L) — prefix check</span>
+    <span class="tp">bool</span> <span class="fn">startsWith</span>(<span class="tp">string</span> prefix) {
+        <span class="tp">TrieNode</span>* cur = root;
+        <span class="kw">for</span> (<span class="tp">char</span> c : prefix) {
+            <span class="tp">int</span> idx = c - <span class="st">'a'</span>;
+            <span class="kw">if</span> (!cur->children[idx]) <span class="kw">return false</span>;
+            cur = cur->children[idx];
+        }
+        <span class="kw">return true</span>;  <span class="cm">// prefix exist karta hai (word zaruri nahi)</span>
+    }
+};</pre>
+    </div>
+    <div class="tip">💡 Search aur StartsWith ka difference: Search mein <code>cur->isEnd</code> check karna zaroori hai. StartsWith mein sirf path exist karna kaafi hai!</div>
+  </div>
+  </div>
+
+  <div id="t-complexity">
+  <div class="sub-heading">Complexity Analysis</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">⚡</div>Trie vs HashMap vs Array — When to use</div>
+    <table class="tbl">
+      <tr><th>Operation</th><th>Trie</th><th>HashMap</th><th>Sorted Array</th></tr>
+      <tr><td>Insert word</td><td style="color:var(--teal)">O(L)</td><td style="color:var(--teal)">O(L)</td><td style="color:var(--coral)">O(N log N)</td></tr>
+      <tr><td>Search exact</td><td style="color:var(--teal)">O(L)</td><td style="color:var(--teal)">O(L)</td><td style="color:var(--amber)">O(L log N)</td></tr>
+      <tr><td>Prefix search</td><td style="color:var(--teal)">O(L)</td><td style="color:var(--coral)">O(N·L)</td><td style="color:var(--amber)">O(L log N)</td></tr>
+      <tr><td>Autocomplete</td><td style="color:var(--teal)">O(L+results)</td><td style="color:var(--coral)">O(N·L)</td><td style="color:var(--coral)">O(N·L)</td></tr>
+      <tr><td>Space</td><td style="color:var(--amber)">O(N·L·26)</td><td style="color:var(--teal)">O(N·L)</td><td style="color:var(--teal)">O(N·L)</td></tr>
+    </table>
+    <div class="info">ℹ️ Trie ka real power = <b>prefix operations</b>. Jab bhi prefix-based search, autocomplete, or shared-prefix optimization chahiye → Trie is the answer!</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════ PAGE 1 — PREFIX BASED ══════════ -->
+<div class="page" id="p1">
+  <div class="page-header">
+    <div class="breadcrumb">Trie Patterns · Pattern 1 of 2</div>
+    <h2>🔤 Prefix Based</h2>
+    <p>Insert/Search, Prefix Match, Autocomplete — Trie ka primary use case. Words ka common prefix share hona efficiently handle karo.</p>
+    <div class="badge-row">
+      <span class="badge badge-blue">O(L) all ops</span>
+      <span class="badge badge-teal">isEnd flag critical</span>
+      <span class="badge badge-amber">Shared prefix = shared path</span>
+    </div>
+  </div>
+
+  <!-- INSERT & SEARCH -->
+  <div id="pb-insert">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🔍</div>Insert & Search<span class="badge badge-blue">LeetCode 208</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      <b>Insert:</b> Traverse from root. For each character, go to child node (create if missing). Mark <code>isEnd=true</code> at last char.<br>
+      <b>Search:</b> Same traversal. If any character's child is missing → word not found. At end, check <code>isEnd</code>.<br>
+      <b>StartsWith:</b> Same as search but DON'T check <code>isEnd</code> — just reaching the end of prefix is enough.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>Insert:</b> Root se traverse karo. Har character ke liye child node jaao (nahi hai toh banao). Last char pe <code>isEnd=true</code>.<br>
+      <b>Search:</b> Same traversal. Koi bhi char ka child missing → word nahi hai. End mein <code>isEnd</code> check karo.<br>
+      <b>StartsWith:</b> Search jaisa but <code>isEnd</code> mat check karo — prefix ka path exist karna kaafi hai!
+    </div>
+
+    <div class="divider"></div>
+    <div class="dry-run">
+      <div class="dry-run-title">Insert "apple", then search "apple" and "app"</div>
+      <div class="step">
+        <span class="step-num">Insert "apple"</span>
+        <div class="arr-row">
+          <div class="a-box cyan">ROOT</div>
+          <span style="color:var(--muted)">→</span>
+          <div class="a-box blue">a</div>
+          <span style="color:var(--muted)">→</span>
+          <div class="a-box blue">p</div>
+          <span style="color:var(--muted)">→</span>
+          <div class="a-box blue">p</div>
+          <span style="color:var(--muted)">→</span>
+          <div class="a-box blue">l</div>
+          <span style="color:var(--muted)">→</span>
+          <div class="a-box found">e*</div>
+        </div>
+        <div class="step-info">* = isEnd=true at 'e'</div>
+      </div>
+      <div class="step">
+        <span class="step-num">search("apple")</span>
+        <div class="arr-row">
+          <div class="a-box found">a</div><div class="a-box found">p</div>
+          <div class="a-box found">p</div><div class="a-box found">l</div>
+          <div class="a-box found">e*</div>
+        </div>
+        <div class="step-info">All chars found, isEnd=true</div>
+        <span class="step-result sr-eq">✅ true</span>
+      </div>
+      <div class="step">
+        <span class="step-num">search("app")</span>
+        <div class="arr-row">
+          <div class="a-box found">a</div><div class="a-box found">p</div>
+          <div class="a-box hi">p(isEnd=false)</div>
+        </div>
+        <div class="step-info">Path exists but isEnd=false at last 'p'</div>
+        <span class="step-result sr-hi">❌ false</span>
+      </div>
+      <div class="step">
+        <span class="step-num">startsWith("app")</span>
+        <div class="arr-row">
+          <div class="a-box found">a</div><div class="a-box found">p</div>
+          <div class="a-box found">p</div>
+        </div>
+        <div class="step-info">Path exists → prefix exists! isEnd not checked</div>
+        <span class="step-result sr-eq">✅ true</span>
+      </div>
+    </div>
+    <div class="tip">💡 Search vs StartsWith: yahi sabse common interview mistake hai. Search = path + isEnd. StartsWith = path only. LC 208 mein dono implement karna padta hai!</div>
+  </div>
+  </div>
+
+  <!-- PREFIX MATCH -->
+  <div id="pb-prefix">
+  <div class="sub-heading">Prefix Match — Count & Find</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🔢</div>Count Words with Prefix / Prefix Count<span class="badge badge-teal">Pattern</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Store a <code>count</code> (or <code>prefixCount</code>) at each node — incremented during insert. To count words with a prefix: traverse to the prefix end node, return its count. O(L) per query regardless of dictionary size!
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Har node mein ek <code>count</code> store karo — insert ke time badhao. Prefix wale words count karne ke liye: prefix ke end node tak jaao, uska count return karo. O(L) per query — dictionary size se independent!
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Count Words with Prefix + Sum of Prefix Scores</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">struct</span> <span class="tp">TrieNode</span> {
+    <span class="tp">TrieNode</span>* ch[<span class="nm">26</span>] = {};
+    <span class="tp">int</span> cnt = <span class="nm">0</span>;   <span class="cm">// kitne words yahan se guzre</span>
+    <span class="tp">bool</span> end = <span class="kw">false</span>;
+};
+
+<span class="kw">class</span> <span class="tp">Trie</span> {
+    <span class="tp">TrieNode</span>* root = <span class="kw">new</span> <span class="tp">TrieNode</span>();
+<span class="kw">public</span>:
+    <span class="kw">void</span> <span class="fn">insert</span>(<span class="tp">string</span>&amp; w) {
+        <span class="kw">auto</span> cur = root;
+        <span class="kw">for</span> (<span class="tp">char</span> c : w) {
+            <span class="tp">int</span> i = c-<span class="st">'a'</span>;
+            <span class="kw">if</span>(!cur->ch[i]) cur->ch[i] = <span class="kw">new</span> <span class="tp">TrieNode</span>();
+            cur = cur->ch[i];
+            cur->cnt++;   <span class="cm">// EVERY node on path pe increment</span>
+        }
+        cur->end = <span class="kw">true</span>;
+    }
+
+    <span class="cm">// Prefix se kitne words start hote hain?</span>
+    <span class="tp">int</span> <span class="fn">countPrefix</span>(<span class="tp">string</span>&amp; prefix) {
+        <span class="kw">auto</span> cur = root;
+        <span class="kw">for</span> (<span class="tp">char</span> c : prefix) {
+            <span class="tp">int</span> i = c-<span class="st">'a'</span>;
+            <span class="kw">if</span>(!cur->ch[i]) <span class="kw">return</span> <span class="nm">0</span>; <span class="cm">// prefix exists nahi</span>
+            cur = cur->ch[i];
+        }
+        <span class="kw">return</span> cur->cnt;   <span class="cm">// yahan se guzre words = prefix wale words</span>
+    }
+
+    <span class="cm">// Sum of Prefix Scores (LC 2416)</span>
+    <span class="cm">// Each word ka score = sum of countPrefix for all its prefixes</span>
+    <span class="tp">int</span> <span class="fn">scorePath</span>(<span class="tp">string</span>&amp; w) {
+        <span class="kw">auto</span> cur = root; <span class="tp">int</span> score = <span class="nm">0</span>;
+        <span class="kw">for</span> (<span class="tp">char</span> c : w) {
+            cur = cur->ch[c-<span class="st">'a'</span>];
+            <span class="kw">if</span>(!cur) <span class="kw">break</span>;
+            score += cur->cnt; <span class="cm">// har prefix ka count add karo</span>
+        }
+        <span class="kw">return</span> score;
+    }
+};</pre>
+    </div>
+    <div class="tip">💡 <code>cnt</code> = yahan se kitne words guzre. Yeh trick prefix frequency O(L) mein deti hai. LC 2416 "Sum of Prefix Scores of Strings" mein yahi approach hai!</div>
+  </div>
+  </div>
+
+  <!-- AUTOCOMPLETE -->
+  <div id="pb-autocomplete">
+  <div class="sub-heading">Autocomplete / All Words with Prefix</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">💡</div>Autocomplete — DFS after prefix<span class="badge badge-amber">Pattern</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Step 1: Traverse to the end of the prefix node.<br>
+      Step 2: DFS from that node — collect all words (paths where <code>isEnd=true</code>).<br>
+      This is the core pattern for search autocomplete (LC 1268).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Step 1: Prefix ke end node tak traverse karo.<br>
+      Step 2: Us node se DFS karo — saare words collect karo (jahan <code>isEnd=true</code> ho).<br>
+      Yahi search autocomplete ka core pattern hai (LC 1268).
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Autocomplete — All Words with Prefix</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">void</span> <span class="fn">dfsCollect</span>(<span class="tp">TrieNode</span>* node, <span class="tp">string</span>&amp; cur,
+                  <span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&amp; results) {
+    <span class="kw">if</span> (!node) <span class="kw">return</span>;
+    <span class="kw">if</span> (node->end) results.push_back(cur);  <span class="cm">// word mila!</span>
+
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">0</span>; i &lt; <span class="nm">26</span>; i++) {
+        <span class="kw">if</span> (node->ch[i]) {
+            cur.push_back(<span class="st">'a'</span> + i);         <span class="cm">// char add karo</span>
+            <span class="fn">dfsCollect</span>(node->ch[i], cur, results);
+            cur.pop_back();                  <span class="cm">// backtrack!</span>
+        }
+    }
+}
+
+<span class="tp">vector</span>&lt;<span class="tp">string</span>&gt; <span class="fn">autocomplete</span>(<span class="tp">string</span> prefix) {
+    <span class="tp">TrieNode</span>* cur = root;
+    <span class="cm">// Step 1: Prefix tak jaao</span>
+    <span class="kw">for</span> (<span class="tp">char</span> c : prefix) {
+        <span class="kw">if</span> (!cur->ch[c-<span class="st">'a'</span>]) <span class="kw">return</span> {}; <span class="cm">// prefix nahi hai</span>
+        cur = cur->ch[c-<span class="st">'a'</span>];
+    }
+    <span class="cm">// Step 2: Us node se DFS — saare words collect karo</span>
+    <span class="tp">vector</span>&lt;<span class="tp">string</span>&gt; results;
+    <span class="tp">string</span> current = prefix;
+    <span class="fn">dfsCollect</span>(cur, current, results);
+    <span class="kw">return</span> results;
+}
+<span class="cm">// LC 1268: Search Suggestions System</span>
+<span class="cm">// Top 3 suggestions for each prefix → same approach, limit to 3</span></pre>
+    </div>
+    <div class="tip">💡 Autocomplete = Trie traversal + DFS with backtracking. Lexicographic order automatically milti hai agar children array index order mein traverse karo (a→z)!</div>
+  </div>
+  </div>
+
+  <!-- WORD SEARCH II -->
+  <div id="pb-wordsearch">
+  <div class="sub-heading">Word Search II — Grid + Trie</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--pink-bg)">🔲</div>Word Search II<span class="badge badge-pink">LeetCode 212</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Insert all words into Trie. DFS on grid — at each cell, check if current path exists in Trie. If <code>isEnd=true</code> → word found! If no Trie child matches → prune (backtrack early). This avoids checking each word separately — O(m·n·4^L) instead of O(W·m·n·4^L).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Saare words Trie mein insert karo. Grid pe DFS karo — har cell pe check karo current path Trie mein exist karta hai. <code>isEnd=true</code> → word mila! Trie child nahi mila → prune (early backtrack). Har word separately check karne ki zaroorat nahi → bahut fast!
+    </div>
+
+    <div class="dry-run">
+      <div class="dry-run-title">board=[["o","a","a","n"],["e","t","a","e"],["i","h","k","r"],["i","f","l","v"]], words=["oath","eat"]</div>
+      <div class="step">
+        <span class="step-num">Build Trie</span>
+        <div class="arr-row">
+          <div class="a-box cyan">ROOT</div>
+          <span style="color:var(--muted)">→</span>
+          <div class="a-box blue">o→a→t→h*</div>
+          <span style="color:var(--muted)">&amp;</span>
+          <div class="a-box blue">e→a→t*</div>
+        </div>
+        <div class="step-info">Both words in Trie</div>
+      </div>
+      <div class="step">
+        <span class="step-num">DFS from 'o'</span>
+        <div class="arr-row">
+          <div class="a-box found">o</div><span style="color:var(--muted)">→</span>
+          <div class="a-box found">a</div><span style="color:var(--muted)">→</span>
+          <div class="a-box found">t</div><span style="color:var(--muted)">→</span>
+          <div class="a-box found">h*</div>
+        </div>
+        <div class="step-info">Trie path o→a→t→h, isEnd=true → "oath" found!</div>
+        <span class="step-result sr-eq">✅ oath</span>
+      </div>
+      <div class="step">
+        <span class="step-num">DFS from 'e'</span>
+        <div class="arr-row">
+          <div class="a-box found">e</div><span style="color:var(--muted)">→</span>
+          <div class="a-box found">a</div><span style="color:var(--muted)">→</span>
+          <div class="a-box found">t*</div>
+        </div>
+        <div class="step-info">Trie path e→a→t, isEnd=true → "eat" found!</div>
+        <span class="step-result sr-eq">✅ eat</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Word Search II (Grid DFS + Trie)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">vector</span>&lt;<span class="tp">string</span>&gt; <span class="fn">findWords</span>(<span class="tp">vector</span>&lt;<span class="tp">vector</span>&lt;<span class="tp">char</span>&gt;&gt;&amp; board,
+                           <span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&amp; words) {
+    <span class="tp">Trie</span> trie;
+    <span class="kw">for</span> (<span class="tp">string</span>&amp; w : words) trie.<span class="fn">insert</span>(w); <span class="cm">// saare words insert</span>
+
+    <span class="tp">int</span> m = board.size(), n = board[<span class="nm">0</span>].size();
+    <span class="tp">vector</span>&lt;<span class="tp">string</span>&gt; result;
+    <span class="tp">int</span> dirs[<span class="nm">4</span>][<span class="nm">2</span>] = {{<span class="nm">0</span>,<span class="nm">1</span>},{<span class="nm">0</span>,-<span class="nm">1</span>},{<span class="nm">1</span>,<span class="nm">0</span>},{-<span class="nm">1</span>,<span class="nm">0</span>}};
+
+    <span class="kw">function</span>&lt;<span class="kw">void</span>(<span class="tp">int</span>,<span class="tp">int</span>,<span class="tp">TrieNode</span>*,<span class="tp">string</span>&amp;)&gt; dfs =
+        [&amp;](<span class="tp">int</span> r, <span class="tp">int</span> c, <span class="tp">TrieNode</span>* node, <span class="tp">string</span>&amp; path) {
+        <span class="kw">if</span> (r&lt;<span class="nm">0</span>||r&gt;=m||c&lt;<span class="nm">0</span>||c&gt;=n||board[r][c]==<span class="st">'#'</span>) <span class="kw">return</span>;
+        <span class="tp">char</span> ch = board[r][c];
+        <span class="tp">TrieNode</span>* next = node->ch[ch-<span class="st">'a'</span>];
+        <span class="kw">if</span> (!next) <span class="kw">return</span>;   <span class="cm">// Trie mein nahi → PRUNE!</span>
+
+        path.push_back(ch);
+        board[r][c] = <span class="st">'#'</span>;   <span class="cm">// visited mark</span>
+
+        <span class="kw">if</span> (next->end) {      <span class="cm">// word mila!</span>
+            result.push_back(path);
+            next->end = <span class="kw">false</span>; <span class="cm">// duplicate avoid karo</span>
+        }
+
+        <span class="kw">for</span> (<span class="kw">auto</span>&amp; d : dirs)
+            dfs(r+d[<span class="nm">0</span>], c+d[<span class="nm">1</span>], next, path);
+
+        path.pop_back();
+        board[r][c] = ch;     <span class="cm">// restore (backtrack)</span>
+    };
+
+    <span class="tp">string</span> path;
+    <span class="kw">for</span> (<span class="tp">int</span> i=<span class="nm">0</span>; i&lt;m; i++)
+        <span class="kw">for</span> (<span class="tp">int</span> j=<span class="nm">0</span>; j&lt;n; j++)
+            dfs(i, j, trie.root, path);
+
+    <span class="kw">return</span> result;
+}</pre>
+    </div>
+    <div class="tip">💡 Key optimization: found word ke baad <code>next->end = false</code> karo — warna same word duplicate aayega. Aur Trie pruning (<code>if(!next) return</code>) is algorithm ko O(W×m×n×4^L) se O(m×n×4^L) kar deta hai!</div>
+  </div>
+  </div>
+
+  <!-- REPLACE WORDS -->
+  <div id="pb-replace">
+  <div class="sub-heading">Replace Words (Shortest Prefix)</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">🔄</div>Replace Words<span class="badge badge-teal">LeetCode 648</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">Insert all root words into Trie. For each word in sentence, traverse Trie until you hit an <code>isEnd=true</code> node → that's the shortest prefix → replace! If no prefix found → keep original word.</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">Saare root words Trie mein insert karo. Sentence ke har word ke liye, Trie traverse karo jab tak <code>isEnd=true</code> node na mile → woh shortest prefix hai → replace karo! Prefix nahi mila → original word rakho.</div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Replace Words</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">string</span> <span class="fn">replaceWords</span>(<span class="tp">vector</span>&lt;<span class="tp">string</span>&gt;&amp; dictionary, <span class="tp">string</span> sentence) {
+    <span class="tp">Trie</span> trie;
+    <span class="kw">for</span> (<span class="tp">string</span>&amp; root : dictionary) trie.<span class="fn">insert</span>(root);
+
+    <span class="tp">istringstream</span> iss(sentence);
+    <span class="tp">string</span> word, result;
+
+    <span class="kw">while</span> (iss &gt;&gt; word) {
+        <span class="tp">TrieNode</span>* cur = trie.root;
+        <span class="tp">string</span> prefix;
+        <span class="tp">bool</span> replaced = <span class="kw">false</span>;
+
+        <span class="kw">for</span> (<span class="tp">char</span> c : word) {
+            <span class="tp">int</span> i = c - <span class="st">'a'</span>;
+            <span class="kw">if</span> (!cur->ch[i]) <span class="kw">break</span>;  <span class="cm">// prefix nahi mila</span>
+            cur = cur->ch[i];
+            prefix += c;
+            <span class="kw">if</span> (cur->end) {             <span class="cm">// shortest prefix mila!</span>
+                result += (result.empty() ? <span class="st">""</span> : <span class="st">" "</span>) + prefix;
+                replaced = <span class="kw">true</span>;
+                <span class="kw">break</span>;
+            }
+        }
+        <span class="kw">if</span> (!replaced)
+            result += (result.empty() ? <span class="st">""</span> : <span class="st">" "</span>) + word;
+    }
+    <span class="kw">return</span> result;
+}
+<span class="cm">// "the cattle was rattled" with roots ["cat","bat","rat"]</span>
+<span class="cm">// → "the cat was rat"</span></pre>
+    </div>
+    <div class="tip">💡 Trie mein <code>isEnd</code> milte hi immediately return karo — yahi <b>shortest</b> prefix milta hai! Agar DFS continue karo toh longer prefix milega jo galat hoga.</div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════ PAGE 2 — BITWISE TRIE ══════════ -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <div class="breadcrumb">Trie Patterns · Pattern 2 of 2</div>
+    <h2>💡 Bitwise Trie (XOR Trie)</h2>
+    <p>Numbers ko binary (bits) mein store karo — XOR maximize/minimize karo O(32) mein. Integers ke liye Prefix Trie!</p>
+    <div class="badge-row">
+      <span class="badge badge-purple">32-bit integers</span>
+      <span class="badge badge-blue">O(32) = O(1) effectively</span>
+      <span class="badge badge-pink">Max/Min XOR</span>
+    </div>
+  </div>
+
+  <div id="bt-concept">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">💡</div>Bitwise Trie — Core Concept</div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      Instead of characters (a-z), store <b>bits (0 or 1)</b> at each node. Each number traverses 32 levels (one per bit, MSB to LSB). <br>
+      <b>To maximize XOR</b>: for each bit of query number, greedily go to the <b>opposite bit</b> child (XOR = 1 when bits differ). If opposite doesn't exist → go same side.<br>
+      Only 2 children per node (0 or 1) instead of 26!
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Characters (a-z) ki jagah <b>bits (0 ya 1)</b> store karo. Har number 32 levels traverse karta hai (MSB se LSB). <br>
+      <b>XOR maximize karne ke liye</b>: query number ke har bit ke liye, greedy jaao <b>opposite bit</b> child pe (XOR=1 jab bits alag hoon). Opposite nahi hai toh same side jaao.<br>
+      Sirf 2 children per node (0 ya 1) — 26 nahi!
+    </div>
+
+    <div class="divider"></div>
+    <div class="dry-run">
+      <div class="dry-run-title">Numbers: 3(011), 10(1010), 5(0101) — Bitwise Trie (3-bit example)</div>
+      <div class="trie-tree">
+        <div class="tree-line"><span class="trie-node tn-root">ROOT</span></div>
+        <div class="tree-indent">
+          <div class="tree-line">
+            <span class="trie-node tn-bit">0</span>
+            <span style="color:var(--muted);font-size:11px;margin:0 8px">← 3(011), 5(101 wait 3-bit: 011, 101)</span>
+          </div>
+          <div class="tree-indent">
+            <div class="tree-line"><span class="trie-node tn-bit">0</span><span style="color:var(--muted);font-size:11px;margin-left:8px">→ bit1</span></div>
+            <div class="tree-indent">
+              <div class="tree-line"><span class="trie-node tn-end">1*</span><span style="color:var(--muted);font-size:11px;margin-left:8px">→ 3(011) stored</span></div>
+            </div>
+            <div class="tree-line"><span class="trie-node tn-bit">1</span><span style="color:var(--muted);font-size:11px;margin-left:8px">→ 5(101) path...</span></div>
+          </div>
+          <div class="tree-line"><span class="trie-node tn-bit">1</span><span style="color:var(--muted);font-size:11px;margin-left:8px">← 10(1010)</span></div>
+        </div>
+      </div>
+      <div class="step" style="margin-top:10px">
+        <span class="step-num">Max XOR(3)</span>
+        <div class="step-info">3=011. Bit0=0 → want 1 (opposite). 1 exists (10=1010) → go there. Bit1=1 → want 0, exists → go. Bit2=1 → want 0... etc</div>
+        <span class="step-result sr-cyan">max XOR found!</span>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- MAXIMUM XOR -->
+  <div id="bt-maxXOR">
+  <div class="sub-heading">Problem 1 — Maximum XOR of Two Numbers</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--purple-bg)">🔝</div>Maximum XOR of Two Numbers<span class="badge badge-purple">LeetCode 421</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Insert all numbers into Bitwise Trie (bit by bit, MSB first). For each number, query the Trie greedily: for each bit, try to go to the <b>opposite bit</b> node (to get XOR=1 at this position). Build the maximum XOR bit by bit. O(32×N) = O(N).
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Saare numbers Bitwise Trie mein insert karo (bit by bit, MSB se). Har number ke liye Trie greedily query karo: har bit pe <b>opposite bit</b> node pe jaane ki koshish karo (XOR=1 milega). Bit by bit maximum XOR banao. O(32×N) = O(N).
+    </div>
+
+    <div class="dry-run">
+      <div class="dry-run-title">nums=[3,10,5,25,2,8] → Expected: 28 (5 XOR 25)</div>
+      <div class="step">
+        <span class="step-num">Insert all</span>
+        <div class="step-info">All 6 numbers in Bitwise Trie (32 levels each)</div>
+        <span class="step-result sr-cyan">Trie built</span>
+      </div>
+      <div class="step">
+        <span class="step-num">Query 5=00101</span>
+        <div class="arr-row">
+          <div class="a-box purp">b4:0→want1</div>
+          <div class="a-box found">→25 has 1!</div>
+        </div>
+        <div class="step-info">Bit 4: 5 has 0 → want 1 → 25=11001 has 1 → XOR bit=1</div>
+        <span class="step-result sr-eq">XOR=28✅</span>
+      </div>
+      <div class="step">
+        <span class="step-num">5 XOR 25</span>
+        <div class="arr-row">
+          <div class="a-box blue">5= 00101</div>
+          <div class="a-box purp">25=11001</div>
+          <div class="a-box found">28=11100</div>
+        </div>
+        <span class="step-result sr-eq">✅ max=28</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Maximum XOR (Bitwise Trie)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">struct</span> <span class="tp">BitNode</span> {
+    <span class="tp">BitNode</span>* ch[<span class="nm">2</span>] = {};  <span class="cm">// sirf 0 aur 1 children!</span>
+};
+
+<span class="kw">class</span> <span class="tp">BitTrie</span> {
+    <span class="tp">BitNode</span>* root = <span class="kw">new</span> <span class="tp">BitNode</span>();
+<span class="kw">public</span>:
+    <span class="kw">void</span> <span class="fn">insert</span>(<span class="tp">int</span> num) {
+        <span class="kw">auto</span> cur = root;
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">31</span>; i &gt;= <span class="nm">0</span>; i--) {  <span class="cm">// MSB se LSB</span>
+            <span class="tp">int</span> bit = (num &gt;&gt; i) &amp; <span class="nm">1</span>;
+            <span class="kw">if</span> (!cur->ch[bit]) cur->ch[bit] = <span class="kw">new</span> <span class="tp">BitNode</span>();
+            cur = cur->ch[bit];
+        }
+    }
+
+    <span class="cm">// query: num ke saath maximum XOR nikalo</span>
+    <span class="tp">int</span> <span class="fn">maxXOR</span>(<span class="tp">int</span> num) {
+        <span class="kw">auto</span> cur = root;
+        <span class="tp">int</span> result = <span class="nm">0</span>;
+        <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">31</span>; i &gt;= <span class="nm">0</span>; i--) {
+            <span class="tp">int</span> bit = (num &gt;&gt; i) &amp; <span class="nm">1</span>;
+            <span class="tp">int</span> want = <span class="nm">1</span> - bit;  <span class="cm">// opposite bit chahiye → XOR=1</span>
+
+            <span class="kw">if</span> (cur->ch[want]) {
+                result |= (<span class="nm">1</span> &lt;&lt; i);  <span class="cm">// yeh bit 1 ho gaya XOR mein</span>
+                cur = cur->ch[want];
+            } <span class="kw">else</span> {
+                cur = cur->ch[bit]; <span class="cm">// opposite nahi → same side</span>
+            }
+        }
+        <span class="kw">return</span> result;
+    }
+};
+
+<span class="tp">int</span> <span class="fn">findMaximumXOR</span>(<span class="tp">vector</span>&lt;<span class="tp">int</span>&gt;&amp; nums) {
+    <span class="tp">BitTrie</span> trie;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums) trie.<span class="fn">insert</span>(x);
+
+    <span class="tp">int</span> maxVal = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> x : nums)
+        maxVal = max(maxVal, trie.<span class="fn">maxXOR</span>(x));
+    <span class="kw">return</span> maxVal;
+}
+<span class="cm">// Time: O(32·N) = O(N). Space: O(32·N) = O(N)</span></pre>
+    </div>
+    <div class="tip">💡 <code>want = 1 - bit</code> — yeh trick opposite bit deta hai. XOR maximum karne ke liye hamesha opposite bit pe jaane ki koshish karo. O(N) brute force O(N²) se bahut better!</div>
+  </div>
+  </div>
+
+  <!-- MIN XOR PAIR -->
+  <div id="bt-minXOR">
+  <div class="sub-heading">Problem 2 — Minimum XOR Pair</div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--blue-bg)">🔽</div>Minimum XOR Pair<span class="badge badge-blue">Pattern</span></div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 Intuition</div>
+    <div class="en-block">
+      Opposite of max XOR: for minimum XOR, greedily go to the <b>same bit</b> node (XOR=0 when bits match). If same bit doesn't exist → go opposite. This minimizes XOR.
+    </div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      Max XOR ka ulta: minimum XOR ke liye, greedy jaao <b>same bit</b> node pe (XOR=0 jab bits match hoon). Same bit nahi hai toh opposite jaao. Isse XOR minimize hota hai.
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label"><span>🔵 C++ · Minimum XOR Query</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="tp">int</span> <span class="fn">minXOR</span>(<span class="tp">int</span> num) {
+    <span class="kw">auto</span> cur = root;
+    <span class="tp">int</span> result = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="nm">31</span>; i &gt;= <span class="nm">0</span>; i--) {
+        <span class="tp">int</span> bit = (num &gt;&gt; i) &amp; <span class="nm">1</span>;
+        <span class="tp">int</span> want = bit;   <span class="cm">// SAME bit chahiye → XOR=0 (min ke liye)</span>
+
+        <span class="kw">if</span> (cur->ch[want])
+            cur = cur->ch[want];        <span class="cm">// same bit → XOR bit = 0</span>
+        <span class="kw">else</span> {
+            result |= (<span class="nm">1</span> &lt;&lt; i);        <span class="cm">// opposite gaye → XOR bit = 1</span>
+            cur = cur->ch[<span class="nm">1</span>-want];
+        }
+    }
+    <span class="kw">return</span> result;
+}
+
+<span class="cm">// Max XOR: want = 1 - bit (opposite)  → XOR maximize</span>
+<span class="cm">// Min XOR: want = bit     (same)      → XOR minimize</span>
+<span class="cm">// Ek hi change! Want ka logic flip karo.</span></pre>
+    </div>
+    <div class="tip">💡 Max XOR vs Min XOR: sirf ek line change hoti hai — <code>want = 1 - bit</code> (max) vs <code>want = bit</code> (min). Same template, same Bitwise Trie!</div>
+    <div class="grid2">
+      <div class="mini-card"><b style="color:var(--purple)">Max XOR query</b><code>want = 1 - bit</code><br>Opposite bit dhundo → XOR = 1 at each position</div>
+      <div class="mini-card"><b style="color:var(--blue)">Min XOR query</b><code>want = bit</code><br>Same bit dhundo → XOR = 0 at each position</div>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════ PAGE 3 — COMPARISON ══════════ -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <div class="breadcrumb">Trie Patterns · Quick Reference</div>
+    <h2>📊 Trie — Comparison & Summary</h2>
+    <p>Kaunsa pattern kab use karna hai — ek jagah sab kuch.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--cyan-bg)">🗺️</div>Pattern Decision Guide</div>
+    <table class="tbl">
+      <tr><th>Pattern</th><th>Trie Type</th><th>Node children</th><th>Use when</th><th>Key operation</th></tr>
+      <tr>
+        <td><span style="color:var(--blue);font-weight:600">Insert/Search</span></td>
+        <td>Char Trie</td><td>26</td>
+        <td>Dictionary lookup, word existence</td>
+        <td>Insert O(L), Search O(L)</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--teal);font-weight:600">Prefix Match</span></td>
+        <td>Char Trie + count</td><td>26</td>
+        <td>StartsWith, count words with prefix, autocomplete</td>
+        <td>Traverse to prefix node, return count/DFS</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--pink);font-weight:600">Grid + Trie</span></td>
+        <td>Char Trie</td><td>26</td>
+        <td>Word Search II, find all words in grid</td>
+        <td>DFS + Trie pruning = O(m·n·4^L)</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--amber);font-weight:600">Shortest Prefix</span></td>
+        <td>Char Trie</td><td>26</td>
+        <td>Replace Words, shortest root substitution</td>
+        <td>Stop at first isEnd=true</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--purple);font-weight:600">Max/Min XOR</span></td>
+        <td>Bit Trie</td><td>2</td>
+        <td>Maximum XOR pair, minimum XOR, XOR queries</td>
+        <td>Greedy: opposite bit (max) / same bit (min)</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--teal-bg)">⚡</div>All Problems Summary</div>
+    <table class="tbl">
+      <tr><th>Problem</th><th>Pattern</th><th>Time</th><th>Space</th><th>LC</th></tr>
+      <tr><td>Implement Trie</td><td>Insert/Search</td><td>O(L)</td><td>O(N·L·26)</td><td>#208</td></tr>
+      <tr><td>Word Search II</td><td>Grid+Trie DFS</td><td>O(m·n·4^L)</td><td>O(N·L)</td><td>#212</td></tr>
+      <tr><td>Replace Words</td><td>Shortest Prefix</td><td>O(N·L)</td><td>O(N·L)</td><td>#648</td></tr>
+      <tr><td>Search Suggestions</td><td>Autocomplete</td><td>O(N·L)</td><td>O(N·L)</td><td>#1268</td></tr>
+      <tr><td>Sum of Prefix Scores</td><td>Prefix Count</td><td>O(N·L)</td><td>O(N·L)</td><td>#2416</td></tr>
+      <tr><td>Maximum XOR</td><td>Bitwise Trie</td><td>O(32·N)</td><td>O(32·N)</td><td>#421</td></tr>
+      <tr><td>Maximum XOR (queries)</td><td>Bitwise Trie</td><td>O(32·N)</td><td>O(32·N)</td><td>#1707</td></tr>
+      <tr><td>Min XOR Pair</td><td>Bitwise Trie</td><td>O(32·N)</td><td>O(32·N)</td><td>Classic</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--amber-bg)">🧠</div>Kab kya use karo — Decision</div>
+    <div class="lang-label" style="color:var(--purple)">🇮🇳 Hinglish</div>
+    <div class="hi-block">
+      <b>"Word exist karta hai dictionary mein?"</b> → Trie Insert + Search<br>
+      <b>"Koi word is prefix se shuru hota hai?"</b> → Trie StartsWith<br>
+      <b>"Prefix se kitne words start hote hain?"</b> → Trie with count at each node<br>
+      <b>"Autocomplete / saare words with prefix?"</b> → Trie traverse + DFS collect<br>
+      <b>"Grid mein words dhundho efficiently?"</b> → Word Search II (Trie + DFS pruning)<br>
+      <b>"Shortest root se replace karo?"</b> → Trie, stop at first isEnd<br>
+      <b>"Maximum XOR of two numbers?"</b> → Bitwise Trie, greedy opposite bit<br>
+      <b>"Minimum XOR pair?"</b> → Bitwise Trie, greedy same bit
+    </div>
+    <div class="lang-label" style="color:var(--blue)">🇬🇧 English</div>
+    <div class="en-block">
+      <b>"Word in dictionary?"</b> → Trie search (isEnd check)<br>
+      <b>"Any word starts with prefix?"</b> → startsWith (path check only)<br>
+      <b>"Count words with prefix?"</b> → count field at each node<br>
+      <b>"Autocomplete suggestions?"</b> → Traverse to prefix + DFS collect<br>
+      <b>"Find words in grid?"</b> → Trie + DFS with pruning<br>
+      <b>"Replace with shortest root?"</b> → Traverse until isEnd=true<br>
+      <b>"Max XOR?"</b> → Bitwise Trie + greedy opposite<br>
+      <b>"Min XOR?"</b> → Bitwise Trie + greedy same bit
+    </div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="mini-card"><b style="color:var(--cyan)">Char Trie</b>26 children. Strings/words. isEnd flag. O(L) per op. Space heavy but prefix ops O(L).</div>
+      <div class="mini-card"><b style="color:var(--purple)">Bit Trie</b>2 children (0/1). Integers. 32 levels. Greedy XOR. O(32)=O(1) effectively.</div>
+      <div class="mini-card"><b style="color:var(--teal)">count node</b>Store count at each node during insert. Prefix frequency O(L). Sum of prefix scores!</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--coral-bg)">⚠️</div>Common Mistakes</div>
+    <div class="warn">⚠️ <b>Search vs StartsWith:</b> Search mein <code>isEnd</code> check karna ZAROORI hai. StartsWith mein nahi. Yeh sabse common mistake hai LC 208 mein!</div>
+    <div class="warn">⚠️ <b>Word Search II duplicate:</b> Word milne ke baad <code>node->end = false</code> set karo — warna same word multiple baar result mein aayega.</div>
+    <div class="warn">⚠️ <b>Bitwise Trie bit order:</b> MSB se LSB insert karo (bit 31 to 0). Ulta kiya toh XOR greedy galat hoga!</div>
+    <div class="warn">⚠️ <b>Memory:</b> Trie space-heavy hai — O(N·L·26). Agar space constraint hai toh HashMap children use karo (<code>unordered_map&lt;char, TrieNode*&gt;</code>) — sparse hoga.</div>
+    <div class="tip">💡 <b>HashMap children optimization:</b><br><code>unordered_map&lt;char, TrieNode*&gt; children</code><br>26-size array ki jagah — sirf existing chars store hote hain. Space kam, lookup thoda slow.</div>
+  </div>
+</div>
+
+</main>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (!sidebar || !overlay) return;
+    sidebar.classList.toggle('open');
+    if (sidebar.classList.contains('open')) {
+      overlay.style.display = 'block';
+      setTimeout(() => overlay.style.opacity = '1', 10);
+    } else {
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.style.display = 'none', 350);
+    }
+  }
+
+  const pages = ['p0','p1','p2','p3'];
+  const subs  = ['sub0','sub1','sub2'];
+
+  function showPage(id, btn) {
+    // Auto-close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
+    pages.forEach(p => document.getElementById(p).classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    const idx = pages.indexOf(id);
+    subs.forEach((s,i) => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = i===idx ? 'block' : 'none';
+    });
+    window.scrollTo(0,0);
+  }
+
+  function scrollTo2(id) {
+    // Auto-close mobile sidebar if open
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-label').nextElementSibling;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#1dd6a0';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+    });
+  }
+
+  subs.forEach((s,i) => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = i===0 ? 'block' : 'none';
+  });
+</script>
+</body>
+</html>
