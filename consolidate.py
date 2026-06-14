@@ -2,7 +2,7 @@ import os
 import base64
 
 # Define the source directory
-source_dir = r"c:\Users\rajga\Downloads\DSA NOTES"
+source_dir = os.path.dirname(os.path.abspath(__file__))
 output_file = os.path.join(source_dir, "DSA-GAURAV.html")
 
 # Order the files logically for the notebook
@@ -73,6 +73,7 @@ master_html = """<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DSA Notebook — Gaurav</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
